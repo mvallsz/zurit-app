@@ -1,0 +1,98 @@
+<div
+  class="w-full h-full bg-pattern auto-overflow"
+  fxLayout="column"
+  fxLayoutAlign="center center"
+>
+  <div @fadeInUp class="card overflow-scroll w-full max-w-xs">
+    <div class="p-8 pb-0" fxLayout="column" fxLayoutAlign="center center">
+      <div class="fill-current text-center">
+        <img class="w-56" src="assets/img/zurit/ZURITLOGO04.png" />
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <h1 class="title m-0">Bienvenido de nuevo</h1>
+      <h2 class="body-2 text-secondary m-0">
+        Inicie sesión con sus credenciales.
+      </h2>
+    </div>
+
+    <div
+      [formGroup]="form"
+      (keydown.enter)="send()"
+      class="p-6"
+      fxLayout="column"
+      fxLayoutGap="16px"
+    >
+      <div fxFlex="auto" fxLayout="column">
+        <mat-form-field fxFlex="grow">
+          <mat-label>Correo Electrónico</mat-label>
+          <input
+            formControlName="email"
+            matInput
+            required
+            autocomplete="false"
+          />
+          <mat-error *ngIf="form.get('email').hasError('required')"
+            >Necesitamos una dirección de correo electrónico para iniciar
+            sesión</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field fxFlex="grow">
+          <mat-label>Contraseña</mat-label>
+          <input
+            [type]="inputType"
+            formControlName="password"
+            matInput
+            required
+            autocomplete="false"
+          />
+          <button
+            (click)="toggleVisibility()"
+            mat-icon-button
+            matSuffix
+            matTooltip="Ver contraseña"
+            type="button"
+          >
+            <mat-icon *ngIf="visible" [icIcon]="icVisibility"></mat-icon>
+            <mat-icon *ngIf="!visible" [icIcon]="icVisibilityOff"></mat-icon>
+          </button>
+          <mat-hint>Haga clic en el ojo para ver su contraseña 😉</mat-hint>
+
+          <mat-error *ngIf="form.get('password').hasError('required')"
+            >Necesitamos una contraseña para iniciar sesión</mat-error
+          >
+        </mat-form-field>
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <mat-checkbox
+          class="caption"
+          color="primary"
+          formControlName="remember"
+          matInput
+          >Recuérdame</mat-checkbox
+        >
+        <a [routerLink]="['/forgot-password']" class="caption"
+          >¿Olvidaste tu contraseña?</a
+        >
+      </div>
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <mat-progress-spinner
+          diameter="40"
+          mode="indeterminate"
+          color="primary"
+          *ngIf="spinner"
+        ></mat-progress-spinner>
+      </div>
+      <button
+        (click)="send()"
+        *ngIf="!spinner"
+        color="primary"
+        mat-raised-button
+        type="button"
+      >
+        INICIAR SESIÓN
+      </button>
+    </div>
+  </div>
+</div>

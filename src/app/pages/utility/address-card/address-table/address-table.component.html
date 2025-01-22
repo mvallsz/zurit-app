@@ -1,0 +1,53 @@
+<table @stagger [dataSource]="dataSource"  class="w-full" style="width: 1000px" mat-table matSort>
+
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- Text Columns -->
+  <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+    <ng-container *ngIf="column.type === 'text'" [matColumnDef]="column.property">
+      <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header> {{ column.label }}</th>
+      <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+       {{row[column.property]}}
+      </td>
+  </ng-container>
+  </ng-container>
+
+
+  <!-- Action Column -->
+  <ng-container matColumnDef="actions">
+    <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>Actions</th>
+    <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
+      <button (click)="$event.stopPropagation()"
+              [matMenuTriggerData]="{ address: row }"
+              [matMenuTriggerFor]="actionsMenu"
+              mat-icon-button
+              type="button">
+        <mat-icon [icIcon]="icMoreHoriz"></mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+  <tr *matRowDef="let row; columns: visibleColumns;"
+      @fadeInUp
+      class="hover:bg-hover trans-ease-out"
+      mat-row></tr>
+
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" [attr.colspan]="visibleColumns.length">
+      No Address found.
+    </td>
+  </tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize" class="left-0"></mat-paginator>
+
+<mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-address="address" matMenuContent>
+    <button (click)="changeDefault(address)" mat-menu-item>
+      <mat-icon [icIcon]="icCheck"></mat-icon>
+      <span>Set as Default</span>
+    </button>
+  </ng-template>
+</mat-menu>

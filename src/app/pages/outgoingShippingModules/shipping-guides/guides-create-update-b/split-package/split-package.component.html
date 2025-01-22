@@ -1,0 +1,218 @@
+<div @fadeInUp class="card overflow-hidden" style="padding: 10px">
+  <div fxLayout="row" fxLayoutAlign="start center" mat-dialog-title>
+    <h2 class="headline m-0" fxFlex="auto">
+      Split Package {{ this.tlPackage.tlCargoId }}
+    </h2>
+    <button
+      class="text-secondary"
+      mat-dialog-close
+      mat-icon-button
+      type="button"
+    >
+      <mat-icon [icIcon]="icClose"></mat-icon>
+    </button>
+  </div>
+  <mat-divider style="border-top-width: 2px"></mat-divider>
+  <br />
+  <div style="display: flex">
+    <div style="flex: 60%">
+      <h2 class="subheading-2">Original Package Information</h2>
+      <div style="font-size: smaller">
+        <b>Measures:</b><br />
+        Length:<b>{{ this.tlPackage.package.length }}''</b>, Width:<b
+          >{{ this.tlPackage.package.width }}''</b
+        >, Height:<b>{{ this.tlPackage.package.height }}''</b>.
+        <br />
+        <b>Package weight:</b><br />
+        Weight: <b>{{ this.tlPackage.weight }} lb. </b>, Volume:
+        <b>{{ this.tlPackage.volume }} ft<sup>3</sup></b
+        >, Vlb: <b>{{ this.tlPackage.vlb }} vlb</b>.
+        <br />
+        <b>Package info:</b><br />
+        Tracking ID: <b>{{ this.tlPackage.trackingId }}</b
+        >, Short Desc: <b>{{ this.tlPackage.shortDesc }}</b
+        >.
+      </div>
+      <ng-template ngIf="{{ this.invoiceUrl !== '-' }}">
+        <div>
+          <a
+            type="button"
+            href="{{ this.invoiceUrl }}"
+            target="_blank"
+            style="font-size: smaller"
+            mat-icon-button
+          >
+            <mat-icon>
+              <span class="material-symbols-outlined"> download </span>
+            </mat-icon>
+            Download Invoice: <strong>{{ this.tlPackage.invoiceUrl }}</strong>
+          </a>
+        </div>
+      </ng-template>
+    </div>
+    <div style="flex: 40%">
+      <ng-template ngIf="{{ this.imageUrl !== '-' }}">
+        <div class="ancho50_2" style="text-align: center">
+          <img
+            [src]="this.imageUrl"
+            alt="the Package Image"
+            width="200px"
+            height="200px"
+            style="text-align: center"
+          />
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  <br />
+  <mat-divider style="border-top-width: 2px"></mat-divider>
+  <br />
+  <div fxLayout="row" fxLayoutAlign="space-between center">
+    <form [formGroup]="packageFormGroup" fxflex fxLayoutAlign="center center">
+      <mat-form-field
+        class="flex-auto xs: ml-1"
+        fxflex="grow"
+        style="width: 300px"
+      >
+        <mat-label>Height</mat-label>
+        <input
+          formControlName="height"
+          (keypress)="keyPressNumbersWithDecimal($event, 'height')"
+          (focusout)="calculaVolume_HxWxL()"
+          matInput
+        />
+        <mat-icon [icIcon]="icRule" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start"
+          >Enter the measurements in inches</mat-hint
+        > </mat-form-field
+      >&nbsp;
+      <mat-form-field
+        class="flex-auto xs: ml-1"
+        fxflex="grow"
+        style="width: 300px"
+      >
+        <mat-label>Width</mat-label>
+        <input
+          formControlName="width"
+          (keypress)="keyPressNumbersWithDecimal($event, 'width')"
+          (focusout)="calculaVolume_HxWxL()"
+          matInput
+        />
+        <mat-icon
+          [icIcon]="icRule"
+          class="mr-3"
+          matPrefix
+        ></mat-icon> </mat-form-field
+      >&nbsp;
+      <mat-form-field
+        class="flex-auto xs: ml-1"
+        fxflex="grow"
+        style="width: 300px"
+      >
+        <mat-label>Length</mat-label>
+        <input
+          formControlName="length"
+          (keypress)="keyPressNumbersWithDecimal($event, 'length')"
+          (focusout)="calculaVolume_HxWxL()"
+          matInput
+        />
+        <mat-icon [icIcon]="icRule" class="mr-1" matPrefix></mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
+  <div fxLayout="row">
+    <mat-form-field class="flex-auto xs: ml-1">
+      <mat-label>New Package Weight</mat-label>
+      <input
+        type="text"
+        [formControl]="weightCtrl"
+        matInput
+        (keypress)="keyPressNumbersWithDecimalFC($event, weightCtrl)"
+      />
+      <mat-hint>Weight (pounds lb)</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="flex-auto xs: ml-1">
+      <mat-label>New Package Volume</mat-label>
+      <input
+        type="text"
+        [formControl]="volumeCtrl"
+        matInput
+        [readonly]="true"
+      />
+      <mat-hint>Volume (ft<sup>3</sup>)</mat-hint>
+    </mat-form-field>
+    <mat-form-field class="flex-auto xs: ml-1">
+      <mat-label>New Package Volumetric Weight</mat-label>
+      <input type="text" [formControl]="vlbCtrl" matInput [readonly]="true" />
+      <mat-hint>Volumetric Weight (vlb)</mat-hint>
+    </mat-form-field>
+  </div>
+  <div
+    class="actions"
+    fxLayout="row"
+    fxLayoutAlign="end center"
+    fxLayoutGap="8px"
+  >
+    <button color="primary" (click)="resetSplit()" mat-button type="button">
+      RESET
+    </button>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate"
+        color="primary"
+        *ngIf="spinner"
+      ></mat-progress-spinner>
+    </div>
+    <div *ngIf="!spinner">
+      <button
+        [disabled]="false"
+        (click)="submitSplit()"
+        color="primary"
+        mat-raised-button
+      >
+        SPLIT PACKAGE
+      </button>
+    </div>
+  </div>
+  <br />
+  <div style="overflow-x: scroll">
+    <vex-temp-package-registry
+      [customerPackageArray]="this.splitPackages"
+    ></vex-temp-package-registry>
+  </div>
+  <br />
+  <div
+    class="actions"
+    fxLayout="row"
+    fxLayoutAlign="end center"
+    fxLayoutGap="8px"
+  >
+    <button
+      color="primary"
+      (click)="dialogRef.close()"
+      mat-button
+      type="button"
+    >
+      CANCEL
+    </button>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate"
+        color="primary"
+        *ngIf="spinner2"
+      ></mat-progress-spinner>
+    </div>
+    <div *ngIf="!spinner2">
+      <button
+        [disabled]="false"
+        (click)="saveSplit()"
+        color="primary"
+        mat-raised-button
+      >
+        SAVE SPLIT
+      </button>
+    </div>
+  </div>
+</div>

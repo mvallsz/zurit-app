@@ -1,0 +1,284 @@
+<div
+  class="w-full h-full bg-pattern"
+  fxLayout="column"
+  fxLayoutAlign="center center"
+>
+  <div
+    @fadeInUp
+    class="card overflow-scroll w-full"
+    style="width: 50%; padding: 20px"
+  >
+    <div class="p-6 pb-0" fxLayout="column" fxLayoutAlign="center center">
+      <div class="fill-current text-center">
+        <img class="w-32" src="assets/img/tlcargo/tl_cargo_3.png" />
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <h2 class="title m-0">Registra tus datos</h2>
+      <h4 class="body-2 text-secondary m-0">
+        Simplemente llena el formulario a continuación para crear tu casillero
+      </h4>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-label>Nombre Completo</mat-label>
+        <input cdkFocusInitial [formControl]="nameCtrl" matInput />
+        <mat-icon [icIcon]="icPerson" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start"
+          >Ingresa tu nombre completo y apellidos</mat-hint
+        >
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Correo electrónico</mat-label>
+        <input [formControl]="emailCtrl" matInput />
+        <mat-icon [icIcon]="icMail" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start"
+          >Ingresa tu correo electrónico, debes tener acceso a el para poder
+          validarlo</mat-hint
+        >
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Número telefónico</mat-label>
+        <input [formControl]="phoneNumberCtrl" matInput />
+        <mat-icon [icIcon]="icPhone" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start"
+          >Ideal ingreses tu numero telefónico asociado al Whatsapp</mat-hint
+        >
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Password</mat-label>
+        <input
+          [type]="inputType"
+          [formControl]="passwordCtrl"
+          matInput
+          required
+          autocomplete="false"
+        />
+        <button
+          (click)="toggleVisibility()"
+          mat-icon-button
+          matSuffix
+          matTooltip="Toggle Visibility"
+          type="button"
+        >
+          <mat-icon *ngIf="visible" [icIcon]="icVisibility"></mat-icon>
+          <mat-icon *ngIf="!visible" [icIcon]="icVisibilityOff"></mat-icon>
+        </button>
+        <mat-hint>Click en el ojo para ver tu password</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Password (Confirmalo)</mat-label>
+        <input
+          [type]="inputType"
+          [formControl]="passwordConfirmCtrl"
+          matInput
+          required
+          autocomplete="false"
+        />
+        <button
+          (click)="toggleVisibility()"
+          mat-icon-button
+          matSuffix
+          matTooltip="Toggle Visibility"
+          type="button"
+        >
+          <mat-icon *ngIf="visible" [icIcon]="icVisibility"></mat-icon>
+          <mat-icon *ngIf="!visible" [icIcon]="icVisibilityOff"></mat-icon>
+        </button>
+        <mat-hint>Por favor ingresa el password nuevamente</mat-hint>
+      </mat-form-field>
+    </div>
+    &nbsp;
+    <mat-divider class="-mx-6 text-border"></mat-divider>
+    &nbsp;
+
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <h3 fxFlex="auto">Información de dirección</h3>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+        <mat-select
+          [formControl]="countryCtrl"
+          placeholder="País"
+          #countrySelect
+          (selectionChange)="findStates()"
+          [(ngModel)]="this.selectedCountry"
+          required
+        >
+          <mat-option>
+            <ngx-mat-select-search
+              placeholderLabel="Search"
+              noEntriesFoundLabel="'No se encuentra el país'"
+              [formControl]="countryFilterCtrl"
+            >
+              <mat-icon
+                [icIcon]="icClose"
+                [inline]="true"
+                size="24px"
+                ngxMatSelectSearchClear
+              ></mat-icon>
+            </ngx-mat-select-search>
+          </mat-option>
+
+          <mat-option
+            *ngFor="let country of filteredCountries | async"
+            [value]="country"
+          >
+            {{ country.name }}
+          </mat-option>
+        </mat-select>
+        <mat-hint align="start">Ingresa el país de residencia</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+        <mat-select
+          [formControl]="stateCtrl"
+          placeholder="Estado"
+          #stateSelect
+          (selectionChange)="findCities()"
+          [(ngModel)]="this.selectedState"
+          required
+        >
+          <mat-option>
+            <ngx-mat-select-search
+              placeholderLabel="Search"
+              noEntriesFoundLabel="'No se encontro el estado'"
+              [formControl]="stateFilterCtrl"
+            >
+              <mat-icon
+                [icIcon]="icClose"
+                [inline]="true"
+                size="24px"
+                ngxMatSelectSearchClear
+              ></mat-icon>
+            </ngx-mat-select-search>
+          </mat-option>
+
+          <mat-option
+            *ngFor="let state of filteredStates | async"
+            [value]="state"
+          >
+            {{ state.name }}
+          </mat-option>
+        </mat-select>
+        <mat-hint align="start">Ingresa el estado de residencia</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-label>City</mat-label>
+        <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+        <mat-select
+          [formControl]="cityCtrl"
+          placeholder="Ciudad"
+          #citySelect
+          [(ngModel)]="this.selectedCity"
+          required
+        >
+          <mat-option>
+            <ngx-mat-select-search
+              placeholderLabel="Search"
+              noEntriesFoundLabel="'No se encontro la ciudad'"
+              [formControl]="cityFilterCtrl"
+            >
+              <mat-icon
+                [icIcon]="icClose"
+                [inline]="true"
+                size="24px"
+                ngxMatSelectSearchClear
+              ></mat-icon>
+            </ngx-mat-select-search>
+          </mat-option>
+
+          <mat-option
+            *ngFor="let city of filteredCities | async"
+            [value]="city"
+          >
+            {{ city.name }}
+          </mat-option>
+        </mat-select>
+        <mat-hint align="start">Ingresa la ciduad de residencia</mat-hint>
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-label>Dirección</mat-label>
+        <input [formControl]="addressCtrl" matInput />
+        <mat-icon [icIcon]="icMyLocation" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start"
+          >Ingresa la dirección de residencia, se lo mas específico
+          posible</mat-hint
+        >
+      </mat-form-field>
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Referencias</mat-label>
+        <input [formControl]="address2Ctrl" matInput />
+        <mat-icon [icIcon]="icEditLocation" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start"
+          >Alguna referencia fisica que nos ayude a encontrar tu
+          dirección...</mat-hint
+        >
+      </mat-form-field>
+      <mat-form-field class="flex-auto" style="padding-left: 20px">
+        <mat-label>Código Postal</mat-label>
+        <input [formControl]="zipcodeCtrl" matInput />
+        <mat-icon [icIcon]="icEditLocation" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start">Ingresa un código postal valido</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="p-6" fxLayout="column" fxLayoutGap="16px">
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <mat-checkbox
+          class="caption"
+          [formControl]="termsCtrl"
+          matInput
+          required
+          >Acepto
+          <a
+            href="{{
+              final_url
+            }}/assets/docs/Condiciones Generales TLCargo 2023.pdf"
+            target="_blank"
+            style="color: #000; text-decoration: underline"
+            >terminos y condiciones.</a
+          ></mat-checkbox
+        >
+      </div>
+      <div class="row">
+        <div class="col"></div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <mat-progress-spinner
+          diameter="40"
+          mode="indeterminate"
+          color="primary"
+          *ngIf="this.spinner"
+        ></mat-progress-spinner>
+      </div>
+      <button
+        (click)="send()"
+        *ngIf="!this.spinner"
+        color="primary"
+        mat-raised-button
+        type="button"
+      >
+        CREAR CASILLERO
+      </button>
+    </div>
+  </div>
+</div>

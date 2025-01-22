@@ -1,0 +1,160 @@
+<vex-page-layout>
+  <ngx-spinner
+    name="balanceSpinner"
+    bdColor="rgba(0, 0, 0, 0.8)"
+    size="small"
+    color="#fff"
+    [fullScreen]="false"
+    type="ball-climbing-dot"
+    template="<img src='../../../../../assets/img/tlcargo/tl_cargo_3.png' width='50px' height='50px'>"
+    ><p style="color: white">Loading...</p></ngx-spinner
+  >
+  <vex-page-layout-header
+    class="pb-16"
+    fxLayout="column"
+    fxLayoutAlign="center start"
+  >
+    <div
+      [class.container]="layoutCtrl.value === 'boxed'"
+      [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between"
+    >
+      <div>
+        <h1 class="title mt-0 mb-1">
+          {{ this.customer.name }}'s credit bitacora
+        </h1>
+      </div>
+    </div>
+  </vex-page-layout-header>
+
+  <vex-page-layout-content
+    [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+    class="-mt-6"
+  >
+    <div class="card -mt-16">
+      <div
+        class="bg-app-bar px-6 h-16 border-b sticky left-0"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <button
+          [matMenuTriggerFor]="columnFilterMenu"
+          class="ml-4"
+          fxFlex="none"
+          mat-icon-button
+          matTooltip="Filter Columns"
+          type="button"
+        >
+          <mat-icon [icIcon]="icFilterList"></mat-icon>
+        </button>
+      </div>
+      <table
+        @stagger
+        [dataSource]="dataSource"
+        class="w-full"
+        mat-table
+        matSort
+      >
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Text Columns -->
+        <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+          <ng-container
+            *ngIf="column.type === 'text'"
+            [matColumnDef]="column.property"
+          >
+            <th
+              *matHeaderCellDef
+              class="uppercase"
+              mat-header-cell
+              mat-sort-header
+            >
+              {{ column.label }}
+            </th>
+            <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+              <div
+                *ngIf="
+                  column.property !== 'notes' &&
+                  column.property !== 'balanceDate' &&
+                  column.property !== 'balance' &&
+                  column.property !== 'newAmount'
+                "
+              >
+                {{ row[column.property] }}
+              </div>
+              <div *ngIf="column.property === 'balanceDate'">
+                {{ row[column.property].toString().split("T")[0] }}
+              </div>
+              <div
+                *ngIf="column.property === 'notes'"
+                matTooltip="{{ row[column.property] }}"
+              >
+                {{
+                  row[column.property].length > 42
+                    ? row[column.property].substring(0, 42) + "..."
+                    : row[column.property]
+                }}
+              </div>
+              <div *ngIf="column.property === 'balance'">
+                {{
+                  row[column.property].toLocaleString("en", {
+                    style: "currency",
+                    currency: "USD"
+                  })
+                }}
+              </div>
+              <div *ngIf="column.property === 'newAmount'">
+                {{
+                  row[column.property].toLocaleString("en", {
+                    style: "currency",
+                    currency: "USD"
+                  })
+                }}
+              </div>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+        <tr
+          *matRowDef="let row; columns: visibleColumns"
+          @fadeInUp
+          class="hover:bg-hover trans-ease-out"
+          mat-row
+        ></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="mat-cell"
+            [attr.colspan]="visibleColumns.length"
+            style="text-align: center"
+          >
+            No Credit Bitacora Registry were found in the System.
+          </td>
+        </tr>
+      </table>
+      <mat-paginator
+        [pageSizeOptions]="pageSizeOptions"
+        [pageSize]="pageSize"
+        class="sticky left-0"
+      ></mat-paginator>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>
+
+<mat-menu #columnFilterMenu="matMenu" xPosition="before" yPosition="below">
+  <button
+    (click)="toggleColumnVisibility(column, $event)"
+    *ngFor="let column of columns"
+    class="checkbox-item mat-menu-item"
+  >
+    <mat-checkbox
+      (click)="$event.stopPropagation()"
+      [(ngModel)]="column.visible"
+      color="primary"
+    >
+      {{ column.label }}
+    </mat-checkbox>
+  </button>
+</mat-menu>

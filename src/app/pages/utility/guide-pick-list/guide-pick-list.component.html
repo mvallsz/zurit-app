@@ -1,0 +1,252 @@
+<div class="w-full h-full" fxLayout="column" id="printableFrame" media="print">
+  <div style="text-align: right; padding: 10px">
+    <button
+      class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
+      mat-button
+      (click)="onPrint()"
+    >
+      PRINT
+    </button>
+  </div>
+  <div class="p-gutter container" style="overflow-y: auto; overflow-x: auto">
+    <div @fadeInUp id="printable">
+      <div fxLayout="row">
+        <div fxFlex="50%">
+          <img class="h-20" src="assets/img/tlcargo/tl_cargo_3.png" />
+        </div>
+        <div fxFlex="50%" fxLayout="column" style="text-align: right">
+          <h3>TL Cargo</h3>
+          <span style="font-size: xx-small">
+            8520 NW 66th St <br />MIAMI, FL 33166.<br />UNITED STATES<br />
+            Tel: (USA) 786-409-7088<br />
+            Tel: (VE) 212-7204488
+          </span>
+        </div>
+      </div>
+      <div fxLayout="row" style="text-align: center">
+        <h1>
+          Listado de paquetes de la {{ guide.quote ? "cotización" : "guia" }}:
+          {{
+            guide.quote
+              ? guide.tlCargoId.includes("HAWB")
+                ? guide.tlCargoId.replace("HAWB", "QUOT")
+                : guide.tlCargoId.replace("HBOL", "QUOT")
+              : guide.tlCargoId
+          }}
+        </h1>
+      </div>
+      <br />
+      <hr />
+      <br />
+      <div class="rowInvoice">
+        <div class="columnInvoice">
+          <table class="tg">
+            <thead>
+              <tr>
+                <th class="tg-ar5m">Fecha de creación de la guía</th>
+                <th class="tg-ar5m">Numero de recibo de guía</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tg-c3qv">
+                  {{ this.creationDate.toLocaleDateString() || "" }}
+                </td>
+                <td class="tg-c3qv">
+                  {{ this.guide.tlCargoId }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="rowInvoice">
+        <div class="columnInvoice">
+          <table class="tg">
+            <thead>
+              <tr>
+                <th class="tg-ar5m">Send To</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tg-c3qv">
+                  <b>{{ guide.customer.name }}</b>
+                  <br />
+                  Tel: {{ guide.customer.phoneNumber }} - Email:
+                  {{ guide.customer.email }}
+                </td>
+              </tr>
+              <tr>
+                <td class="tg-c3qv">
+                  Dirección de facturación: {{ this.billingAddress.address }},
+                  {{ this.billingAddress.address2 }}<br />
+                  {{ this.billingAddress.city }} -
+                  {{ this.billingAddress.state }},
+                  {{ this.billingAddress.country }}<br />
+                  Código Postal: {{ this.billingAddress.zipcode }}<br />&nbsp;
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="columnInvoice">
+          <table class="tg">
+            <thead>
+              <tr>
+                <th class="tg-ar5m">Detalles de envío</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tg-c3qv-xs">
+                  Recibe: {{ guide.customer.name }}<br />
+                  Origen/Destino:
+                  {{ guide.quote ? "MIAMI" : guide.shipping.departureHub.city }}
+                  / {{ guide.quote ? "CCS" : guide.shipping.arrivalHub.city
+                  }}<br />
+                  Fecha de creación: {{ guide.creationDate }}<br />
+                  House Bill: {{ guide.tlCargoId }}<br />
+                  Piezas / Peso:
+                  {{
+                    guide.type === "3"
+                      ? "(" + guide.packageList.length + ")"
+                      : guide.packageList.length
+                  }}
+                  /
+                  {{
+                    guide.finalWeight > guide.finalVlb
+                      ? guide.finalWeight + "libras"
+                      : guide.finalVlb + "vlb"
+                  }}<br />
+                  Numero de reserva: {{ guide.name }}<br />
+                  Nombre del envio:
+                  {{ guide.quote ? "N/A" : guide.shipping.name }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <table id="table1" class="tg">
+          <thead>
+            <tr>
+              <th class="tg-ar5m">Notas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tg-c3qv">
+                {{ guide.notes || "S/I" }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <table id="table2" class="table w-full mt-24">
+        <thead>
+          <tr>
+            <th class="cell-solo-borde-bottom-right-sm" style="width: 10%">
+              Id. Paquete
+            </th>
+            <th class="cell-solo-borde-bottom-right-sm" style="width: 20%">
+              Descripción
+            </th>
+            <th class="cell-solo-borde-bottom-right-sm" style="width: 20%">
+              WH Location
+            </th>
+            <th class="cell-solo-borde-bottom-right-sm" style="width: 25%">
+              Tracking ID
+            </th>
+            <th class="cell-solo-borde-bottom-right-sm" style="width: 15%">
+              Medidas
+            </th>
+            <th class="cell-solo-borde-bottom-sm" style="width: 10%">
+              {{ prefixType === "AIR" ? "Peso / Vlb" : "Volumen" }}
+            </th>
+          </tr>
+        </thead>
+        <tbody style="font-size: x-small">
+          <tr *ngFor="let item of packages">
+            <td
+              class="cell-solo-borde-bottom-right-sm"
+              style="text-align: center"
+            >
+              <a href="{{ urlItem + item._id }}" target="_blank">
+                {{ item.tlCargoId }}
+              </a>
+            </td>
+            <td class="cell-solo-borde-bottom-right-sm">
+              {{ item.shortDesc }}
+            </td>
+            <td class="cell-solo-borde-bottom-right-sm">
+              {{ item.physicalLocation }}
+            </td>
+            <td class="cell-solo-borde-bottom-right-sm">
+              {{ item.trackingId }}
+            </td>
+            <td class="cell-solo-borde-bottom-right-sm">
+              H:{{ item.package.height }}'' x W:{{ item.package.width }}'' x
+              L:{{ item.package.length }}''
+            </td>
+            <td class="cell-solo-borde-bottom-sm">
+              {{
+                prefixType === "AIR"
+                  ? item.weight + " / " + item.vlb
+                  : item.volume
+              }}
+            </td>
+          </tr>
+          <tr *ngIf="guide.packageList.length < 3" style="height: 50px">
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-sm"></td>
+          </tr>
+          <tr *ngIf="guide.packageList.length < 4" style="height: 50px">
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-right-sm"></td>
+            <td class="cell-solo-borde-bottom-sm"></td>
+          </tr>
+        </tbody>
+      </table>
+      <table id="table3" class="table w-full mt-24">
+        <thead>
+          <tr>
+            <td class="headline font-medium text-left pt-6"></td>
+            <td
+              class="headline font-medium text-left pt-6"
+              style="text-align: right"
+              colspan="3"
+            >
+              TOTAL
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="body-2 text-right"></td>
+            <td class="body-2 text-right">
+              {{ guide.packageList.length }}
+              {{ guide.packageList.length > 1 ? "Paquetes" : "Paquete" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="mt-8"
+        fxLayout="column"
+        fxLayoutAlign="start end"
+        style="font-size: 10pt"
+      >
+        Powered by www.doghoundtechnology.com
+      </div>
+    </div>
+  </div>
+</div>

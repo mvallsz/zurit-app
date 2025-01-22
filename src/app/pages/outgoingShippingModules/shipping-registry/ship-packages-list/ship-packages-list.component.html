@@ -1,0 +1,454 @@
+<vex-page-layout>
+  <ngx-spinner
+    name="packagesSpinner"
+    bdColor="rgba(0, 0, 0, 0.8)"
+    size="small"
+    color="#fff"
+    [fullScreen]="false"
+    type="ball-climbing-dot"
+    template="<img src='../../../../../assets/img/tlcargo/tl_cargo_3.png' width='50px' height='50px'>"
+    ><p style="color: white">Loading...</p></ngx-spinner
+  >
+
+  <vex-page-layout-header
+    class="pb-16"
+    fxLayout="column"
+    fxLayoutAlign="center start"
+  >
+    <div
+      [class.container]="layoutCtrl.value === 'boxed'"
+      [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between"
+    >
+      <div>
+        <h1 class="title mt-0 mb-1">Package Registry -> {{ shipping.name }}</h1>
+        <h1 class="title mt-0 mb-1">
+          Departure Date: {{ shipping.departureDate.split("T")[0] }}&nbsp; ->
+          Arrival Date: {{ shipping.arrivalDate.split("T")[0] }}&nbsp;&nbsp;
+          <div
+            ngClass="{{ selectShipStatusById(shipping.status).classColor }}"
+            class="tag"
+            fxFlex="none"
+          >
+            {{ selectShipStatusById(shipping.status).text }}
+          </div>
+        </h1>
+        <vex-breadcrumbs
+          [crumbs]="[
+            { value: 'Outgoing Shipping Module', router: '/app' },
+            { value: 'Ships Registry', router: '/app/ships' },
+            { value: 'Shipping Package Registry', router: '/app' }
+          ]"
+        ></vex-breadcrumbs>
+      </div>
+    </div>
+  </vex-page-layout-header>
+
+  <vex-page-layout-content
+    [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+    class="-mt-6"
+  >
+    <div class="card overflow-auto -mt-16">
+      <div
+        class="bg-app-bar px-6 h-16 border-b sticky left-0"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <h2
+          class="title my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l"
+          fxFlex="none"
+          fxHide.xs
+        >
+          <span>Packages registered in Shipping</span>
+        </h2>
+
+        <div class="mr-4 pr-4 border-r" fxFlex="none">
+          <button
+            (click)="openScanner()"
+            color="primary"
+            mat-icon-button
+            matTooltip="Open Scanner"
+            type="button"
+          >
+            <mat-icon>
+              <span class="material-symbols-outlined"> qr_code_scanner </span>
+            </mat-icon>
+          </button>
+
+          <button
+            *ngIf="selection.hasValue()"
+            [disabled]="this.shipping.status >= '2'"
+            (click)="assignToPallet(selection.selected)"
+            color="primary"
+            mat-icon-button
+            matTooltip="Assign to a container"
+            type="button"
+          >
+            <mat-icon>table_chart</mat-icon>
+          </button>
+          <button
+            *ngIf="selection.hasValue()"
+            [disabled]="
+              this.shipping.status < '2' ||
+              checkPackagesStatus(selection.selected, '4', true, false, false)
+            "
+            (click)="receivePackage(selection.selected)"
+            matTooltip="Register at Warehouse"
+            type="button"
+            color="primary"
+            mat-icon-button
+          >
+            <mat-icon
+              ><span class="material-symbols-outlined">
+                forklift
+              </span></mat-icon
+            >
+          </button>
+
+          <button
+            *ngIf="selection.hasValue()"
+            (click)="assignADelivery(selection.selected)"
+            [disabled]="this.shipping.status < '3'"
+            matTooltip="Assign or change the deliveryman"
+            type="button"
+            color="primary"
+            mat-icon-button
+          >
+            <mat-icon>
+              <span class="material-symbols-outlined"> local_shipping </span>
+            </mat-icon>
+          </button>
+
+          <button
+            *ngIf="selection.hasValue()"
+            [disabled]="this.shipping.status < '3'"
+            (click)="deliverPackage(selection.selected)"
+            matTooltip="Deliver the package"
+            type="button"
+            color="primary"
+            mat-icon-button
+          >
+            <mat-icon
+              ><span class="material-symbols-outlined">
+                inventory
+              </span></mat-icon
+            >
+          </button>
+        </div>
+        <div
+          class="bg-card rounded-full border px-4"
+          fxFlex="400px"
+          fxFlex.lt-md="auto"
+          fxHide.xs
+          fxLayout="row"
+          fxLayoutAlign="start center"
+        >
+          <ic-icon [icIcon]="icSearch" size="20px"></ic-icon>
+          <input
+            [formControl]="searchCtrl"
+            class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+            placeholder="Search..."
+            type="search"
+          />
+        </div>
+
+        <span fxFlex></span>
+
+        <button
+          class="ml-4"
+          fxFlex="none"
+          fxHide.gt-xs
+          mat-icon-button
+          type="button"
+        >
+          <mat-icon [icIcon]="icSearch"></mat-icon>
+        </button>
+
+        <button
+          [matMenuTriggerFor]="columnFilterMenu"
+          class="ml-4"
+          fxFlex="none"
+          mat-icon-button
+          matTooltip="Filter Columns"
+          type="button"
+        >
+          <mat-icon [icIcon]="icFilterList"></mat-icon>
+        </button>
+        <button
+          [disabled]="
+            !checkPackagesStatus(this.packages, '5', true, true, true) ||
+            this.shipping.status > '2'
+          "
+          (click)="changeShipStatus()"
+          color="primary"
+          mat-icon-button
+          matTooltip="Update Ship Status"
+          type="button"
+        >
+          <mat-icon
+            ><span class="material-symbols-outlined"> update </span></mat-icon
+          >
+        </button>
+      </div>
+      <ng-container *ngIf="scanOn">
+        <button
+          style="text-align: right"
+          mat-icon-button
+          type="button"
+          (click)="closeScanner()"
+        >
+          <mat-icon [icIcon]="icClose"></mat-icon>
+        </button>
+        <zxing-scanner
+          [(device)]="currentDevice"
+          (scanSuccess)="scanSuccessHandler($event)"
+        ></zxing-scanner>
+      </ng-container>
+      <table
+        @stagger
+        [dataSource]="dataSource"
+        class="w-full"
+        mat-table
+        matSort
+      >
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="checkbox">
+          <th *matHeaderCellDef mat-header-cell>
+            <mat-checkbox
+              (change)="$event ? masterToggle() : null"
+              [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()"
+              color="primary"
+            >
+            </mat-checkbox>
+          </th>
+          <td *matCellDef="let row" class="w-4" mat-cell>
+            <mat-checkbox
+              (change)="$event ? selection.toggle(row) : null"
+              (click)="$event.stopPropagation()"
+              [checked]="selection.isSelected(row)"
+              color="primary"
+            >
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- Text Columns -->
+        <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+          <ng-container
+            *ngIf="column.type === 'text'"
+            [matColumnDef]="column.property"
+          >
+            <th
+              *matHeaderCellDef
+              class="uppercase"
+              mat-header-cell
+              mat-sort-header
+            >
+              {{ column.label }}
+            </th>
+            <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+              <div
+                *ngIf="
+                  column.property !== 'delivery' &&
+                  column.property !== 'shipContainer' &&
+                  column.property !== 'status' &&
+                  column.property !== 'user' &&
+                  column.property !== 'shortDesc' &&
+                  column.property !== 'weight' &&
+                  column.property !== 'volume' &&
+                  column.property !== 'package' &&
+                  column.property !== 'receptionDate' &&
+                  column.property !== 'guideId' &&
+                  column.property !== 'tlCargoId'
+                "
+              >
+                {{ row[column.property] }}
+              </div>
+              <div
+                *ngIf="column.property === 'shortDesc'"
+                matTooltip="{{ row[column.property] }}"
+              >
+                {{
+                  row[column.property].length > 10
+                    ? row[column.property].substr(0, 10) + "..."
+                    : row[column.property]
+                }}
+              </div>
+              <div *ngIf="column.property === 'delivery'">
+                <span *ngIf="row[column.property]">
+                  {{ row[column.property].name }}
+                </span>
+                <span *ngIf="!row[column.property]"> N/A </span>
+              </div>
+              <div *ngIf="column.property === 'package'">
+                {{ row[column.property].name }}
+              </div>
+              <div *ngIf="column.property === 'shipContainer'">
+                <div *ngIf="!row[column.property]">N/A</div>
+                <div *ngIf="row[column.property]">
+                  {{ row[column.property] }}
+                </div>
+              </div>
+              <div *ngIf="column.property === 'user'">
+                {{ row[column.property].name }}
+              </div>
+              <div
+                *ngIf="column.property === 'guideId'"
+                matTooltip="{{ row[column.property] }}"
+              >
+                <a
+                  href="javascript:void(0)"
+                  (click)="updateGuide(row['guide'])"
+                  >{{ row[column.property] }}</a
+                >
+              </div>
+              <div
+                *ngIf="column.property === 'tlCargoId'"
+                matTooltip="{{ row[column.property] }}"
+              >
+                <a href="javascript:void(0)" (click)="updatePac(row)">{{
+                  row[column.property]
+                }}</a>
+              </div>
+
+              <div *ngIf="column.property === 'volume'">
+                {{ row[column.property] }} ft<sup>3</sup>
+              </div>
+              <div *ngIf="column.property === 'weight'">
+                {{ row[column.property] }} lb
+              </div>
+              <div *ngIf="column.property === 'receptionDate'">
+                {{ row[column.property].split("T")[0] }}
+              </div>
+              <div *ngIf="column.property === 'status'">
+                <div
+                  [ngClass]="[
+                    selectStatusById(row[column.property]).textClass,
+                    selectStatusById(row[column.property]).bgClass
+                  ]"
+                  class="rounded px-2 py-1 font-medium text-xs"
+                  fxFlex="none"
+                >
+                  {{ selectStatusById(row[column.property]).text }}
+                </div>
+              </div>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="actions">
+          <th
+            *matHeaderCellDef
+            class="uppercase"
+            mat-header-cell
+            mat-sort-header
+          >
+            Actions
+          </th>
+          <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
+            <button
+              (click)="$event.stopPropagation()"
+              [matMenuTriggerData]="{ tlPackage: row }"
+              [matMenuTriggerFor]="actionsMenu"
+              mat-icon-button
+              type="button"
+            >
+              <mat-icon [icIcon]="icMoreHoriz"></mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+        <tr
+          *matRowDef="let row; columns: visibleColumns"
+          @fadeInUp
+          class="hover:bg-hover trans-ease-out"
+          mat-row
+        ></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="mat-cell"
+            [attr.colspan]="visibleColumns.length"
+            style="text-align: center"
+          >
+            No Packages found On System.
+          </td>
+        </tr>
+      </table>
+      <!-- (click)="updateGuide(row)" -->
+      <mat-paginator
+        [pageSizeOptions]="pageSizeOptions"
+        [pageSize]="pageSize"
+        class="sticky left-0"
+      ></mat-paginator>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>
+
+<mat-menu #columnFilterMenu="matMenu" xPosition="before" yPosition="below">
+  <button
+    (click)="toggleColumnVisibility(column, $event)"
+    *ngFor="let column of columns"
+    class="checkbox-item mat-menu-item"
+  >
+    <mat-checkbox
+      (click)="$event.stopPropagation()"
+      [(ngModel)]="column.visible"
+      color="primary"
+    >
+      {{ column.label }}
+    </mat-checkbox>
+  </button>
+</mat-menu>
+
+<mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-tlPackage="tlPackage" matMenuContent>
+    <button
+      [disabled]="this.shipping.status >= '2'"
+      (click)="assignToPallet(tlPackage)"
+      mat-menu-item
+    >
+      <mat-icon>table_chart</mat-icon>
+      <span>Assign To Container</span>
+    </button>
+
+    <button
+      [disabled]="this.shipping.status < '2' || tlPackage.status >= '5'"
+      (click)="receivePackage(tlPackage)"
+      mat-menu-item
+    >
+      <mat-icon
+        ><span class="material-symbols-outlined"> forklift </span></mat-icon
+      >
+      <span>Register at Warehouse</span>
+    </button>
+
+    <button
+      (click)="assignADelivery(tlPackage)"
+      [disabled]="this.shipping.status < '3' || tlPackage.status > '6'"
+      mat-menu-item
+    >
+      <mat-icon>
+        <span class="material-symbols-outlined"> local_shipping </span>
+      </mat-icon>
+      <span>Assign or change the deliveryman</span>
+    </button>
+
+    <button
+      [disabled]="this.shipping.status < '3' || tlPackage.status >= '7'"
+      (click)="deliverPackage(tlPackage)"
+      mat-menu-item
+    >
+      <mat-icon
+        ><span class="material-symbols-outlined"> inventory </span></mat-icon
+      >
+      <span>Deliver the package</span>
+    </button>
+  </ng-template>
+</mat-menu>

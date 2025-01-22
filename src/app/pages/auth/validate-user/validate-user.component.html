@@ -1,0 +1,28 @@
+<div class="bg-pattern w-full h-full" fxLayout="column" fxLayoutAlign="center center">
+  <div @fadeInUp class="card overflow-hidden w-full max-w-xs">
+    <div class="p-6 pb-0" fxLayout="column" fxLayoutAlign="center center">
+      <div class="fill-current text-center">
+        <img class="w-32" src="assets/img/tlcargo/tl_cargo_3.png">
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <h2 class="title m-0">Validate User email</h2>
+      <h4 class="body-2 text-secondary m-0">{{this.msg}}</h4>
+    </div>
+     <div class="p-6" fxLayout="column" fxLayoutGap="16px" *ngIf="usuarioValido">
+      <div class="flex flex-col sm:flex-row" style="text-align: center">
+        Welcome {{this.usuarioValido.name}}, your user has already been validated, please click on the button below so you can access the system.
+      </div>
+      <button [routerLink]="['/']" class="mt-2" color="primary" mat-raised-button type="button">
+        GO TO LOGIN
+      </button>
+
+    </div>
+    <div class="p-6" fxLayout="column" fxLayoutGap="16px" *ngIf="!usuarioValido">
+      <div class="flex flex-col sm:flex-row" style="text-align: center">
+       For some reason we can't validate your user, please contact Support.
+      </div>
+   </div>
+  </div>
+</div>

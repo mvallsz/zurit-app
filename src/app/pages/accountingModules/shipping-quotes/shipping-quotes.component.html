@@ -1,0 +1,695 @@
+<vex-page-layout>
+  <ngx-spinner
+    name="guideSpinner"
+    bdColor="rgba(0, 0, 0, 0.8)"
+    size="small"
+    color="#fff"
+    [fullScreen]="false"
+    type="ball-climbing-dot"
+    template="<img src='../../../../../assets/img/tlcargo/tl_cargo_3.png' width='50px' height='50px'>"
+    ><p style="color: white">Loading...</p></ngx-spinner
+  >
+  <vex-page-layout-header
+    class="pb-16"
+    fxLayout="column"
+    fxLayoutAlign="center start"
+  >
+    <div
+      [class.container]="layoutCtrl.value === 'boxed'"
+      [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between"
+    >
+      <div>
+        <h1 class="title mt-0 mb-1">Shipping Quotes</h1>
+        <vex-breadcrumbs
+          [crumbs]="[
+            { value: 'Accounting Module', router: '/app' },
+            {
+              value: 'Shipping Quotes',
+              router: '/app/shipping-quotes'
+            }
+          ]"
+        ></vex-breadcrumbs>
+      </div>
+    </div>
+  </vex-page-layout-header>
+
+  <vex-page-layout-content
+    [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+    class="-mt-6"
+  >
+    <div class="card overflow-auto -mt-16">
+      <div
+        class="bg-app-bar px-6 h-16 border-b sticky left-0"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <button
+          (click)="createQuote()"
+          class="ml-4"
+          color="primary"
+          fxFlex="none"
+          mat-mini-fab
+          matTooltip="Add Shipping Quote"
+          type="button"
+        >
+          <mat-icon [icIcon]="icAdd"></mat-icon></button
+        >&nbsp;&nbsp;
+        <h2
+          class="title my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l"
+          fxFlex="none"
+          fxHide.xs
+        >
+          <span *ngIf="selection.isEmpty()">Shipping Quote</span>
+          <span *ngIf="selection.hasValue()"
+            >{{ selection.selected.length }} Shipping Quotes<span
+              *ngIf="selection.selected.length > 1"
+              >s</span
+            >
+            selected</span
+          >
+        </h2>
+
+        <div
+          *ngIf="selection.hasValue()"
+          class="mr-4 pr-4 border-r"
+          fxFlex="none"
+        >
+          <button
+            (click)="deleteQuotes(selection.selected)"
+            color="primary"
+            mat-icon-button
+            matTooltip="Delete selected"
+            type="button"
+          >
+            <mat-icon [icIcon]="icDelete"></mat-icon>
+          </button>
+        </div>
+        <ng-container *ngIf="!dateSearch">
+          <div
+            class="bg-card rounded-full border px-4"
+            fxFlex="400px"
+            fxFlex.lt-md="auto"
+            fxHide.xs
+            fxLayout="row"
+            fxLayoutAlign="start center"
+          >
+            <ic-icon [icIcon]="icSearch" size="20px"></ic-icon>
+            <input
+              [formControl]="searchCtrl"
+              (keyup.enter)="onFilterChange(searchCtrl.value)"
+              class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+              placeholder="Search..."
+              type="search"
+            />
+            <button
+              (click)="onFilterChange(searchCtrl.value)"
+              color="primary"
+              mat-icon-button
+              matTooltip="Search"
+              type="button"
+            >
+              <mat-icon [icIcon]="icSearch"></mat-icon>
+            </button>
+          </div>
+          <button
+            (click)="onFilterChange('')"
+            color="primary"
+            mat-icon-button
+            matTooltip="Reset table data"
+            type="button"
+          >
+            <mat-icon>
+              <span class="material-symbols-outlined"> restart_alt </span>
+            </mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="dateSearch">
+          Since &nbsp;&nbsp;
+          <div
+            class="bg-card rounded-full border px-4"
+            fxFlex="200px"
+            fxLayout="row"
+            fxLayoutAlign="start center"
+          >
+            <input
+              [formControl]="sinceDateCtrl"
+              class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+              type="date"
+            />
+          </div>
+          &nbsp;&nbsp;Until&nbsp;&nbsp;
+          <div
+            class="bg-card rounded-full border px-4"
+            fxFlex="200px"
+            fxLayout="row"
+            fxLayoutAlign="start center"
+          >
+            <input
+              [formControl]="untilDateCtrl"
+              class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+              type="date"
+            />
+          </div>
+          <button
+            (click)="onFilterChange('')"
+            color="primary"
+            mat-icon-button
+            matTooltip="Search"
+            type="button"
+          >
+            <mat-icon [icIcon]="icSearch"></mat-icon>
+          </button>
+          <button
+            (click)="onFilterChange('')"
+            color="primary"
+            mat-icon-button
+            matTooltip="Reset table data"
+            type="button"
+          >
+            <mat-icon>
+              <span class="material-symbols-outlined"> restart_alt </span>
+            </mat-icon>
+          </button>
+        </ng-container>
+
+        <span fxFlex></span>
+        <button
+          (click)="showDate()"
+          [color]="dateColor"
+          mat-icon-button
+          matTooltip="Date Range Search"
+          type="button"
+        >
+          <mat-icon>
+            <span class="material-symbols-outlined"> date_range </span>
+          </mat-icon>
+        </button>
+        <button
+          [matMenuTriggerFor]="columnFilterMenu"
+          class="ml-4"
+          fxFlex="none"
+          mat-icon-button
+          matTooltip="Filter Columns"
+          type="button"
+        >
+          <mat-icon [icIcon]="icFilterList"></mat-icon>
+        </button>
+        <mat-progress-spinner
+          diameter="20"
+          mode="indeterminate"
+          color="primary"
+          *ngIf="spinnerDown"
+        ></mat-progress-spinner>
+        <!-- <div *ngIf="!spinnerDown">
+          <button
+            (click)="exportToExcel()"
+            matTooltip="Download table"
+            mat-icon-button
+          >
+            <mat-icon>
+              <span class="material-symbols-outlined"> download </span>
+            </mat-icon>
+          </button>
+        </div> -->
+      </div>
+      <table
+        @stagger
+        [dataSource]="dataSource"
+        class="w-full"
+        mat-table
+        matSort
+      >
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="checkbox">
+          <th *matHeaderCellDef mat-header-cell>
+            <mat-checkbox
+              (change)="$event ? masterToggle() : null"
+              [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()"
+              color="primary"
+            >
+            </mat-checkbox>
+          </th>
+          <td *matCellDef="let row" class="w-4" mat-cell>
+            <mat-checkbox
+              (change)="$event ? selection.toggle(row) : null"
+              (click)="$event.stopPropagation()"
+              [checked]="selection.isSelected(row)"
+              color="primary"
+            >
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- Image Column
+        <ng-container matColumnDef="image">
+          <th *matHeaderCellDef mat-header-cell></th>
+          <td *matCellDef="let row" class="w-8 min-w-8 pr-0" mat-cell>
+            <img [src]="row['imageSrc']" class="avatar h-8 w-8 align-middle">
+          </td>
+        </ng-container>
+                        -->
+
+        <!-- Text Columns -->
+        <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+          <ng-container
+            *ngIf="column.type === 'text'"
+            [matColumnDef]="column.property"
+          >
+            <th
+              *matHeaderCellDef
+              class="uppercase"
+              mat-header-cell
+              mat-sort-header
+            >
+              {{ column.label }}
+            </th>
+            <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+              <div
+                *ngIf="
+                  column.property !== 'user' &&
+                  column.property !== 'finalWeight' &&
+                  column.property !== 'finalVolume' &&
+                  column.property !== 'tlCargoId' &&
+                  column.property !== 'customer'
+                "
+              >
+                {{ row[column.property] }}
+              </div>
+
+              <div
+                *ngIf="column.property === 'tlCargoId'"
+                (click)="updateQuote(row)"
+                class="cursor-pointer"
+              >
+                {{ row[column.property] }}
+              </div>
+
+              <div *ngIf="column.property === 'user'">
+                {{ row[column.property].name }}
+              </div>
+              <div
+                *ngIf="column.property === 'customer'"
+                matTooltip="{{ row[column.property].name }}"
+              >
+                {{
+                  row[column.property].name.length > 15
+                    ? row[column.property].name.substring(0, 15) + "..."
+                    : row[column.property].name
+                }}
+              </div>
+              <div *ngIf="column.property === 'finalVolume'">
+                {{ row[column.property].toFixed(2) }} ft<sup>3</sup>
+              </div>
+              <div *ngIf="column.property === 'finalWeight'">
+                {{ row[column.property].toFixed(2) }} lb
+              </div>
+            </td>
+          </ng-container>
+        </ng-container>
+        <ng-container matColumnDef="paymentStatus">
+          <th
+            *matHeaderCellDef
+            class="uppercase"
+            mat-header-cell
+            mat-sort-header
+          >
+            Payment Status
+          </th>
+          <td *matCellDef="let row" mat-cell>
+            <div
+              (click)="$event.stopPropagation()"
+              fxLayoutAlign="start center"
+              fxLayoutGap="4px"
+            >
+              <div
+                [ngClass]="[
+                  selectPaymentStatusById(row.paymentStatus).textClass,
+                  selectPaymentStatusById(row.paymentStatus).bgClass
+                ]"
+                class="rounded px-2 py-1 font-medium text-xs"
+                fxFlex="none"
+              >
+                {{ selectPaymentStatusById(row.paymentStatus).text }}
+              </div>
+              <!-- <div
+                (click)="paystatusSelect.open()"
+                class="text-secondary bg-base text-hint cursor-pointer hover:bg-hover"
+                fxFlex="none"
+                fxLayout="row"
+                fxLayoutAlign="center center"
+              >
+                <ic-icon [icon]="icArrowDropDown" size="18px"></ic-icon>
+              </div>
+              <mat-select
+                #paystatusSelect="matSelect"
+                (selectionChange)="onPayStatusChange($event, row)"
+                [value]="selectPaymentStatusById(row.paymentStatus)"
+                class="invisible w-0 h-0 text-sm"
+                fxFlex="0 1 0px"
+              >
+                <mat-option
+                  *ngFor="let stat of paymentGuideStatus"
+                  [value]="stat"
+                >
+                  <div
+                    [ngClass]="stat.previewClass"
+                    class="h-6 w-6 align-middle ltr:mr-2 rtl:ml-2 rounded inline-block"
+                  ></div>
+                  <span>{{ stat.text }}</span>
+                </mat-option>
+              </mat-select> -->
+            </div>
+          </td>
+        </ng-container>
+        <!-- Status Columns -->
+        <ng-container matColumnDef="status">
+          <th
+            *matHeaderCellDef
+            class="uppercase"
+            mat-header-cell
+            mat-sort-header
+          >
+            Status
+          </th>
+          <td *matCellDef="let row" mat-cell>
+            <div
+              (click)="$event.stopPropagation()"
+              fxLayoutAlign="start center"
+              fxLayoutGap="4px"
+            >
+              <div
+                [ngClass]="[
+                  selectStatusById(row.status).textClass,
+                  selectStatusById(row.status).bgClass
+                ]"
+                class="rounded px-2 py-1 font-medium text-xs"
+                fxFlex="none"
+              >
+                {{ selectStatusById(row.status).text }}
+              </div>
+              <!-- <div
+                (click)="statusSelect.open()"
+                class="text-secondary bg-base text-hint cursor-pointer hover:bg-hover"
+                fxFlex="none"
+                fxLayout="row"
+                fxLayoutAlign="center center"
+              >
+                <ic-icon [icon]="icArrowDropDown" size="18px"></ic-icon>
+              </div>
+              <mat-select
+                #statusSelect="matSelect"
+                (selectionChange)="onStatusChange($event, row)"
+                [value]="selectStatusById(row.status)"
+                class="invisible w-0 h-0 text-sm"
+                fxFlex="0 1 0px"
+              >
+                <mat-option *ngFor="let stat of statusToShow" [value]="stat">
+                  <div
+                    [ngClass]="stat.previewClass"
+                    class="h-6 w-6 align-middle ltr:mr-2 rtl:ml-2 rounded inline-block"
+                  ></div>
+                  <span>{{ stat.text }}</span>
+                </mat-option>
+              </mat-select> -->
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Tag Columns -->
+        <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+          <ng-container
+            *ngIf="column.type === 'tag'"
+            [matColumnDef]="column.property"
+          >
+            <th
+              *matHeaderCellDef
+              class="uppercase"
+              mat-header-cell
+              mat-sort-header
+            >
+              {{ column.label }}
+            </th>
+            <td *matCellDef="let row" mat-cell>
+              <div *ngIf="row[column.property] === '1'">
+                <span
+                  class="rounded px-2 py-1 font-medium text-xs bg-green-light text-green"
+                  fxFlex="none"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px"
+                >
+                  In Warehouse
+                </span>
+              </div>
+              <div *ngIf="row[column.property] === '2'">
+                <span
+                  class="rounded px-2 py-1 font-medium text-xs bg-teal text-white"
+                  fxFlex="none"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px"
+                >
+                  Repacking
+                </span>
+              </div>
+              <div *ngIf="row[column.property] === '3'">
+                <span
+                  class="rounded px-2 py-1 font-medium text-xs bg-cyan text-white"
+                  fxFlex="none"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px"
+                >
+                  On Boarding
+                </span>
+              </div>
+              <div *ngIf="row[column.property] === '4'">
+                <span
+                  class="rounded px-2 py-1 font-medium text-xs bg-blue-light text-blue"
+                  fxFlex="none"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px"
+                >
+                  In Transit
+                </span>
+              </div>
+              <div *ngIf="row[column.property] === '5'">
+                <span
+                  class="rounded px-2 py-1 font-medium text-xs bg-blue-light text-blue"
+                  fxFlex="none"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px"
+                >
+                  On Destination
+                </span>
+              </div>
+              <div *ngIf="row[column.property] === '6'">
+                <span
+                  class="rounded px-2 py-1 font-medium text-xs bg-blue-light text-blue"
+                  fxFlex="none"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px"
+                >
+                  Delivered
+                </span>
+              </div>
+            </td>
+          </ng-container>
+        </ng-container>
+
+        <!-- Contact Column -->
+        <ng-container matColumnDef="preGuideList">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            PACKAGE LIST
+          </th>
+          <td *matCellDef="let row" mat-cell>
+            <div class="flex" style="font-size: 8px; padding-left: 20px">
+              <a
+                (click)="showPicList(row.preGuideList[0]._id)"
+                class="flex items-center justify-center ml-1 text-green text-secondary font-small"
+                style="font-size: 8px; text-align: center"
+                mat-icon-button
+              >
+                <mat-icon [icIcon]="icCheck" size="18px"></mat-icon>
+                CHECK PKG LIST ({{ row.preGuideList[0].packageList.length }})
+              </a>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="actions">
+          <th
+            *matHeaderCellDef
+            class="uppercase"
+            mat-header-cell
+            mat-sort-header
+          >
+            Actions
+          </th>
+          <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
+            <button
+              (click)="$event.stopPropagation()"
+              [matMenuTriggerData]="{ quote: row }"
+              [matMenuTriggerFor]="actionsMenu"
+              mat-icon-button
+              type="button"
+            >
+              <mat-icon [icIcon]="icMoreHoriz"></mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+        <tr
+          *matRowDef="let row; columns: visibleColumns"
+          @fadeInUp
+          class="hover:bg-hover trans-ease-out"
+          mat-row
+        ></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="mat-cell"
+            [attr.colspan]="visibleColumns.length"
+            style="text-align: center"
+          >
+            No Quotes found On System.
+          </td>
+        </tr>
+      </table>
+      <!-- (click)="updateQuote(row)" -->
+      <mat-paginator
+        [pageSizeOptions]="pageSizeOptions"
+        [length]="totalData"
+        [pageSize]="pageSize"
+        class="sticky left-0"
+      ></mat-paginator>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>
+
+<mat-menu #columnFilterMenu="matMenu" xPosition="before" yPosition="below">
+  <button
+    (click)="toggleColumnVisibility(column, $event)"
+    *ngFor="let column of columns"
+    class="checkbox-item mat-menu-item"
+  >
+    <mat-checkbox
+      (click)="$event.stopPropagation()"
+      [(ngModel)]="column.visible"
+      color="primary"
+    >
+      {{ column.label }}
+    </mat-checkbox>
+  </button>
+</mat-menu>
+
+<mat-menu #printMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-quote="quote" matMenuContent>
+    <button (click)="openInvoice(getGuide('AIR', quote))" mat-menu-item>
+      <span>Print Air Quote</span>
+    </button>
+    <button (click)="openInvoice(getGuide('SEA', quote))" mat-menu-item>
+      <span>Print Sea Quote</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #notificationMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-quote="quote" matMenuContent>
+    <button
+      (click)="sendNotification(getGuide('AIR', quote), true, quote)"
+      mat-menu-item
+    >
+      <span>Notify about Air Quote</span></button
+    ><button
+      (click)="sendNotification(getGuide('SEA', quote), true, quote)"
+      mat-menu-item
+    >
+      <span>Notify about Sea Quote</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #convertMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-quote="quote" matMenuContent>
+    <button
+      (click)="convertToGuide(getGuide('AIR', quote), quote)"
+      mat-menu-item
+    >
+      <span>Convert to Air guide</span>
+    </button>
+    <button
+      (click)="convertToGuide(getGuide('SEA', quote), quote)"
+      mat-menu-item
+    >
+      <span>Convert to Sea guide</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-quote="quote" matMenuContent>
+    <button
+      (click)="$event.stopPropagation()"
+      [matMenuTriggerData]="{ quote: quote }"
+      [matMenuTriggerFor]="notificationMenu"
+      [disabled]="quote.status == '0'"
+      mat-menu-item
+    >
+      <mat-icon [icIcon]="icAlarm"></mat-icon>
+      <span>Notify Customer</span>
+    </button>
+    <button
+      (click)="$event.stopPropagation()"
+      [matMenuTriggerData]="{ quote: quote }"
+      [matMenuTriggerFor]="convertMenu"
+      mat-menu-item
+      [disabled]="quote.status == '0'"
+    >
+      <mat-icon>
+        <span class="material-symbols-outlined"> transform </span>
+      </mat-icon>
+      <span>Convert to guide</span>
+    </button>
+    <button
+      (click)="$event.stopPropagation()"
+      [matMenuTriggerData]="{ quote: quote }"
+      [matMenuTriggerFor]="printMenu"
+      mat-menu-item
+    >
+      <mat-icon [icIcon]="icPrint"></mat-icon>
+      <span>Print Quote</span>
+    </button>
+
+    <button
+      [disabled]="quote.status == '0'"
+      (click)="openPickList(quote.preGuideList[0])"
+      mat-menu-item
+    >
+      <mat-icon [icIcon]="icList"></mat-icon>
+      <span>Print Package Pick List</span>
+    </button>
+    <button
+      [disabled]="quote.status == '0'"
+      (click)="updateQuote(quote)"
+      mat-menu-item
+    >
+      <mat-icon [icIcon]="icEdit"></mat-icon>
+      <span>Modify</span>
+    </button>
+    <button (click)="deleteQuote(quote)" mat-menu-item>
+      <mat-icon [icIcon]="icDelete"></mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>

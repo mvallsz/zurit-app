@@ -1,0 +1,104 @@
+<mat-dialog-content fxLayout="column">
+  <div class="flex flex-col sm:flex-row gap-4">
+    <div class="card flex-auto">
+      <div class="px-6 py-4 border-b flex items-center">
+        <h2 class="headline m-0" fxFlex="auto">Shipping Association</h2>
+        <button
+          class="text-secondary"
+          mat-dialog-close
+          mat-icon-button
+          type="button"
+        >
+          <mat-icon [icIcon]="icClose"></mat-icon>
+        </button>
+      </div>
+      <div class="px-6 py-4 flex flex-col">
+        <div class="flex flex-col sm:flex-row" style="padding-top: 20px">
+          <mat-form-field class="flex-auto s: ml-1">
+            <mat-label>Select a Rate from availables</mat-label>
+            <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+            <mat-select
+              [formControl]="ratesCtrl"
+              placeholder="registered rates"
+              (selectionChange)="costCalculate()"
+            >
+              <mat-option *ngFor="let rate of rates" [value]="rate._id">
+                {{ rate.name }} - ${{ rate.rate }}
+              </mat-option>
+            </mat-select>
+            <mat-hint
+              >Select a rate, if you not select one, the default one is going to
+              be set</mat-hint
+            >
+          </mat-form-field>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="flex flex-col sm:flex-row" style="padding-top: 20px">
+          <mat-form-field class="flex-auto s: ml-1">
+            <mat-label>Select a Shipping from availables</mat-label>
+            <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+            <mat-select
+              [formControl]="shippingsCtrl"
+              placeholder="registered shippings"
+            >
+              <mat-option *ngFor="let shipping of ships" [value]="shipping._id">
+                Shipping: {{ shipping.type }}-{{
+                  shipping.name.toUpperCase()
+                }}
+                - Departure Date: {{ shipping.departureDate.split("T")[0] }} -
+                Arrival Hub: {{ shipping.arrivalHub.city }}
+              </mat-option>
+            </mat-select>
+            <mat-hint
+              >in which shipping you are associating the quote?</mat-hint
+            >
+          </mat-form-field>
+        </div>
+        <div
+          class="rounded-lg bg-primary flex flex-col items-center justify-center p-10 text-2xl"
+        >
+          <span class="pb-2">
+            Guide Cost
+            <br />
+            <mat-icon
+              class="mr-3"
+              *ngIf="this.guide.name.includes('SEA')"
+              matPrefix
+            >
+              <span class="material-symbols-outlined"> directions_boat </span>
+            </mat-icon>
+            <mat-icon
+              class="mr-3"
+              *ngIf="this.guide.name.includes('AIR')"
+              matPrefix
+            >
+              <span class="material-symbols-outlined"> flight </span>
+            </mat-icon>
+            <b>${{ this.guide.cost.toFixed(2) }}</b>
+          </span>
+        </div>
+        <br />
+        <div class="flex items-center justify-end gap-2">
+          <div fxLayout="row" fxLayoutAlign="center center">
+            <mat-progress-spinner
+              diameter="40"
+              mode="indeterminate"
+              color="primary"
+              *ngIf="spinner"
+            ></mat-progress-spinner>
+          </div>
+          <div *ngIf="!spinner">
+            <button
+              (click)="submit()"
+              [disabled]="false"
+              color="primary"
+              mat-raised-button
+            >
+              SAVE ASSOCIATION
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

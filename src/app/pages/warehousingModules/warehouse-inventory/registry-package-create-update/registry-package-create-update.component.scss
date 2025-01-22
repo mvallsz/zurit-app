@@ -1,0 +1,94 @@
+ancho70 {
+  left: 0px;
+  width: calc((70% - 0.5px) * 1 + 0px);
+}
+
+.ancho30 {
+  left: calc((70% - 0.5px) * 1 + 0px);
+  width: calc((30% - 0.5px) * 1 + 0px);
+}
+
+
+.ancho1 {
+  left: 0px;
+  width: calc((85% - 0.5px) * 1 + 0px);
+}
+
+.ancho2 {
+  left: calc((85% - 0.5px) * 1 + 0px);
+  width: calc((15% - 0.5px) * 1 + 0px);
+}
+
+.ancho50_1 {
+  left: 0px;
+  width: calc((70% - 0.5px) * 1 + 0px);
+}
+
+.ancho50_2 {
+  left: calc((70% - 0.5px) * 1 + 0px);
+  width: calc((30% - 0.5px) * 1 + 0px);
+}
+
+.anchoMitad_1 {
+  left: 0px;
+  width: calc((50% - 0.5px) * 1 + 0px);
+}
+
+.anchoMitad_2 {
+  left: calc((50% - 0.5px) * 1 + 0px);
+  width: calc((50% - 0.5px) * 1 + 0px);
+}
+
+.anchoTercio_1 {
+  left: 0px;
+  width: calc((33% - 0.5px) * 1 + 0px);
+}
+
+.anchoTercio_2 {
+  left: calc((33% - 0.5px) * 1 + 0px);
+  width: calc((33% - 0.5px) * 1 + 0px);
+}
+
+.anchoTercio_3 {
+  left: calc((66% - 0.5px) * 1 + 0px);
+  width: calc((33% - 0.5px) * 1 + 0px);
+}
+
+.button {
+  position: relative;
+  overflow: hidden;
+  height: 3rem;
+  padding: 0 2rem;
+  border-radius: 1.5rem;
+  background: #3d3a4e;
+  background-size: 400%;
+  color: #fff;
+  border: none;
+}
+
+.button:hover::before {
+  transform: scaleX(1);
+}
+
+.button-content {
+  position: relative;
+  z-index: 1;
+}
+
+.button::before {
+  content: 'Download!!';
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  width: 100%;
+  height: inherit;
+  border-radius: inherit;
+  background: linear-gradient(
+    82.3deg,
+    rgba(150, 93, 233, 1) 10.8%,
+    rgba(99, 88, 238, 1) 94.3%
+  );
+  transition: all 0.475s;
+}

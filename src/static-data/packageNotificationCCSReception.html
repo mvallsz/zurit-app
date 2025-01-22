@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+  lang="en"
+>
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      hs-webfonts="true"
+      href="https://fonts.googleapis.com/css?family=Lato|Lato:i,b,bi"
+    />
+    <title>Sistema de notificación de TLCARGO</title>
+    <meta property="og:title" content="Email template" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+      a.button {
+        -webkit-appearance: button;
+        -moz-appearance: button;
+        appearance: auto;
+        text-decoration: none;
+        color: initial;
+      }
+      h1 {
+        font-size: 56px;
+      }
+      h2 {
+        font-size: 28px;
+        font-weight: 900;
+      }
+      p {
+        font-weight: 100;
+      }
+      td {
+        vertical-align: top;
+      }
+      #email {
+        margin: auto;
+        width: 600px;
+        background-color: white;
+      }
+      button {
+        font: inherit;
+        background-color: #ff7a59;
+        border: none;
+        padding: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 900;
+        color: white;
+        border-radius: 5px;
+        box-shadow: 3px 3px #d94c53;
+      }
+      .subtle-link {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #cbd6e2;
+      }
+    </style>
+  </head>
+
+  <body
+    bgcolor="#F5F8FA"
+    style="
+      width: 100%;
+      margin: auto 0;
+      padding: 0;
+      font-family: Lato, sans-serif;
+      font-size: 18px;
+      color: #33475b;
+      word-break: break-word;
+    "
+  >
+    <! View in Browser Link -->
+    <div id="email">
+      <table align="right" role="presentation">
+        <tr>
+          <td>
+            <!-- <a class="subtle-link" href="#">Ver en el navegador</a>  -->
+          </td>
+        </tr>
+
+        <tr></tr>
+      </table>
+
+      <! Banner -->
+      <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+        <tr>
+          <td bgcolor="white" align="center" style="color: black">
+            <br />
+            <img
+              alt="TLCARGO"
+              src="http://tlcargo.doghoundtech.com/assets/img/tlcargo/tl_cargo_3.png"
+              width="150px"
+              align="middle"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#85C1E9" align="center" style="color: white">
+            <br />
+            <h2>¡Recepción de paquete en almacen en Caracas!</h2>
+          </td>
+        </tr>
+      </table>
+      <! First Row   -->
+      <table
+        role="presentation"
+        border="0"
+        cellpadding="0"
+        cellspacing="0"
+        style="text-align: center"
+        width="100%"
+      >
+        <tr>
+          <td style="background-color: #5dade2; color: white">
+            <h2 style="font-size: 14pt">Hola ${pac.customer.name}</h2>
+            <p style="font-size: 12pt">
+              Hemos recibido tu paquete en nuestras instalaciones en Caracas,
+              abajo el detalle
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: justify;
+              font-size: 10pt;
+              padding-left: 20px;
+              padding-top: 20px;
+            "
+          >
+            <b>ID de la guia:</b> ${guide.tlCargoId}
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: justify;
+              font-size: 10pt;
+              padding-left: 20px;
+              padding-top: 20px;
+            "
+          >
+            <b>ID del paquete:</b> ${tlPackage.tlCargoId}, paquete ${
+            tlPackage.guideCounter } de la guia
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: justify;
+              font-size: 10pt;
+              padding-left: 20px;
+              padding-top: 10px;
+            "
+          >
+            <b>ID Tracking:</b> ${tlPackage.trackingId}
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: justify;
+              font-size: 10pt;
+              padding-left: 20px;
+              padding-top: 10px;
+            "
+          >
+            <b>Descripción:</b> ${tlPackage.shortDesc}
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: justify;
+              font-size: 10pt;
+              padding-left: 20px;
+              padding-top: 10px;
+            "
+          >
+            <b>Fecha de recepción:</b> ${ new
+            Date(tlPackage.receptionDate).toLocaleDateString('ve-ES', {day:
+            'numeric', month: 'numeric', year: 'numeric' })}
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: justify;
+              font-size: 10pt;
+              padding-left: 20px;
+              padding-top: 10px;
+            "
+          >
+            <b>Peso y volumen:</b> ${tlPackage.weight} libras,
+            <span style="font-size: 8pt">
+              ${ Number(+tlPackage.weight / 2.2046).toFixed(2) } Kgs.
+            </span>
+            / ${tlPackage.volume} pies<sup>3</sup>
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: justify;
+              font-size: 10pt;
+              padding-left: 20px;
+              padding-top: 10px;
+            "
+          >
+            <b>Enviado por:</b> ${tlPackage.shipper.name}
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; font-size: 8pt; padding: 10px">
+            <hr />
+            <p>
+              Si necesitas mas detalles respecto a tu paquete por favor haz
+              click en en siguiente enlace. <br />${this.urlItem}
+            </p>
+            <hr />
+            <p>
+              Tu paquete va a entrar en nuestros procesos de entrega local,
+              aunque si estas en Caracas lo puedes retirar por nuestras oficinas
+              cuando gustes.
+            </p>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15554650.068626555!2d-84.29088907217479!3d17.86102954636453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c2a59ca76b2bb29%3A0x2ad7927aa28f1d3b!2stlcargo!5e0!3m2!1ses!2sve!4v1700341532019!5m2!1ses!2sve"
+              width="300"
+              height="225"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </td>
+        </tr>
+        <tr>
+          <td
+            style="
+              text-align: center;
+              background-color: #85c1e9;
+              font-size: larger;
+            "
+          >
+            <br />
+            ¡Gracias por preferirnos!<br />
+            <a href="https://www.tlcargo.net">www.tlcargo.net</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: left; background-color: #85c1e9">
+            <br />
+            <ul style="font-size: 6pt">
+              <li><b>TL CARGO</b></li>
+              <li><b>Dir:</b> 8520 NW 66 ST Miami, FL 33166</li>
+              <li>
+                <b>Web:</b><a href="https://www.tlcargo.net">www.tlcargo.net</a>
+              </li>
+              <li><b>Telefono:</b> +1-786-409-708</li>
+              <li>
+                <b>Servicio al Cliente Directo Venezuela:</b> 0212-720 4488
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center; background-color: #85c1e9">
+            <a style="text-decoration: none" href="https://wa.link/knntyd">
+              <img
+                src="http://tlcargo.doghoundtech.com/assets/img/icons/logos/WS_W.png"
+                width="30px"
+                height="30px"
+              />
+            </a>
+            &nbsp;
+            <a
+              style="text-decoration: none"
+              href="https://www.facebook.com/TLCARGOmiami/"
+            >
+              <img
+                src="http://tlcargo.doghoundtech.com/assets/img/icons/logos/FB_W.png"
+                width="30px"
+                height="30px"
+              />
+            </a>
+            &nbsp;
+            <a
+              style="text-decoration: none"
+              href="https://twitter.com/tlcargomiami/"
+            >
+              <img
+                src="http://tlcargo.doghoundtech.com/assets/img/icons/logos/X_W.png"
+                width="30px"
+                height="30px"
+              />
+            </a>
+            &nbsp;
+            <a
+              style="text-decoration: none"
+              href="https://www.instagram.com/tlcargomiami/"
+            >
+              <img
+                src="http://tlcargo.doghoundtech.com/assets/img/icons/logos/IG_W.png"
+                width="30px"
+                height="30px"
+              />
+            </a>
+          </td>
+        </tr>
+      </table>
+      <table bgcolor="#5DADE2" width="100%">
+        <tr>
+          <td align="left" style="padding: 30px">
+            <p style="color: white; text-align: center">
+              Made with <span style="color: #d94c53">&hearts;</span> at
+              DogHoundTechnology
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

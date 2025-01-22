@@ -1,0 +1,517 @@
+<vex-page-layout>
+  <vex-page-layout-header
+    class="pb-16"
+    fxLayout="column"
+    fxLayoutAlign="center start"
+  >
+    <div
+      [class.container]="layoutCtrl.value === 'boxed'"
+      [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between"
+    >
+      <div>
+        <h1 class="title mt-0 mb-1">Shipping Quotes Registry</h1>
+        <vex-breadcrumbs
+          [crumbs]="[
+            { value: 'Accounting Module', router: '/app' },
+            {
+              value: 'Shipping Quotes',
+              router: '/app/shipping-quotes'
+            },
+            {
+              value: 'Shipping Quotes Registry',
+              router: '/app/shipping-quotes'
+            }
+          ]"
+        ></vex-breadcrumbs>
+      </div>
+    </div>
+  </vex-page-layout-header>
+  <vex-page-layout-content
+    [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+    class="-mt-6 p-4"
+  >
+    <div class="card overflow-auto -mt-16 p-4">
+      <div
+        class="bg-app-bar px-6 h-16 border-b sticky left-0"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <h2 *ngIf="!this.quote" class="headline m-0" fxFlex="auto">
+          Quote Creation Form
+        </h2>
+        <h2 *ngIf="this.quote" class="headline m-0" fxFlex="auto">
+          {{ this.quote.tlCargoId }} Edition Form
+        </h2>
+      </div>
+
+      <div @fadeInUp class="card overflow-hidden p-5">
+        <h2 class="subheading-2">Customer & Packages Information</h2>
+        <br />
+        <div class="subheading-1">
+          Select the customer to generate the shipping guide & select from the
+          available packages
+        </div>
+        <div class="flex flex-col sm:flex-row" *ngIf="quote">
+          <mat-form-field class="flex-auto xs: ml-1 width:60px">
+            <mat-label>Customer</mat-label>
+            <input
+              type="text"
+              [formControl]="customerCtrl"
+              [readonly]="true"
+              matInput
+            />
+            <mat-hint>Who is receiving the package?</mat-hint>
+          </mat-form-field>
+        </div>
+        <div class="flex flex-col sm:flex-row" *ngIf="!quote">
+          <mat-form-field class="flex-auto s: ml-1">
+            <mat-label>Select a Customer</mat-label>
+            <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+            <mat-select
+              [formControl]="customersCtrl"
+              placeholder="Customers"
+              #customersSelect
+              (selectionChange)="showUserInfo()"
+              required
+            >
+              <mat-option>
+                <ngx-mat-select-search
+                  placeholderLabel="Search a customer, enter at least 4 characters"
+                  noEntriesFoundLabel="'No Customer Found'"
+                  (ngModelChange)="filterCustomer()"
+                  [formControl]="customersFilterCtrl"
+                >
+                  <mat-icon
+                    [icIcon]="icClose"
+                    [inline]="true"
+                    size="24px"
+                    ngxMatSelectSearchClear
+                  ></mat-icon>
+                </ngx-mat-select-search>
+              </mat-option>
+
+              <mat-option
+                *ngFor="let customer of filteredCustomers | async"
+                [value]="customer._id"
+              >
+                {{ customer.name }} - {{ customer.tlCargoName }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>Who is receiving the package?</mat-hint>
+          </mat-form-field>
+        </div>
+        <div
+          class="sm:flex-row"
+          style="overflow-y: scroll"
+          *ngIf="customerSelected && this.customerPackages"
+        >
+          <vex-picking-list-package
+            (packagesSelected)="setPackage($event)"
+            [customerId]="customersCtrl.value"
+            [customerPackageArray]="this.customerPackages"
+            *ngIf="mode !== 'update'"
+          ></vex-picking-list-package>
+          <vex-picking-list-package
+            (packagesSelected)="setPackage($event)"
+            [customerId]="customersCtrl.value"
+            [customerPackageArray]="this.customerPackages"
+            [selectedPackageArray]="packageSelected"
+            *ngIf="mode === 'update'"
+          ></vex-picking-list-package>
+        </div>
+        <div class="px-6 py-4 flex flex-col" *ngIf="customerSelected">
+          <vex-address-card
+            (addresses)="setAddressBook($event)"
+            [address]="this.shippingAddress"
+            [customer]="this.customer"
+          ></vex-address-card>
+        </div>
+        <!--  DIV para totales   -->
+        <div class="mt-4" fxLayout="column">
+          <mat-form-field fxFlex="auto">
+            <mat-label>Quote Totals</mat-label>
+            <mat-icon class="mr-3" matPrefix
+              ><span class="material-symbols-outlined"> weight </span></mat-icon
+            >
+            <span matSuffix>&nbsp;Weight / Vlb / Volume </span>
+            <input type="text" [formControl]="totalsCtrl" matInput readonly />
+            <mat-hint align="start"> </mat-hint>
+          </mat-form-field>
+        </div>
+        <!--  DIV para costo de cotizaciones   -->
+        <div class="mt-4" fxLayout="column" *ngIf="!this.quote">
+          <div class="flex flex-row justify-center">
+            <div
+              class="rounded-lg bg-primary flex flex-col items-center justify-center p-10 text-2xl"
+            >
+              <span class="pb-8">
+                <mat-icon class="mr-3" matPrefix>
+                  <span class="material-symbols-outlined">
+                    directions_boat
+                  </span>
+                </mat-icon>
+                <b>${{ seaCost.toFixed(2) }}</b>
+              </span>
+              <div class="rounded-lg flex flex-col sm:flex-row p-4 bg-white">
+                <mat-form-field
+                  class="flex-auto s: ml-1"
+                  style="background-color: white"
+                >
+                  <mat-label>Select a new Sea Rate</mat-label>
+                  <mat-icon
+                    [icIcon]="icMoreVert"
+                    class="mr-3"
+                    matPrefix
+                  ></mat-icon>
+                  <mat-select
+                    [formControl]="seaRatesCtrl"
+                    placeholder="Outgoing Sea Shippings Rates"
+                    #seaRatesSelect
+                    (selectionChange)="quoteCostCalculate('SEA')"
+                    [disabled]="!this.packageSelected"
+                  >
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search"
+                        noEntriesFoundLabel="'No Rates Found'"
+                        [formControl]="seaRatesFilterCtrl"
+                      >
+                        <mat-icon
+                          [icIcon]="icClose"
+                          [inline]="true"
+                          size="24px"
+                          ngxMatSelectSearchClear
+                        ></mat-icon>
+                      </ngx-mat-select-search>
+                    </mat-option>
+
+                    <mat-option
+                      *ngFor="let rate of filteredSeaRates | async"
+                      [value]="rate._id"
+                    >
+                      {{ rate.type }} - {{ rate.name }} - {{ rate.rate }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint
+                    >Choose one if you want to select a new SeaRate</mat-hint
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div
+              class="rounded-lg bg-primary flex flex-col items-center justify-center p-10 text-2xl"
+            >
+              <span class="pb-8">
+                <mat-icon class="mr-3" matPrefix>
+                  <span class="material-symbols-outlined"> flight </span>
+                </mat-icon>
+                <b>${{ airCost.toFixed(2) }}</b>
+              </span>
+              <div class="rounded-lg flex flex-col sm:flex-row p-4 bg-white">
+                <mat-form-field class="flex-auto s: ml-1">
+                  <mat-label>Select a new Air Rate</mat-label>
+                  <mat-icon
+                    [icIcon]="icMoreVert"
+                    class="mr-3"
+                    matPrefix
+                  ></mat-icon>
+                  <mat-select
+                    [formControl]="airRatesCtrl"
+                    placeholder="Outgoing Air Shippings Rates"
+                    #airRatesSelect
+                    (selectionChange)="quoteCostCalculate('AIR')"
+                    [disabled]="!this.packageSelected"
+                  >
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search"
+                        noEntriesFoundLabel="'No Rates Found'"
+                        [formControl]="airRatesFilterCtrl"
+                      >
+                        <mat-icon
+                          [icIcon]="icClose"
+                          [inline]="true"
+                          size="24px"
+                          ngxMatSelectSearchClear
+                        ></mat-icon>
+                      </ngx-mat-select-search>
+                    </mat-option>
+
+                    <mat-option
+                      *ngFor="let rate of filteredAirRates | async"
+                      [value]="rate._id"
+                    >
+                      {{ rate.type }} - {{ rate.name }} - {{ rate.rate }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint
+                    >Choose one if you want to select a new AirRate</mat-hint
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div
+            *ngIf="this.minVolume || this.minWeight"
+            class="text-xs"
+            [innerHTML]="minNote"
+          ></div>
+          <br />
+        </div>
+
+        <!--  DIV para los los Repacking   -->
+        <div class="mt-4" fxLayout="column" *ngIf="this.quote">
+          <div class="flex flex-row justify-center">
+            <div
+              class="rounded-lg bg-primary flex flex-col items-center justify-center p-10 text-2xl"
+            >
+              <span class="pb-8">
+                <mat-icon class="mr-3" matPrefix>
+                  <span class="material-symbols-outlined">
+                    directions_boat
+                  </span>
+                </mat-icon>
+                <b>${{ seaCost.toFixed(2) }}</b>
+              </span>
+              <div class="rounded-lg flex flex-col sm:flex-row p-4 bg-white">
+                <mat-form-field
+                  class="flex-auto s: ml-1"
+                  style="background-color: white"
+                >
+                  <mat-label>Select a new Sea Rate</mat-label>
+                  <mat-icon
+                    [icIcon]="icMoreVert"
+                    class="mr-3"
+                    matPrefix
+                  ></mat-icon>
+                  <mat-select
+                    [formControl]="seaRatesCtrl"
+                    placeholder="Outgoing Sea Shippings Rates"
+                    #seaRatesSelect
+                    (selectionChange)="quoteCostCalculate('SEA')"
+                    [disabled]="!this.packageSelected"
+                  >
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search"
+                        noEntriesFoundLabel="'No Rates Found'"
+                        [formControl]="seaRatesFilterCtrl"
+                      >
+                        <mat-icon
+                          [icIcon]="icClose"
+                          [inline]="true"
+                          size="24px"
+                          ngxMatSelectSearchClear
+                        ></mat-icon>
+                      </ngx-mat-select-search>
+                    </mat-option>
+
+                    <mat-option
+                      *ngFor="let rate of filteredSeaRates | async"
+                      [value]="rate._id"
+                    >
+                      {{ rate.type }} - {{ rate.name }} - {{ rate.rate }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint
+                    >Choose one if you want to select a new SeaRate</mat-hint
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div
+              class="rounded-lg bg-primary flex flex-col items-center justify-center p-10 text-2xl"
+            >
+              <span class="pb-8">
+                <mat-icon class="mr-3" matPrefix>
+                  <span class="material-symbols-outlined"> flight </span>
+                </mat-icon>
+                <b>${{ airCost.toFixed(2) }}</b>
+              </span>
+              <div class="rounded-lg flex flex-col sm:flex-row p-4 bg-white">
+                <mat-form-field class="flex-auto s: ml-1">
+                  <mat-label>Select a new Air Rate</mat-label>
+                  <mat-icon
+                    [icIcon]="icMoreVert"
+                    class="mr-3"
+                    matPrefix
+                  ></mat-icon>
+                  <mat-select
+                    [formControl]="airRatesCtrl"
+                    placeholder="Outgoing Air Shippings Rates"
+                    #airRatesSelect
+                    (selectionChange)="quoteCostCalculate('AIR')"
+                    [disabled]="!this.packageSelected"
+                  >
+                    <mat-option>
+                      <ngx-mat-select-search
+                        placeholderLabel="Search"
+                        noEntriesFoundLabel="'No Rates Found'"
+                        [formControl]="airRatesFilterCtrl"
+                      >
+                        <mat-icon
+                          [icIcon]="icClose"
+                          [inline]="true"
+                          size="24px"
+                          ngxMatSelectSearchClear
+                        ></mat-icon>
+                      </ngx-mat-select-search>
+                    </mat-option>
+
+                    <mat-option
+                      *ngFor="let rate of filteredAirRates | async"
+                      [value]="rate._id"
+                    >
+                      {{ rate.type }} - {{ rate.name }} - {{ rate.rate }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint
+                    >Choose one if you want to select a new AirRate</mat-hint
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div
+            *ngIf="this.minVolume || this.minWeight"
+            class="text-xs"
+            [innerHTML]="minNote"
+          ></div>
+          <br />
+        </div>
+
+        <!--  DIV para los los Repacking   -->
+        <mat-divider></mat-divider>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto">
+            <mat-label>Notes</mat-label>
+            <textarea [formControl]="notesCtrl" matInput></textarea>
+            <mat-hint
+              >If you have something to say regarding the shipping of the
+              package, feel free to expose all the details.</mat-hint
+            >
+          </mat-form-field>
+        </div>
+
+        <div class="flex flex-col sm:flex-row">
+          <span
+            style="font-size: small; padding-left: 5px"
+            class="text-secondary"
+            fxLayoutGap="5px"
+            >Take a picture...</span
+          >
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+          <input
+            class="ancho50_1"
+            type="file"
+            accept="image/*"
+            id="file-input"
+            capture="environment"
+            (change)="previewImagen($event.target.files[0])"
+          />
+          <div class="ancho50_2" style="text-align: center">
+            <img
+              *ngIf="previewStatus"
+              [src]="photoURL('guide')"
+              alt="the Package Image"
+              width="200px"
+              height="200px"
+              style="text-align: center"
+            />
+            <img
+              *ngIf="quote && !previewStatus"
+              [src]="url"
+              alt="the Package Image"
+              width="200px"
+              height="200px"
+              style="text-align: center"
+            />
+          </div>
+        </div>
+        <br />
+        <span
+          style="font-size: x-small; padding-left: 5px"
+          class="text-secondary"
+          >This photo will be sent to the client, make sure everything is
+          ok</span
+        >
+        <br />
+        <!-- <mat-checkbox
+          class="checkbox"
+          checked="true"
+          [formControl]="notificationCtrl"
+          value="false"
+        >
+          Send a notification email to the customer?
+        </mat-checkbox>
+        <br /> -->
+        <div
+          class="actions"
+          fxLayout="row"
+          fxLayoutAlign="end center"
+          fxLayoutGap="8px"
+        >
+          <button color="primary" mat-button type="button" (click)="reset()">
+            RESET
+          </button>
+          <div fxLayout="row" fxLayoutAlign="center center">
+            <mat-progress-spinner
+              diameter="40"
+              mode="indeterminate"
+              color="primary"
+              *ngIf="spinner"
+            ></mat-progress-spinner>
+          </div>
+
+          <ng-container *ngIf="!this.quote">
+            <div *ngIf="!spinner">
+              <button
+                *ngIf="mode === 'create'"
+                (click)="checkMin()"
+                [disabled]="false"
+                color="primary"
+                mat-raised-button
+              >
+                CREATE SHIPPING QUOTE
+              </button>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="this.quote">
+            <ng-container>
+              <ng-container>
+                <span>
+                  <span
+                    *ngIf="this.quote.status === '0'"
+                    style="font-size: 7pt"
+                  >
+                    This quote is not valid, read only view <br />
+                  </span>
+                  <div *ngIf="!spinner">
+                    <button
+                      [disabled]="this.quote.status === '0'"
+                      (click)="checkMin()"
+                      matTooltip="color"
+                      color="primary"
+                      mat-raised-button
+                    >
+                      UPDATE SHIPPING QUOTE
+                    </button>
+                  </div>
+                </span>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>

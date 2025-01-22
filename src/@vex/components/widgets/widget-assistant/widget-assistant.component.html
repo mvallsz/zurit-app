@@ -1,0 +1,38 @@
+<div class="card bg-green-light" fxLayout="row" fxLayout.xs="column">
+  <div class="p-4 ml-4" fxFlex="none" fxFlexAlign="center">
+    <img src="assets/img/illustrations/buy-discount-list-svgrepo-com.svg" style="height: 168px; width: 152px">
+  </div>
+
+  <div class="p-6 text-primary" fxFlex="auto">
+    <h2 class="headline m-0">Shipping Resume</h2>
+    <p class="caption m-0 opacity-50">You've finished all of your tasks related with this shipping?</p>
+
+    <div *ngIf="!shippingCost" class="mt-4 text-accent" fxLayout="row" fxLayoutAlign="start center">
+      <ic-icon [icon]="icWarning" class="mr-2" size="20px"></ic-icon>
+      <span class="body-2 cursor-pointer">Shipping Cost: {{ shippingCost }}</span>
+    </div>
+    <div *ngIf="shippingCost" class="mt-4" fxLayout="row" fxLayoutAlign="start center">
+      <ic-icon [icon]="icCheckCircle" class="mr-2" size="24px"></ic-icon>
+      <span  class="body-2 cursor-pointer">Shipping Cost: {{ shippingCost }}</span>
+    </div>
+
+    <div *ngIf="!shippingRevenue" class="mt-4  text-accent" fxLayout="row" fxLayoutAlign="start center">
+      <ic-icon [icon]="icWarning" class="mr-2" size="20px"></ic-icon>
+      <span class="body-2 cursor-pointer">Shipping Revenue: {{ shippingRevenue }}</span>
+    </div>
+    <div *ngIf="shippingRevenue" class="mt-4" fxLayout="row" fxLayoutAlign="start center">
+      <ic-icon [icon]="icCheckCircle" class="mr-2" size="24px"></ic-icon>
+      <span  class="body-2 cursor-pointer">Shipping Revenue: {{ shippingRevenue }}</span>
+    </div>
+
+    <div *ngIf="!quantities" class="mt-4  text-accent" fxLayout="row" fxLayoutAlign="start center">
+      <ic-icon [icon]="icWarning" class="mr-2" size="20px"></ic-icon>
+      <span class="body-2 cursor-pointer">Q': {{ quantities }}</span>
+    </div>
+    <div *ngIf="quantities" class="mt-4" fxLayout="row" fxLayoutAlign="start center">
+      <ic-icon [icon]="icCheckCircle" class="mr-2" size="24px"></ic-icon>
+      <span  class="body-2 cursor-pointer">Q': {{ quantities }}</span>
+    </div>
+
+  </div>
+</div>

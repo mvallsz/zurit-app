@@ -1,0 +1,145 @@
+@media print {
+  .p-gutter {
+    padding: 0 !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+  }
+}
+
+.date-footer {
+  background: #FFFFFF !important;
+  font-size: small;
+  font-weight: bold;
+  color: #0091af;
+}
+
+.date-header {
+  font-size: small;
+  background: #0091af !important;
+  color: #1a202e;
+}
+
+.cell-sin-borde-der-md {
+  padding: 5px;
+  border-bottom-width:0.5px;
+  border-bottom-color: lightgrey;
+  border-right-color: lightgrey;
+  border-right-width: 0.5px;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: medium
+}
+
+.cell-sin-borde-der-sm {
+  padding: 5px;
+  border-bottom-width:0.5px;
+  border-bottom-color: lightgrey;
+  border-right-color: lightgrey;
+  border-right-width: 0.5px;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: small;
+}
+
+.cell-sin-borde-der-x-sm {
+  padding: 5px;
+  border-bottom-width:0.5px;
+  border-bottom-color: lightgrey;
+  border-right-color: lightgrey;
+  border-right-width: 0.5px;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: x-small;
+}
+
+.cell-con-borde-x-sm {
+  padding: 5px;
+  border-width:0.5px;
+  border-color: lightgrey;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: x-small;
+}
+
+.cell-solo-borde-bottom-x-sm {
+  padding: 5px;
+  border-bottom-width:0.5px;
+  border-bottom-color: lightgrey;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: x-small;
+}
+
+.cell-solo-borde-bottom-sm {
+  padding: 5px;
+  border-bottom-width:0.5px;
+  border-bottom-color: lightgrey;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: small;
+}
+
+.cell-solo-borde-bottom-right-sm {
+  padding: 5px;
+  border-bottom-width:0.5px;
+  border-bottom-color: lightgrey;
+  border-right-width:0.5px;
+  border-right-color: lightgrey;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: small;
+}
+
+.cell-solo-borde-bottom-left-sm {
+  padding: 5px;
+  border-bottom-width:0.5px;
+  border-bottom-color: lightgrey;
+  border-left-width:0.5px;
+  border-left-color: lightgrey;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: small;
+}
+
+.cell-con-borde-sm {
+  padding: 5px;
+  border-width:0.5px;
+  border-color: lightgrey;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: small;
+}
+
+.cell-con-borde-md {
+  padding: 5px;
+  border-width:0.5px;
+  border-color: lightgrey;
+  text-align: left;
+  font-family:Arial, sans-serif;
+  font-size: medium;
+}
+
+.tg  {border-collapse:collapse;border-color:#9ABAD9;border-spacing:0; width: 100%}
+.tg td{background-color:#EBF5FF;border-bottom-width:1px;border-color:#9ABAD9;border-style:solid;border-top-width:1px;
+  border-width:0px;color:#444;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:7px 14px;
+  word-break:normal;}
+.tg th{background-color:#409cff;border-bottom-width:1px;border-color:#9ABAD9;border-style:solid;border-top-width:1px;
+  border-width:0px;color:#fff;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;
+  padding:7px 14px;word-break:normal;}
+.tg .tg-c3qv{border-color:#68cbd0;text-align:left;vertical-align:middle}
+.tg .tg-c3qv-xs{border-color:#68cbd0;text-align:left;vertical-align:middle; font-size: 10pt}
+.tg .tg-ar5m{background-color:#68cbd0;border-color:#68cbd0;font-weight:bold;text-align:left;vertical-align:middle}
+.tg .tg-ar5m-2{background-color:#68cbd0;font-weight:bold;text-align:left;vertical-align:middle;border-left: #1a202e; padding-left: 5px;}
+
+.rowInvoice {
+  display: flex;
+  margin-left:-5px;
+  margin-right:-5px;
+}
+
+.columnInvoice {
+  flex: 50%;
+  padding: 5px;
+}

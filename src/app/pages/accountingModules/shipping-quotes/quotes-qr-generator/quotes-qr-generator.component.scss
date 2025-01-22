@@ -1,0 +1,48 @@
+.mat-divider{
+  border-top-width: 4px;
+}
+
+.img-center {
+  display: flex;
+  justify-content: center;
+}
+
+.sub-title {
+  font-size: 38pt;
+  font-weight: bold;
+  text-align: center;
+}
+
+.carga-id {
+  font-size: 48pt;
+  font-weight: bold;
+  text-align: center;
+}
+
+.description-container {
+  font-size: 18pt;
+  font-weight: normal;
+  text-align: center;
+  line-height: 30px;
+}
+
+.cell-left {
+  border-bottom-width: 4px;
+  border-bottom-color: lightgray;
+  border-right-width: 4px;
+  border-right-color: lightgray;
+  border-top-width: 4px;
+  border-top-color: lightgray;
+  font-size: 20pt;
+  text-align: right;
+}
+
+.cell-right {
+  border-bottom-width: 4px;
+  border-bottom-color: lightgray;
+  border-top-width: 4px;
+  border-top-color: lightgray;
+  font-size: 20pt;
+  text-align: left;
+}
+

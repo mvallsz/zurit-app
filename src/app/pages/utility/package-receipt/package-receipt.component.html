@@ -1,0 +1,172 @@
+<div class="w-full h-full" fxLayout="column">
+  <div style="text-align: right; padding: 10px">
+    <button
+      class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
+      mat-button
+      (click)="onPrint()"
+    >
+      PRINT
+    </button>
+  </div>
+  <div class="p-gutter container" style="overflow-y: auto">
+    <div @fadeInUp class="card p-16" id="printable">
+      <div fxLayout="row">
+        <div fxFlex="50%">
+          <img class="h-40" src="assets/img/tlcargo/tl_cargo_3.png" />
+          <br />8520 NW 66th St <br />MIAMI, FL 33166. <br />UNITED STATES
+          <br />Tel: (USA) 786-409-7088 <br />Tel: (VE) 212-7204488
+          <div class="mt-12">
+            <h4 class="body-2 text-secondary mt-0">Quien recibe</h4>
+            <h3 class="title m-0">
+              {{ packageTL.customer.name }} -
+              {{ packageTL.customer.tlCargoName }}
+            </h3>
+            <div class="text-secondary">
+              <p class="m-0">Email: {{ packageTL.customer.email }}</p>
+              <p class="m-0">Telefono: {{ packageTL.customer.phoneNumber }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="text-right body-1"
+          fxFlex="50%"
+          fxLayout="column"
+          fxLayoutAlign="start end"
+        >
+          <h1 class="display-2 m-0">
+            {{ "Recibo de recepción".toUpperCase() }}
+          </h1>
+
+          <table class="mt-6">
+            <tbody>
+              <tr>
+                <td class="text-secondary body-2">Nro de recibo</td>
+                <td class="text-left pl-4">{{ packageTL.tlCargoId }}</td>
+              </tr>
+              <tr>
+                <td class="text-secondary body-2">Fecha de recepción</td>
+                <td class="text-right pl-4">
+                  {{ receptionDate.toLocaleDateString("es-VE") }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="mt-12">
+            <h4 class="body-2 text-secondary mt-0">Quien envia</h4>
+            <h3 class="title m-0">{{ packageTL.shipper.name }}</h3>
+            <div class="text-secondary">
+              <p class="m-0 mt-3">
+                Email: <span>{{ packageTL.shipper.email }}</span>
+                <br />
+                Telefono: <span>{{ packageTL.shipper.phoneNumber }}</span>
+              </p>
+            </div>
+            <br />
+            <h4 class="body-2 text-secondary mt-0">Compañia de envio</h4>
+            <h3 class="title m-0">{{ packageTL.carrier.name }}</h3>
+            <div class="text-secondary">
+              <p class="m-0">{{ packageTL.carrier.address }}</p>
+              <p class="m-0">{{ packageTL.carrier.city }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <table class="table w-full mt-24">
+        <thead>
+          <tr>
+            <td class="body-2" style="width: 40%">DESCRIPCION</td>
+            <td class="body-2" style="width: 20%">MEDIDAS DEL PAQUETE</td>
+            <td class="body-2" style="width: 20%">PESO / VLB</td>
+            <td class="body-2 text-right" style="width: 20%">VOLUMEN</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="py-6 border-b">
+              <p style="text-align: left">{{ packageTL.shortDesc }}</p>
+            </td>
+            <td class="py-6 border-b">
+              Measures: H:{{ packageTL.package.height }}xW:{{
+                packageTL.package.width
+              }}L:{{ packageTL.package.length }}
+            </td>
+            <td class="py-6 border-b text-right">
+              {{ packageTL.weight }}
+              <span style="font-size: xx-small">Lbs</span> /
+              {{ packageTL.vlb }}
+              <span style="font-size: xx-small">Vlbs</span>
+            </td>
+            <td class="py-6 border-b text-right">
+              {{ packageTL.volume }}
+              <span style="font-size: xx-small">Pies<sup>3</sup></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="py-6 border-b"></td>
+            <td class="py-6 border-b"></td>
+            <td class="py-6 border-b"></td>
+            <td class="py-6 border-b"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="tlPackageImg">
+        <img
+          src="{{ base_url }}/uploads/packages/{{ packageTL.imageUrl || '-' }}"
+          width="350px"
+          height="350px"
+        />
+      </div>
+      <table class="table w-full mt-24">
+        <thead>
+          <tr>
+            <td class="headline font-medium text-left pt-6">Recibido por</td>
+            <td
+              class="headline font-medium text-left pt-6"
+              style="text-align: right"
+              colspan="3"
+            >
+              TOTALES
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="body-2">{{ packageTL.user.name }}</td>
+            <td class="body-2 text-right">CANTIDAD</td>
+            <td class="body-2 text-right">PESO</td>
+            <td class="body-2 text-right">VOLUMEN</td>
+          </tr>
+          <tr>
+            <td class="headline font-medium pl-12 pt-6"></td>
+            <td class="headline font-medium text-right pt-6">1</td>
+            <td class="headline font-medium text-right pt-6">
+              {{ packageTL.weight }}
+              <span style="font-size: x-small">Libras</span>
+            </td>
+            <td class="headline font-medium text-right pt-6">
+              {{ packageTL.volume }}
+              <span style="font-size: x-small">Pies<sup>3</sup></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="mt-8"
+        fxLayout="column"
+        fxLayoutAlign="start end"
+        style="font-size: 10pt"
+      >
+        Notes: {{ packageTL.infoCarrier }}
+      </div>
+      <div
+        class="mt-8"
+        fxLayout="column"
+        fxLayoutAlign="start end"
+        style="font-size: 10pt"
+      >
+        Powered by www.doghoundtechnology.com
+      </div>
+    </div>
+  </div>
+</div>

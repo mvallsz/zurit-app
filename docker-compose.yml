@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  angular-app:
+    build: .
+    restart: always
+    ports:
+      - "4200:80"
+    networks:
+      - tlcargo-network
+
+networks:
+  tlcargo-network:
+    external: true

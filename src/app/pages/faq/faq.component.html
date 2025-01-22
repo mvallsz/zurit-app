@@ -1,0 +1,177 @@
+<div class="text-center p-6 pb-24 header">
+  <div class="container">
+    <h2 @fadeInUp class="display-2 mt-16 mb-8">Frequently Asked Questions</h2>
+  </div>
+
+  <div class="text-left mt-24 max-w-3xl mx-auto">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            ><b>How to record the reception of a package?</b></mat-panel-title
+          >
+        </mat-expansion-panel-header>
+
+        <p>
+          To register a customer's package in the system, follow the steps we
+          show you in the video below.
+        </p>
+        <br />
+        <div style="display: flex; justify-content: center">
+          <video width="560" height="315" controls>
+            <source src="assets/videos/CREAR_PAQUETE.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <br />
+        <a [routerLink]="['/app/warehouse-list']" class="button-style"
+          >Go to Inventory</a
+        >
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title><b>How do I repack?</b></mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <p>
+          To register a repack process of customer's package in the system,
+          There are 2 ways to do it, follow the steps we show you in the video
+          for the first way.
+        </p>
+        <br />
+        <div style="display: flex; justify-content: center">
+          <video width="560" height="315" controls>
+            <source src="assets/videos/REEMPAQUE.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <br />
+        <a [routerLink]="['/app/warehouse-list']" class="button-style"
+          >Go to Inventory</a
+        >
+        <br />
+        <br />
+        <p>Follow the steps we show you in the video for the second way.</p>
+        <br />
+        <div style="display: flex; justify-content: center">
+          <video width="560" height="315" controls>
+            <source src="assets/videos/REEMPAQUE.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <br />
+        <a [routerLink]="['/app/guides']" class="button-style"
+          >Go to Guide Module</a
+        >
+        <br />
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            ><b>I can modify a repacked package?</b></mat-panel-title
+          >
+        </mat-expansion-panel-header>
+
+        <p>
+          Of course you can edit a repacked package, The repacked packages are
+          treated in the system as normal packages, The differences are mainly
+          visual and associated with the ID of the package, since the repacked
+          packages begin their ID with the RP prefix (RP-XXXXXXXX). I remind you
+          that you can only edit packages with status = "In Warehouse", also
+          remember that once the package is associated with a guide, this cannot
+          be altered.
+        </p>
+        <br />
+        <div fxLayout="column" fxLayoutAlign="space-around center">
+          <h3>Follow the steps below to edit a package:</h3>
+          <br />
+          <ul>
+            <li>- Go to the Warehouse Inventory module</li>
+            <li>
+              - Once the package list is showed, look for the package you want
+              to edit
+            </li>
+            <li>
+              - To access the packet editing module you can do clik in the row
+              of the table associated with the package or from the Action menu,
+              click on edit option.
+            </li>
+            <li>
+              - Once in the package editing module, you can modify the fields
+              you want
+            </li>
+            <li>- After editing just click in the UPDATE PACKAGE button</li>
+          </ul>
+          <br />
+          <a [routerLink]="['/app/warehouse-list']" class="button-style"
+            >Go to Inventory</a
+          >
+        </div>
+        <br />
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            ><b
+              >How to split a package already registered in several ones?</b
+            ></mat-panel-title
+          >
+        </mat-expansion-panel-header>
+
+        <p>
+          To register a repack process of customer's package in the system,
+          follow the steps we show you in the video below.
+        </p>
+        <br />
+        <div style="display: flex; justify-content: center">
+          <video width="560" height="315" controls>
+            <source src="assets/videos/CREAR_PAQUETE.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <br />
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>
+
+<div class="bg-foreground py-16 px-6 footer">
+  <h2 class="display-1 mt-0 mb-4 text-center">Still have questions?</h2>
+  <h3 class="subheading-2 text-hint text-center max-w-lg mx-auto m-0">
+    If you still have questions, do not hesitate to contact us. We are here to
+    help you. We leave our contact data for online support.
+  </h3>
+
+  <div class="mt-16 max-w-3xl mx-auto flex flex-col sm:flex-row gap-6">
+    <div class="text-center p-6 border rounded flex-1">
+      <h3 class="title mb-0 mt-4">
+        <mat-icon>
+          <span class="material-symbols-outlined"> smartphone </span>
+        </mat-icon>
+        +56 (9) 5055 58 77
+      </h3>
+      <h3 class="title mb-0 mt-4">
+        <mat-icon>
+          <span class="material-symbols-outlined"> smartphone </span>
+        </mat-icon>
+        +58 (414) 384 33 05
+      </h3>
+      <h4 class="subheading-2 m-0 text-hint">
+        Call us anytime for a quick solution
+      </h4>
+    </div>
+
+    <div class="text-center p-6 border rounded flex-1">
+      <mat-icon class="text-hint icon-4xl" svgIcon="mat:mail"></mat-icon>
+      <h3 class="title mb-0 mt-4">
+        <a href="mailto:admin@doghoundtech.com">admin@doghoundtech.com</a>
+      </h3>
+      <h4 class="subheading-2 m-0 text-hint">
+        Send us a mail to resolve your issue
+      </h4>
+    </div>
+  </div>
+</div>

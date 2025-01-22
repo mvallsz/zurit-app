@@ -1,0 +1,109 @@
+<form (ngSubmit)="send()" [formGroup]="form" enctype="multipart/form-data">
+  <div fxLayout="row" fxLayoutAlign="start center" mat-dialog-title>
+    <h2 *ngIf="form.get('name').value" class="headline m-0" fxFlex="auto">
+      {{ form.get("name").value }}
+    </h2>
+    <h2 *ngIf="!form.get('name').value" class="headline m-0" fxFlex="auto">
+      Nuevo Usuario
+    </h2>
+
+    <button
+      class="text-secondary"
+      mat-dialog-close
+      mat-icon-button
+      type="button"
+    >
+      <mat-icon [icIcon]="icClose"></mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="-mx-6 text-border"></mat-divider>
+
+  <mat-dialog-content fxLayout="column">
+    <div class="p-6" fxLayout="column" fxLayoutGap="16px">
+      <div fxFlex="auto" fxLayout="column">
+        <div fxLayout="row" fxLayoutAlign="center center" class="p-2">
+          <img
+            [alt]="avatarPreview ? 'Avatar Preview' : 'Default Avatar'"
+            [src]="
+              imageUrl ? imageUrl : 'assets/img/icons/dummy-user.png'
+            "
+            style="max-width: 200px; max-height: 200px; border-radius: 50%"
+          />
+        </div>
+
+        <div fxFlex="grow" fxLayout="row" fxLayoutAlign="center center">
+          <input
+            #avatarInput
+            type="file"
+            id="avatar"
+            (change)="onFileChange($event)"
+            hidden
+          />
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="avatarInput.click()"
+          >
+            Selecciona la foto de perfil
+          </button>
+        </div>
+        <br />
+        <mat-form-field fxFlex="grow">
+          <mat-label>Nombre</mat-label>
+          <input formControlName="name" matInput required />
+        </mat-form-field>
+
+        <mat-form-field fxFlex="grow">
+          <mat-label>Correo Electrónico</mat-label>
+          <input formControlName="email" matInput required />
+        </mat-form-field>
+        <mat-form-field fxFlex="grow">
+          <mat-label>Teléfono</mat-label>
+          <input formControlName="phone" matInput required />
+        </mat-form-field>
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Rol</mat-label>
+            <mat-select
+              [formControl]="rolesCtrl"
+              placeholder="Tipo de Roles"
+              #rolesSelect
+              matInput
+              required
+            >
+              <mat-option *ngFor="let role of roles" [value]="role.role">
+                {{ role.role }} - {{ role.shortDesc }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col"></div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">CANCELAR</button>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate"
+        color="primary"
+        *ngIf="spinner"
+      ></mat-progress-spinner>
+    </div>
+    <div *ngIf="!spinner">
+      <button *ngIf="isCreateMode()" color="primary" mat-button type="submit">
+        CREAR CUENTA DE USUARIO
+      </button>
+      <button *ngIf="isUpdateMode()" color="primary" mat-button type="submit">
+        ACTUALIZAR CUENTA DE USUARIO
+      </button>
+    </div>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,40 @@
+<mat-dialog-content fxLayout="column">
+  <div class="flex flex-col sm:flex-row gap-4">
+    <div class="card flex-auto">
+      <div class="px-6 py-4 border-b flex items-center">
+        <h2 class="headline m-0" fxFlex="auto">Container Association </h2>
+        <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+          <mat-icon [icIcon]="icClose"></mat-icon>
+        </button>
+      </div>
+      <div class="px-6 py-4 flex flex-col" [innerHTML]="this.packageToShow"></div>
+      <div class="px-6 py-4 flex flex-col">
+        <div class="flex flex-col sm:flex-row" style="padding-top: 20px">
+          <mat-form-field class="flex-auto s: ml-1 ">
+            <mat-label>Select a Container from the Ship</mat-label>
+            <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+            <mat-select [formControl]="contaniersCtrl" placeholder="registered containers" >
+              <mat-option *ngFor="let contanier of containers" [value]="contanier.shortDesc" >
+                {{ contanier.shortDesc }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>in which container you are associating the package?</mat-hint>
+          </mat-form-field>
+        </div >
+        <br>
+        <mat-divider></mat-divider>
+        <br>
+        <div class="flex items-center justify-end gap-2">
+          <div fxLayout="row" fxLayoutAlign="center center" >
+            <mat-progress-spinner diameter="40" mode="indeterminate" color="primary" *ngIf="spinner"></mat-progress-spinner>
+          </div>
+          <div *ngIf="!spinner">
+            <button (click)="submit()" [disabled]="false" color="primary" mat-raised-button>
+              SAVE ASSOCIATION
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>

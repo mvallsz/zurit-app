@@ -1,0 +1,224 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:v="urn:schemas-microsoft-com:vml" lang="en">
+
+<head>
+
+  <link rel="stylesheet" type="text/css" hs-webfonts="true"
+    href="https://fonts.googleapis.com/css?family=Lato|Lato:i,b,bi" />
+  <title>Sistema de notificación de TLCARGO
+  </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style type="text/css">
+    a.button {
+      -webkit-appearance: button;
+      -moz-appearance: button;
+      appearance: auto;
+      text-decoration: none;
+      color: initial;
+    }
+
+    h1 {
+      font-size: 56px;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    p {
+      font-weight: 100;
+    }
+
+    td {
+      vertical-align: top;
+    }
+
+    #email {
+      margin: auto;
+      width: 600px;
+      background-color: white;
+    }
+
+    button {
+      font: inherit;
+      background-color: #FF7A59;
+      border: none;
+      padding: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 900;
+      color: white;
+      border-radius: 5px;
+      box-shadow: 3px 3px #d94c53;
+    }
+
+    .subtle-link {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #CBD6E2;
+    }
+  </style>
+</head>
+
+<body bgcolor="#F5F8FA"
+  style="width: 100%; margin: auto 0; padding:0; font-family:Lato, sans-serif; font-size:18px; color:#33475B; word-break:break-word">
+  <! View in Browser Link -->
+
+    <div id="email">
+      <table align="right" role="presentation">
+        <tr>
+          <td><a class="subtle-link" href="#">Ver en el navegador</a>
+          </td>
+        </tr>
+        <tr>
+        </tr>
+      </table>
+      <! Banner -->
+        <table role="presentation" width="100%">
+          <tr>
+            <td bgcolor="#00A4BD" align="center" style="color: white;">
+              <br />
+              <img alt="TLCARGO" src="http://tlcargo.doghoundtech.com/assets/img/tlcargo/tl_cargo_3.png" width="150px"
+                align="middle" />
+              <h2>Tu envio con TLCargo ya está listo para salir!</h2>
+            </td>
+          </tr>
+        </table>
+        <! First Row -->
+          <table role="presentation" border="0" cellpadding="0" cellspacing="10px"
+            style="padding: 30px 30px 30px 20px; text-align: center">
+            <tr>
+              <td>
+                <h2>Hola ${guide.customer.name}!</h2>
+
+                <p>Gracias por utilizar nuestro servicio de envíos.</p>
+
+                <p style="text-align: justify; font-size: small;">Nuestro objetivo es que siempre estés satisfecho, para
+                  poder cumplir con esto, es imprescindible que todos tus envíos estén Pre-Pagados; para tu comodidad
+                  puedes hacer pagos en Dólares, o en Bolívares (Al cambio del día) y enviarnos el comprobante a
+                  PAGOS@TLCARGO.NET el comprobante.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center;">
+
+                <div style="background: #0091af; border-radius: 20px; color: white;padding: 30px;">
+                  <h2 style="font-size: 26pt"> Costo total de la guia: </h2>
+                  <h3 style="font-size: 36pt"> ${ guide.cost.toLocaleString('en', {style: 'currency', currency: 'USD'})
+                    } </h3>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-size: 10pt;">
+                <hr> <b>Fecha estimada de salida:</b> ${ new
+                Date(guide.shipping.departureDate).toLocaleDateString('ve-ES') }
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-size: 10pt;"> <b>Fecha estimada de llegada:</b> ${ new
+                Date(guide.shipping.arrivalDate).toLocaleDateString('ve-ES', {day: 'numeric', month: 'numeric', year:
+                'numeric' }) }
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-size: 10pt;">
+                <hr />
+
+                <p>Para revisar los paquetes asociados a la guía haz click en el siguiente enlace:<br />${ this.urlItem2
+                  }</p>
+
+                <p> Descarga el invoice acá:<br />${ this.urlItem }</p>
+                <hr>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">
+
+              <p>
+                <h1 style="text-align: center; font-size: 12pt;">Te recordamos que estas son las únicas cuentas
+                  autorizadas de TLCARGO</h1>
+                <h2 style="font-size: 10pt;">Para depósitos en Bolívares</h2>
+                <ul style="font-size: 8pt;">
+                  <li><b>Banco:</b> Banca Amiga</li>
+                  <li><b>Numero de Cuenta:</b> 0172 0110 7111 0844 6517</li>
+                  <li><b>Titular:</b> Francy Wadskier</li>
+                  <li><b>C.I.:</b> V-18857206</li>
+                </ul>
+                <h2 style="font-size: 10pt;">Para Pago Movil en Bolívares</h2>
+                <ul style="font-size: 8pt;">
+                  <li><b>Banco:</b> Banca Amiga (0172)</li>
+                  <li><b>Telefono:</b> 0424-1521758</li>
+                  <li><b>C.I.:</b> V-18857206</li>
+                </ul>
+
+                <span style="text-align: center; font-size: 10pt; color: #d94c53"> <b>Nota: Si no has realizado el pago
+                    al momento de recibir este correo electrónico, por favor comunícate con nuestro servicio de atención
+                    al cliente para verificar la tasa de cambio. </b>
+                </span>
+                <hr>
+                <h2 style="font-size: 10pt;">Para depósitos en Dólares</h2>
+                <ul style="font-size: 8pt;">
+                  <li><b>Banco:</b> CITIBANK</li>
+                  <li><b>Cuenta:</b> Cheque</li>
+                  <li><b>Numero de Cuenta:</b> 9149573200</li>
+                  <li><b>Titular:</b> TL CARGO</li>
+                  <li><b>ABA:</b> 266086554</li>
+                  <li><b>SWIFT:</b> CITIUS33MIA</li>
+                </ul>
+                <h2 style="font-size: 10pt;">Para pago en Dólares mediante ZELLE</h2>
+                <ul style="font-size: 8pt;">
+                  <li><b>Banco:</b> CITIBANK</li>
+                  <li><b>ZELLE:</b> ZELLE@TLCARGO.NET</li>
+                  <li><b>Nombre:</b> (Teleflex Group Inc o Alvaro Abreu)</li>
+                  <li><b>Por favor colocar numero de Invoice en memo</b></li>
+                </ul>
+                <h2 style="font-size: 10pt;">Para pago en Dólares mediante PAYPAL</h2>
+                <ul style="font-size: 8pt;">
+                  <li><b>Email:</b> paypal@TLCargo.net</li>
+                  <li><b>Verificar si su cuenta cobra un Fee por pagar debe agregarlo para que llegue el pago
+                      completo</b></li>
+                </ul>
+
+                <span style="text-align: center; font-size: 10pt; color: #d94c53"> <b> Nota: Los pagos recibidos a
+                    través de transferencias (Wire) de otros bancos americanos tendrán un cargo extra de $15.00, esto no
+                    aplica para Zelle. </b> 
+                </span>
+                <hr>
+              </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center;"> ¡Gracias por preferirnos! <a
+                  href="https://www.tlcargo.net">www.tlcargo.net</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">
+                <ul style="font-size: 6pt;">
+                  <li><b>TL CARGO</b> 8520 NW 66 ST Miami, FL 33166</li>
+                  <li><b>Web:</b><a href="https://www.tlcargo.net">www.tlcargo.net</a> </li>
+                  <li><b>Telefono:</b> +1-786-409-708</li>
+                  <li><b>Servicio al Cliente Directo Venezuela:</b> 0212-720 4488</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+          <table role="presentation" bgcolor="#F5F8FA" width="100%">
+            <tr>
+              <td align="left" style="padding: 30px 30px;">
+
+                <p style="color:#99ACC2; text-align: center"> Made with &hearts; at DogHoundTechnology </p>
+              </td>
+            </tr>
+          </table>
+    </div>
+</body>
+
+</html>

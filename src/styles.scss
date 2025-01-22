@@ -1,0 +1,29 @@
+@import "~simplebar/dist/simplebar.css";
+@import "~highlight.js/styles/androidstudio.css";
+// Vex Core
+@import "./@vex/styles/core";
+
+@media print {
+  body * {
+    visibility:hidden;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, arial, sans-serif;
+  }
+  #printable, #printable * {
+    visibility:visible;
+  }
+  #printable {
+    position:absolute;
+    left:0;
+    top:0;
+  }
+}
+:root {
+  --color-primary: 76, 158, 213;
+  --color-primary-contrast: 255, 255, 255;
+
+  // --color-accent: yellow;
+  // --color-accent-contrast: black;
+
+  // --color-warn: yellow;
+  // --color-warn-contrast: black;
+}

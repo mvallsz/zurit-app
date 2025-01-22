@@ -1,0 +1,96 @@
+<form (ngSubmit)="save()" [formGroup]="form">
+  <div fxLayout="row" fxLayoutAlign="start center" mat-dialog-title>
+    <h2 *ngIf="form.get('type').value" class="headline m-0" fxFlex="auto">
+      Package Type: {{ form.get("type").value
+      }}<span *ngIf="form.get('height').value"
+        >_{{ form.get("height").value }}</span
+      >
+      <span *ngIf="form.get('width').value"
+        >x{{ form.get("width").value }}</span
+      >
+      <span *ngIf="form.get('length').value"
+        >x{{ form.get("length").value }}</span
+      >
+    </h2>
+
+    <h2 *ngIf="!form.get('type').value" class="headline m-0" fxFlex="auto">
+      New Package Type
+    </h2>
+
+    <button
+      class="text-secondary"
+      mat-dialog-close
+      mat-icon-button
+      type="button"
+    >
+      <mat-icon [icIcon]="icClose"></mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="-mx-6 text-border"></mat-divider>
+
+  <mat-dialog-content>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto w-64">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type" matInput>
+          <mat-option value="">Select package type</mat-option>
+          <mat-option value="BAG">BAG</mat-option>
+          <mat-option value="BOX">BOX</mat-option>
+          <mat-option value="CRATE">CRATE</mat-option>
+          <mat-option value="PALLET">PALLET</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto xs: ml-1 pr-2 w-24">
+        <mat-label>Height</mat-label>
+        <input formControlName="height" matInput />
+        <mat-icon [icIcon]="icRule" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start">Enter the measurements in inches</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto xs: ml-1 pr-2 w-24">
+        <mat-label>Width</mat-label>
+        <input formControlName="width" matInput />
+        <mat-icon [icIcon]="icRule" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start">Enter the measurements in inches</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field class="flex-auto xs: ml-1 pr-2 w-24">
+        <mat-label>Length</mat-label>
+        <input formControlName="length" matInput />
+        <mat-icon [icIcon]="icRule" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start">Enter the measurements in inches</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Notes</mat-label>
+        <textarea formControlName="notes" matInput></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">CANCEL</button>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate"
+        color="primary"
+        *ngIf="spinner"
+      ></mat-progress-spinner>
+    </div>
+    <div *ngIf="!spinner">
+      <button *ngIf="isCreateMode()" color="primary" mat-button type="submit">
+        CREATE PACKAGE TYPE
+      </button>
+      <button *ngIf="isUpdateMode()" color="primary" mat-button type="submit">
+        UPDATE PACKAGE TYPE
+      </button>
+    </div>
+  </mat-dialog-actions>
+</form>

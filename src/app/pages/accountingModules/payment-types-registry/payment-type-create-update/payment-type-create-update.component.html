@@ -1,0 +1,88 @@
+<form (ngSubmit)="save()" [formGroup]="form">
+  <div fxLayout="row" fxLayoutAlign="start center" mat-dialog-title>
+
+    <h2 *ngIf="form.get('name').value"
+        class="headline m-0"
+        fxFlex="auto">{{ form.get('name').value }}
+    </h2>
+
+    <h2 *ngIf="!form.get('name').value"
+        class="headline m-0"
+        fxFlex="auto">New Payment Type</h2>
+
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+      <mat-icon [icIcon]="icClose"></mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="-mx-6 text-border"></mat-divider>
+
+  <mat-dialog-content fxLayout="column">
+
+    <div class="flex flex-col sm:flex-row">
+
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-label>Payment Name</mat-label>
+        <input cdkFocusInitial formControlName="name" matInput>
+        <mat-icon [icIcon]="icBox" class="mr-3" matPrefix></mat-icon>
+        <mat-hint align="start">Set a short description name for the payment type.</mat-hint>
+      </mat-form-field>
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row">
+
+      <mat-form-field fxFlex="auto">
+        <mat-label>Transaction Type</mat-label>
+        <mat-select formControlName="type" matInput >
+          <mat-option  value ="CREDIT CARD">
+            <span>CREDIT CARD</span>
+          </mat-option>
+          <mat-option value ="DIGITAL TRANSFER">
+            <span>DIGITAL TRANSFER</span>
+          </mat-option>
+          <mat-option value ="MANUAL DEPOSIT">
+            <span>MANUAL DEPOSIT</span>
+          </mat-option>
+          <mat-option value ="CASH">
+            <span>CASH</span>
+          </mat-option>
+        </mat-select>
+        <mat-icon [icIcon]="icMoney" class="mr-3" matPrefix></mat-icon>
+        <mat-hint>Type of transaction asociate with the Payment Type</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="flex flex-col sm:flex-row">
+
+      <mat-form-field fxFlex="auto">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status" matInput >
+          <mat-option  value ="1">
+            <span>ON</span>
+          </mat-option>
+          <mat-option value ="0">
+            <span>OFF</span>
+          </mat-option>
+        </mat-select>
+        <mat-icon [icIcon]="icOfflineBolt" class="mr-3" matPrefix></mat-icon>
+        <mat-hint>This Payment Type is available?</mat-hint>
+      </mat-form-field>
+
+    </div>
+
+    <mat-form-field class="flex-auto">
+      <mat-label>Relevant Information</mat-label>
+      <textarea formControlName="notes" matInput></textarea>
+      <mat-hint>Notes about the payment type, example: Account number for Deposit Type of payment</mat-hint>
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">CANCEL</button>
+    <button *ngIf="isCreateMode()" color="primary" mat-button type="submit">CREATE PAYMENT TYPE</button>
+    <button *ngIf="isUpdateMode()" color="primary" mat-button type="submit">UPDATE PAYMENT TYPE</button>
+  </mat-dialog-actions>
+</form>
+

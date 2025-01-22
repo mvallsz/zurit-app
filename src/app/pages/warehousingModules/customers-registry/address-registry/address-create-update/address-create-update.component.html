@@ -1,0 +1,142 @@
+  <div fxLayout="row" fxLayoutAlign="start center" mat-dialog-title>
+
+    <h2 *ngIf="createAddressForm.get('address').value && createAddressForm.get('address2').value"
+        class="headline m-0"
+        fxFlex="auto">{{ createAddressForm.get('address').value }} {{ createAddressForm.get('address2').value }} </h2>
+    <h2 *ngIf="!createAddressForm.get('address').value"
+        class="headline m-0"
+        fxFlex="auto">New Address</h2>
+
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+      <mat-icon [icIcon]="icClose"></mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="-mx-6 text-border"></mat-divider>
+  <mat-dialog-content fxLayout="column">
+    <div class="flex flex-col sm:flex-row">
+        <mat-form-field class="mt-6 flex-auto">
+          <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+          <mat-select [formControl]="countryCtrl" placeholder="Country" #countrySelect (selectionChange)="findStates()" [(ngModel)]="this.selectedCountry" required>
+            <mat-option>
+              <ngx-mat-select-search placeholderLabel="Search" noEntriesFoundLabel="'Not Country Found'" [formControl]="countryFilterCtrl">
+                <mat-icon [icIcon]="icClose" [inline]="true" size="24px" ngxMatSelectSearchClear></mat-icon>
+              </ngx-mat-select-search>
+            </mat-option>
+
+            <mat-option *ngFor="let country of filteredCountries | async" [value]="country" >
+              {{ country.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+&nbsp;&nbsp;
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+          <mat-select [formControl]="stateCtrl" placeholder="State" #stateSelect (selectionChange)="findCities()" [(ngModel)]="this.selectedState" required>
+            <mat-option>
+              <ngx-mat-select-search placeholderLabel="Search" noEntriesFoundLabel="'No state found'" [formControl]="stateFilterCtrl">
+                <mat-icon [icIcon]="icClose" [inline]="true" size="24px" ngxMatSelectSearchClear></mat-icon>
+              </ngx-mat-select-search>
+            </mat-option>
+
+            <mat-option *ngFor="let state of filteredStates | async" [value]="state">
+              {{ state.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row">
+
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-label>City</mat-label>
+        <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+          <mat-select [formControl]="cityCtrl" placeholder="City" #citySelect [(ngModel)]="this.selectedCity"  required>
+            <mat-option>
+              <ngx-mat-select-search placeholderLabel="Search" noEntriesFoundLabel="'No city found'" [formControl]="cityFilterCtrl">
+                <mat-icon [icIcon]="icClose" [inline]="true" size="24px" ngxMatSelectSearchClear></mat-icon>
+              </ngx-mat-select-search>
+            </mat-option>
+
+            <mat-option *ngFor="let city of filteredCities | async" [value]="city">
+              {{ city.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+    </div>
+  </mat-dialog-content>
+<form (ngSubmit)="save()" [formGroup]="createAddressForm">
+  <mat-dialog-content fxLayout="column">
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="mt-6 flex-auto">
+        <mat-label>Address Line</mat-label>
+        <input  formControlName="address" matInput>
+        <mat-icon [icIcon]="icMyLocation" class="mr-3" matPrefix></mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Address Complement</mat-label>
+        <input formControlName="address2" matInput>
+        <mat-icon [icIcon]="icEditLocation" class="mr-3" matPrefix></mat-icon>
+      </mat-form-field>
+
+    </div>
+    <div class="flex flex-col sm:flex-row">
+      <mat-form-field class="flex-auto">
+        <mat-label>Zip Code</mat-label>
+        <input formControlName="zipcode" matInput>
+        <mat-icon [icIcon]="icEditLocation" class="mr-3" matPrefix></mat-icon>
+      </mat-form-field>
+
+    </div>
+    <mat-form-field class="flex-auto">
+      <mat-label>Status</mat-label>
+     <mat-select formControlName="status" matInput>
+        <mat-option value="1">Active</mat-option>
+        <mat-option value="2">Inactive</mat-option>
+        <mat-option value="3">Blocked</mat-option>
+      </mat-select>
+      <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+    </mat-form-field>
+
+    <mat-form-field class="flex-auto">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type" matInput>
+        <mat-option value="0">Main Address</mat-option>
+        <mat-option value="1">Shipping Address</mat-option>
+        <mat-option value="2">Billing Address</mat-option>
+        <mat-option value="3">Other Address</mat-option>
+      </mat-select>
+      <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">CANCEL</button>
+    <button *ngIf="isCreateMode()" color="primary" mat-button type="submit">CREATE ADDRESS</button>
+    <button *ngIf="isUpdateMode()" color="primary" mat-button type="submit">UPDATE ADDRESS</button>
+  </mat-dialog-actions>
+</form>
+
+<mat-menu #settingsMenu="matMenu" xPosition="before" yPosition="below">
+  <button mat-menu-item>
+    <mat-icon [icIcon]="icPrint"></mat-icon>
+    <span>Print</span>
+  </button>
+
+  <button mat-menu-item>
+    <mat-icon [icIcon]="icDownload"></mat-icon>
+    <span>Export</span>
+  </button>
+
+  <button mat-menu-item>
+    <mat-icon [icIcon]="icDelete"></mat-icon>
+    <span>Delete</span>
+  </button>
+</mat-menu>

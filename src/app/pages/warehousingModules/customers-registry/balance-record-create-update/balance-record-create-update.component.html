@@ -1,0 +1,68 @@
+<div fxLayout="row" fxLayoutAlign="start center" mat-dialog-title>
+    <h2 class="headline m-0" fxFlex="auto">Add Credit to Customer Account</h2>
+    <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
+      <mat-icon [icIcon]="icClose"></mat-icon>
+    </button>
+</div>
+<mat-divider class="-mx-6 text-border"></mat-divider>
+<mat-dialog-content fxLayout="column">
+  <div class="flex flex-col sm:flex-row">
+    <mat-form-field class="mt-6 flex-auto">
+      <mat-label>Customer Name</mat-label>
+      <input type="text" [formControl]="nameCtrl" matInput readonly/>
+      <mat-icon [icIcon]="icPkg" class="mr-3" matPrefix></mat-icon>
+    </mat-form-field>
+  </div>
+  <div class="flex flex-col sm:flex-row">
+    <mat-form-field class="mt-6 flex-auto">
+      <mat-label>Current Credit Amount</mat-label>
+      <input cdkFocusInitial [formControl]="balanceCtrl" readonly matInput>
+      <mat-icon [icIcon]="icMoney" class="mr-3" matPrefix></mat-icon>
+    </mat-form-field>
+  </div>
+  <div class="flex flex-col sm:flex-row" style="padding-top: 20px">
+    <mat-form-field class="flex-auto s: ml-1 ">
+      <mat-label>Select a Payment Type</mat-label>
+      <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+      <mat-select [formControl]="paymentTypesCtrl" placeholder="Payment Types" #paymentTypesSelect required >
+        <mat-option>
+          <ngx-mat-select-search placeholderLabel="Search" noEntriesFoundLabel="'No Payment Types Found'" [formControl]="paymentTypesFilterCtrl">
+            <mat-icon [icIcon]="icClose" [inline]="true" size="24px" ngxMatSelectSearchClear></mat-icon>
+          </ngx-mat-select-search>
+        </mat-option>
+
+        <mat-option *ngFor="let paymentType of filteredPaymentTypes | async" [value]="paymentType._id" >
+          {{ paymentType.type }} - {{ paymentType.name }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Wich type of Payment are you receiving?</mat-hint>
+    </mat-form-field>
+  </div >
+  <div class="flex flex-col sm:flex-row">
+    <mat-form-field class="mt-6 flex-auto">
+      <mat-label>Amount to add</mat-label>
+      <input cdkFocusInitial [formControl]="paidAmountCtrl" (keypress)="keyPressNumbersWithDecimalFC($event, this.paidAmountCtrl)" matInput>
+      <mat-icon [icIcon]="icCard" class="mr-3" matPrefix></mat-icon>
+    </mat-form-field>
+  </div>
+  <div class="flex flex-col sm:flex-row">
+    <mat-form-field class="mt-6 flex-auto">
+      <mat-label>Notes</mat-label>
+      <input type="text" [formControl]="notesCtrl" matInput />
+      <mat-icon [icIcon]="icNote" class="mr-3" matPrefix></mat-icon>
+    </mat-form-field>
+  </div>
+  <br>
+  <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+    <button color="primary" mat-button type="button" (click)="reset()">RESET</button>
+    <div fxLayout="row" fxLayoutAlign="center center" >
+      <mat-progress-spinner diameter="40" mode="indeterminate" color="primary" *ngIf="spinner"></mat-progress-spinner>
+    </div>
+    <div *ngIf="!spinner">
+      <button (click)="submit()" [disabled]="false" color="primary" mat-raised-button>
+        ADD CREDIT
+      </button>
+    </div>
+
+    </div>
+</mat-dialog-content>

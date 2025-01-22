@@ -1,0 +1,61 @@
+<div style="text-align: right; padding: 10px">
+  <button
+    class="mat-focus-indicator mat-raised-button mat-button-base mat-primary"
+    mat-button
+    (click)="onPrint()"
+  >
+    PRINT
+  </button>
+</div>
+<div class="card overflow-hidden" fxLayout="column" fxLayout.gt-sm="row">
+  <div class="p-6 bg-app-bar" id="printable">
+    <mat-card class="max-w-full" style="width: 600px">
+      <mat-card-header fxLayout="row" fxLayoutAlign="space-around center">
+        <mat-card-subtitle fxLayout="row" fxLayoutAlign="space-around center">
+          <img
+            src="assets/img/tlcargo/logo_BW.png"
+            width="300px"
+            height="200px"
+          />
+        </mat-card-subtitle>
+        <mat-card-title class="sub-title">
+          <mat-divider class="mat-divider"></mat-divider>
+          {{ this.defaults.customer.tlCargoName }}<br />
+          {{ this.defaults.customer.name.toUpperCase() }}
+          <mat-divider></mat-divider>
+        </mat-card-title>
+      </mat-card-header>
+      <div style="display: flex; justify-content: center">
+        <qr-code [value]="urlItem" size="300"></qr-code>
+      </div>
+      <mat-card-content>
+        <br />
+        <mat-divider class="mat-divider"></mat-divider>
+        <div class="carga-id">
+          {{ this.defaults.tlCargoId }}
+        </div>
+        <table style="width: 100%">
+          <tr>
+            <td class="cell-left">PIECE&nbsp;</td>
+            <td class="cell-right">&nbsp;TOTAL</td>
+          </tr>
+          <tr>
+            <td class="cell-sub-left">1&nbsp;&nbsp;</td>
+            <td class="cell-sub-right">&nbsp;&nbsp;1</td>
+          </tr>
+        </table>
+        <br />
+        <p class="description-container">
+          <b>Description</b>:<br />
+          {{ this.defaults.shortDesc }}<br />
+          <b>Dimensions:</b> {{ this.defaults.package.height }} x
+          {{ this.defaults.package.width }} x {{ this.defaults.package.length
+          }}<br />
+          <b>Weight:</b> {{ this.defaults.weight }} lbs. <b>Vlb:</b>
+          {{ this.defaults.vlb }} vlb. <b>Volume:</b>
+          {{ this.defaults.volume }} ft <sup>3</sup>
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
