@@ -19,8 +19,6 @@ import { ContainerModule } from "../../directives/container/container.module";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { TlCargoIdPipe } from "src/app/pipes/tl-cargo-id/tl-cargo-id.pipe";
-import { TlCargoIdModule } from "src/app/pipes/tl-cargo-id/tl-cargo-id.module";
 
 @NgModule({
   declarations: [ToolbarComponent],
@@ -43,9 +41,7 @@ import { TlCargoIdModule } from "src/app/pipes/tl-cargo-id/tl-cargo-id.module";
     MatDialogModule,
     MatSnackBarModule,
     MatAutocompleteModule,
-    TlCargoIdModule,
   ],
-  providers: [TlCargoIdPipe],
   exports: [ToolbarComponent],
 })
-export class ToolbarModule {}
+export class ToolbarModule { }

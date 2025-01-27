@@ -12,26 +12,26 @@ const routes: VexRoutes = [
   {
     path: "",
     loadChildren: () =>
-      import("./pages/auth/login/login.module").then((m) => m.LoginModule),
+      import("./pages/auth-module/sub-modules/login/login.module").then((m) => m.LoginModule),
   },
   {
     path: "forgot-password",
     loadChildren: () =>
-      import("./pages/auth/forgot-password/forgot-password.module").then(
+      import("./pages/auth-module/sub-modules/forgot-password/forgot-password.module").then(
         (m) => m.ForgotPasswordModule
       ),
   },
   {
     path: "active-user/:token",
     loadChildren: () =>
-      import("./pages/auth/validate-user/validate-user.module").then(
+      import("./pages/auth-module/sub-modules/validate-user/validate-user.module").then(
         (m) => m.ValidateUserModule
       ),
   },
   {
     path: "reset-password/:token",
     loadChildren: () =>
-      import("./pages/auth/reset-password/reset-password.module").then(
+      import("./pages/auth-module/sub-modules/reset-password/reset-password.module").then(
         (m) => m.ResetPasswordModule
       ),
   },
@@ -45,8 +45,8 @@ const routes: VexRoutes = [
         // tslint:disable-next-line:max-line-length
         loadChildren: () =>
           import(
-            "./pages/dashboards/dashboard-analytics/dashboard-analytics.module"
-          ).then((m) => m.DashboardAnalyticsModule),
+            "./pages/admin-module/sub-modules/users/users.module"
+          ).then((m) => m.UsersRegistryModule),
       },
       {
         path: "dashboards/analytics",
@@ -59,7 +59,7 @@ const routes: VexRoutes = [
         // tslint:disable-next-line:max-line-length
         loadChildren: () =>
           import(
-            "./pages/adminModules/users-registry/users-registry.module"
+            "./pages/admin-module/sub-modules/users/users.module"
           ).then((m) => m.UsersRegistryModule),
       },
       {
@@ -76,45 +76,45 @@ const routes: VexRoutes = [
             (m) => m.FaqModule
           ),
       },
-      {
-        path: "proveedores",
-        canActivate: [RoleGuard],
-        data: { expectedRoles: permissions.filter(x => x.path === 'proveedores')[0].expectedRoles },
-        loadChildren: () =>
-          import(
-            "./pages/adminModules/shipper-registry/shipper-registry.module"
-          ).then((m) => m.ShipperRegistryModule),
-      },
-      {
-        path: "tarifas",
-        canActivate: [RoleGuard],
-        data: { expectedRoles: permissions.filter(x => x.path === 'tarifas')[0].expectedRoles },
-        // tslint:disable-next-line:max-line-length
-        loadChildren: () =>
-          import(
-            "./pages/adminModules/rate-registry/rate-registry.module"
-          ).then((m) => m.RateRegistryModule),
-      },
-      {
-        path: "clientes",
-        canActivate: [RoleGuard],
-        data: { expectedRoles: permissions.filter(x => x.path === 'clientes')[0].expectedRoles },
-        // tslint:disable-next-line:max-line-length
-        loadChildren: () =>
-          import(
-            "./pages/warehousingModules/customers-registry/customers-registry.module"
-          ).then((m) => m.CustomersRegistryModule),
-      },
-      {
-        path: "proyectos",
-        canActivate: [RoleGuard],
-        data: { expectedRoles: permissions.filter(x => x.path === 'proyectos')[0].expectedRoles },
-        // tslint:disable-next-line:max-line-length
-        loadChildren: () =>
-          import(
-            "./pages/warehousingModules/customers-registry/customers-registry.module"
-          ).then((m) => m.CustomersRegistryModule),
-      },
+      // {
+      //   path: "proveedores",
+      //   canActivate: [RoleGuard],
+      //   data: { expectedRoles: permissions.filter(x => x.path === 'proveedores')[0].expectedRoles },
+      //   loadChildren: () =>
+      //     import(
+      //       "./pages/adminModules/shipper-registry/shipper-registry.module"
+      //     ).then((m) => m.ShipperRegistryModule),
+      // },
+      // {
+      //   path: "tarifas",
+      //   canActivate: [RoleGuard],
+      //   data: { expectedRoles: permissions.filter(x => x.path === 'tarifas')[0].expectedRoles },
+      //   // tslint:disable-next-line:max-line-length
+      //   loadChildren: () =>
+      //     import(
+      //       "./pages/adminModules/rate-registry/rate-registry.module"
+      //     ).then((m) => m.RateRegistryModule),
+      // },
+      // {
+      //   path: "clientes",
+      //   canActivate: [RoleGuard],
+      //   data: { expectedRoles: permissions.filter(x => x.path === 'clientes')[0].expectedRoles },
+      //   // tslint:disable-next-line:max-line-length
+      //   loadChildren: () =>
+      //     import(
+      //       "./pages/warehousingModules/customers-registry/customers-registry.module"
+      //     ).then((m) => m.CustomersRegistryModule),
+      // },
+      // {
+      //   path: "proyectos",
+      //   canActivate: [RoleGuard],
+      //   data: { expectedRoles: permissions.filter(x => x.path === 'proyectos')[0].expectedRoles },
+      //   // tslint:disable-next-line:max-line-length
+      //   loadChildren: () =>
+      //     import(
+      //       "./pages/warehousingModules/customers-registry/customers-registry.module"
+      //     ).then((m) => m.CustomersRegistryModule),
+      // },
       {
         path: "items",
         canActivate: [RoleGuard],
@@ -122,8 +122,18 @@ const routes: VexRoutes = [
         // tslint:disable-next-line:max-line-length
         loadChildren: () =>
           import(
-            "./pages/warehousingModules/warehouse-inventory/warehouse-inventory.module"
-          ).then((m) => m.WarehouseInventoryModule),
+            "./pages/inventory-module/sub-modules/items/items.module"
+          ).then((m) => m.ItemsModule),
+      },
+      {
+        path: "items/registro",
+        canActivate: [RoleGuard],
+        data: { expectedRoles: permissions.filter(x => x.path === 'items/registro')[0].expectedRoles },
+        // tslint:disable-next-line:max-line-length
+        loadChildren: () =>
+          import(
+            "./pages/inventory-module/sub-modules/items/items-create/items-create.module"
+          ).then((m) => m.ItemsCreateModule),
       },
       {
         path: "items/registro/:id",
@@ -132,39 +142,39 @@ const routes: VexRoutes = [
         // tslint:disable-next-line:max-line-length
         loadChildren: () =>
           import(
-            "./pages/warehousingModules/warehouse-inventory/registry-package-create-update-b/registry-package-create-update-b.module"
-          ).then((m) => m.RegistryPackageCreateUpdateBModule),
+            "./pages/inventory-module/sub-modules/items/items-update/items-update.module"
+          ).then((m) => m.ItemsUpdateModule),
       },
-      {
-        path: "documentos",
-        canActivate: [RoleGuard],
-        data: { expectedRoles: permissions.filter(x => x.path === 'documentos')[0].expectedRoles },
-        // tslint:disable-next-line:max-line-length
-        loadChildren: () =>
-          import(
-            "./pages/outgoingShippingModules/shipping-guides/shipping-guides.module"
-          ).then((m) => m.ShippingGuidesModule),
-      },
-      {
-        path: "documentos/registro/:documentoId",
-        canActivate: [RoleGuard],
-        data: { expectedRoles: permissions.filter(x => x.path === 'documentos/registro')[0].expectedRoles },
-        // tslint:disable-next-line:max-line-length
-        loadChildren: () =>
-          import(
-            "./pages/outgoingShippingModules/shipping-guides/guides-create-update-b/guides-create-update-b.module"
-          ).then((m) => m.GuidesCreateUpdateBModule),
-      },
-      {
-        path: "contaduria",
-        canActivate: [RoleGuard],
-        data: { expectedRoles: permissions.filter(x => x.path === 'contaduria')[0].expectedRoles },
-        // tslint:disable-next-line:max-line-length
-        loadChildren: () =>
-          import(
-            "./pages/accountingModules/payment-types-registry/payment-types-registry.module"
-          ).then((m) => m.PaymentTypesRegistryModule),
-      },
+      // {
+      //   path: "documentos",
+      //   canActivate: [RoleGuard],
+      //   data: { expectedRoles: permissions.filter(x => x.path === 'documentos')[0].expectedRoles },
+      //   // tslint:disable-next-line:max-line-length
+      //   loadChildren: () =>
+      //     import(
+      //       "./pages/outgoingShippingModules/shipping-guides/shipping-guides.module"
+      //     ).then((m) => m.ShippingGuidesModule),
+      // },
+      // {
+      //   path: "documentos/registro/:documentoId",
+      //   canActivate: [RoleGuard],
+      //   data: { expectedRoles: permissions.filter(x => x.path === 'documentos/registro')[0].expectedRoles },
+      //   // tslint:disable-next-line:max-line-length
+      //   loadChildren: () =>
+      //     import(
+      //       "./pages/outgoingShippingModules/shipping-guides/guides-create-update-b/guides-create-update-b.module"
+      //     ).then((m) => m.GuidesCreateUpdateBModule),
+      // },
+      // {
+      //   path: "contaduria",
+      //   canActivate: [RoleGuard],
+      //   data: { expectedRoles: permissions.filter(x => x.path === 'contaduria')[0].expectedRoles },
+      //   // tslint:disable-next-line:max-line-length
+      //   loadChildren: () =>
+      //     import(
+      //       "./pages/accountingModules/payment-types-registry/payment-types-registry.module"
+      //     ).then((m) => m.PaymentTypesRegistryModule),
+      // },
       {
         path: "**",
         loadChildren: () =>
