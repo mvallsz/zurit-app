@@ -6,6 +6,7 @@ import { QuicklinkModule, QuicklinkStrategy } from "ngx-quicklink";
 import { AuthGuard } from "./guards/auth.guard";
 import { RoleGuard } from "./guards/role.guard";
 import { environment } from "../environments/environment";
+import { UnsavedChangesGuard } from "./guards/unsaved-changes";
 
 const permissions = environment.permissions;
 const routes: VexRoutes = [

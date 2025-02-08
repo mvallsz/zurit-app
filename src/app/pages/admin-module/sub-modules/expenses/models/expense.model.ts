@@ -6,6 +6,7 @@ export interface IExpense {
   justificacion: string;
   descripcion: string;
   iva?: number;
+  igtf?: number;
   monto: number;
   moneda: number; // 1: USD, 2: EUR, 3: BTC, 4: ETH, 5: VES
   factura?: string;
@@ -21,6 +22,7 @@ export class Expense implements IExpense {
   justificacion: string;
   descripcion: string;
   iva?: number;
+  igtf?: number;
   monto: number;
   moneda: number;
   factura?: string;
@@ -35,6 +37,7 @@ export class Expense implements IExpense {
     this.justificacion = expense.justificacion;
     this.descripcion = expense.descripcion;
     this.iva = expense.iva || 0;
+    this.igtf = expense.igtf || 0;
     this.monto = expense.monto;
     this.moneda = expense.moneda;
     this.factura = expense.factura;
