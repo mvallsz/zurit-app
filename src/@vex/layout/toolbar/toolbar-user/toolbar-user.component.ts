@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { PopoverService } from '../../../components/popover/popover.service';
 import { ToolbarUserDropdownComponent } from './toolbar-user-dropdown/toolbar-user-dropdown.component';
 import icPerson from '@iconify/icons-ic/twotone-person';
-import { UsuarioService } from '../../../../app/services/usuario.service';
+import { UsuarioService } from '../../../../app/services/modules/admin-module/user.service';
 
 @Component({
   selector: 'vex-toolbar-user',

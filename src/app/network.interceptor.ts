@@ -4,13 +4,12 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HttpResponse,
   HttpErrorResponse
 } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { LoadingService } from './services/loading.service';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 @Injectable()

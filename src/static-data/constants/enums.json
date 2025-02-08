@@ -1,0 +1,111 @@
+{
+  "monedas": {
+    "1": "USD",
+    "2": "EUR",
+    "3": "BTC",
+    "4": "ETH",
+    "5": "VES"
+  },
+  "categorias": {
+    "1": "medicamento",
+    "2": "insumo",
+    "3": "equipo médico",
+    "4": "servicio",
+    "5": "otros"
+  },
+  "unidades": {
+    "1": "ml",
+    "2": "l",
+    "3": "mg",
+    "4": "g",
+    "5": "kg",
+    "6": "cm",
+    "7": "m",
+    "8": "und",
+    "9": "paquete",
+    "10": "caja",
+    "11": "bulto"
+  },
+  "item_estados": {
+    "1": "activo",
+    "2": "inactivo",
+    "3": "sin stock",
+    "4": "alarmado"
+  },
+  "categorias_empresa": {
+    "1": "proveedor",
+    "2": "cliente",
+    "3": "distribuidor",
+    "4": "transportista",
+    "5": "almacén",
+    "6": "farmacia",
+    "7": "laboratorio",
+    "8": "clínica",
+    "9": "hospital",
+    "10": "centro de salud",
+    "11": "centro de diagnóstico",
+    "12": "centro de rehabilitación",
+    "13": "centro de investigación",
+    "14": "centro de formación",
+    "15": "centro de atención",
+    "16": "centro de emergencia",
+    "17": "centro de especialidades",
+    "18": "centro de terapia",
+    "19": "centro de prevención",
+    "20": "centro de vacunación",
+    "21": "centro de estética",
+    "22": "centro de belleza",
+    "23": "centro de bienestar",
+    "24": "centro de nutrición",
+    "25": "centro de deporte",
+    "26": "centro de recreación",
+    "27": "centro de turismo",
+    "28": "centro de ocio",
+    "29": "centro de entretenimiento",
+    "30": "centro de cultura",
+    "31": "centro de arte",
+    "32": "centro de música",
+    "33": "centro de danza",
+    "34": "centro de teatro",
+    "35": "centro de cine",
+    "36": "centro de televisión",
+    "37": "centro de radio",
+    "38": "centro de prensa",
+    "39": "centro de publicidad",
+    "40": "centro de marketing",
+    "41": "centro de ventas",
+    "42": "centro de compras",
+    "43": "centro de distribución",
+    "44": "centro de logística",
+    "45": "centro de transporte",
+    "46": "centro de almacenamiento",
+    "47": "centro de embalaje",
+    "48": "centro de envase"
+  },
+  "tipos_contabilidad": {
+    "1": "simplificada",
+    "2": "general",
+    "3": "especial"
+  },
+  "tipos_empresa": {
+    "1": "persona natural",
+    "2": "persona jurídica",
+    "3": "organismo público",
+    "4": "organización privada",
+    "5": "organización sin fines de lucro",
+    "6": "organización internacional"
+  },
+  "categorias_proveedores": {
+    "1": "medicamentos",
+    "2": "insumos",
+    "3": "equipos médicos",
+    "4": "servicios",
+    "5": "otros"
+  },
+  "tipos_incomes": {
+    "1": "reembolso",
+    "2": "ajuste inventario",
+    "3": "ajuste contable",
+    "4": "venta"
+  }
+}

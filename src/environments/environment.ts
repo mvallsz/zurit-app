@@ -6,31 +6,58 @@ export const environment = {
   production: false,
   base_url: "http://localhost:3500/api/v1",
   this_url: "http://localhost:4200/",
-  admin_email: ["mvallsz85@gmail.com", "Alvaro@tlcargo.net", "jerqs2003@gmail.com"],
   admin_notification: true,
-  min_weight_air: 4,
-  min_weight_sea: 3,
-  available_countries: "Venezuela, Colombia, Panamá",
-  warehouse_filters: [
-    "tlCargoId",
-    "shortDesc",
-    "customer.email",
-    "customer.name",
-    "customer.tlCargoName",
-  ],
-  guide_filters: [
-    "tlCargoId",
-    "name",
-    "notes",
-    "customer.email",
-    "customer.name",
-    "customer.tlCargoName",
-    "shipping.name",
-  ],
-  customer_filters: ["email", "name", "tlCargoName"],
-  ships_filters: ["type", "name", "arrivalHub.name"],
-  users_filters: ["phone", "name", "email", "role"],
-  NEWUSERSECRET: "3df4$3we&wf4f5rg*",
+  admin_email: ["mvallsz85@gmail.com"],
+  items_config: {
+    items_filters: [
+      "nombre",
+      "descripcion",
+      "lote",
+      "serial",
+      "sku",
+      "codigo_uuid",
+      "marca",
+      "proveedor.nombre"
+    ],
+    items_export_config: {
+      header_mapper: {
+        "nombre": "Nombre",
+        "descripcion": "Descripción",
+        "lote": "Lote",
+        "serial": "Serial",
+        "sku": "SKU",
+        "codigo_uuid": "Código UUID",
+        "marca": "Marca",
+        "proveedor.nombre": "Proveedor",
+        "cantidad": "Cantidad",
+        "unidad": "Unidad",
+        "min_stock": "Stock mínimo",
+        "max_stock": "Stock máximo",
+        "estado": "Estado",
+        "creationDate": "Fecha de creación",
+        "createdBy.name": "Creado por"
+      },
+      file_name_template: "items",
+      file_extension: "xlsx"
+    }
+  },
+  users_config: {
+    new_users_secret: "3df4$3we&wf4f5rg*",
+    users_filters: ["phone", "name", "email", "role"],
+    users_export_config: {
+      header_mapper: {
+        "name": "Nombre",
+        "email": "Correo",
+        "phone": "Teléfono",
+        "role": "Rol",
+        "estado": "Estado",
+        "creationDate": "Fecha de creación",
+        "createdBy.name": "Creado por"
+      },
+      file_name_template: "users",
+      file_extension: "xlsx"
+    }
+  },
   permissions: [
     { path: 'proveedores', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'usuarios', expectedRoles: ['ADMIN', 'ROOT'] },
@@ -45,11 +72,6 @@ export const environment = {
     { path: 'contaduria', expectedRoles: ['ADMIN', 'ROOT'] }
   ]
 };
-
-/*export const environment = {
-  production: false,
-  base_url : 'http://192.227.138.4:3500/api'
-};*/
 
 /*
  * For easier debugging in development mode, you can import the following file
