@@ -102,7 +102,7 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   openSnackbar(message: string) {
-    this.snackBar.open(message, 'CLOSE', {
+    this.snackBar.open(message, 'CERRAR', {
       duration: 5000,
       horizontalPosition: 'right'
     });

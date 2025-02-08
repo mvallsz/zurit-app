@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IItem, Item } from '../../../../pages/inventory-module/sub-modules/items/models/item.model';
 import { ServiceResponse } from 'src/app/interfaces/service-response.interface';
+import { ItemType } from '../../../../pages/inventory-module/sub-modules/item-types/models/itemType.model';
 
 const base_url = environment.base_url;
 
@@ -64,5 +65,10 @@ export class InventoryService {
 
   deleteItem(id: string): Observable<ServiceResponse> {
     return this.http.delete<ServiceResponse>(`${this.apiUrl}/${id}`, this.headers);
+  }
+
+
+  addStock(item: Item): Observable<Item> {
+    return this.http.post<Item>(`${this.apiUrl}/add-stock`, item);
   }
 }

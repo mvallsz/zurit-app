@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
   constructor(private router: Router,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private snackbar: MatSnackBar,
+    private snackBar: MatSnackBar,
     private usuarioService: UsuarioService
   ) { }
 
@@ -110,7 +110,7 @@ export class LoginComponent implements OnInit {
   }
 
   openSnackbar(message: string) {
-    this.snackbar.open(message, 'CLOSE', {
+    this.snackBar.open(message, 'CERRAR', {
       duration: 5000,
       horizontalPosition: 'right'
     });

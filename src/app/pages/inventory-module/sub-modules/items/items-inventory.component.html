@@ -78,7 +78,7 @@
           fxFlex="none"
         >
           <button
-            (click)="deleteItems(selection.selected)"
+            (click)="deleteItemTypes(selection.selected)"
             color="primary"
             mat-icon-button
             matTooltip="Borrar selección"
@@ -370,7 +370,7 @@
 
         <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
         <tr
-          (click)="updateItem(row)"
+          (click)="updateItemType(row)"
           *matRowDef="let row; columns: visibleColumns"
           @fadeInUp
           class="hover:bg-hover trans-ease-out cursor-pointer"
@@ -429,7 +429,7 @@
       <mat-icon [icIcon]="icQR"></mat-icon>
       <span>Imprime códigos de barra</span>
     </button>
-    <button (click)="deleteItem(item)" mat-menu-item>
+    <button (click)="deleteItemType(item)" mat-menu-item>
       <mat-icon [icIcon]="icDelete"></mat-icon>
       <span>Eliminar</span>
     </button>

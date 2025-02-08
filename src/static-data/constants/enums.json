@@ -23,7 +23,8 @@
     "7": "m",
     "8": "und",
     "9": "paquete",
-    "10": "caja"
+    "10": "caja",
+    "11": "bulto"
   },
   "item_estados": {
     "1": "activo",

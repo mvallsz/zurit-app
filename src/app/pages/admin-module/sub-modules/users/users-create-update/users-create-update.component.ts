@@ -227,7 +227,7 @@ export class UsersCreateUpdateComponent implements OnInit {
   }
 
   openSnackbar(message: string) {
-    this.snackBar.open(message, 'CLOSE', {
+    this.snackBar.open(message, 'CERRAR', {
       duration: 20000,
       horizontalPosition: 'center'
     });

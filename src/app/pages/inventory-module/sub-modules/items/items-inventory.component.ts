@@ -53,6 +53,8 @@ import { InventoryService } from "src/app/services/modules/inventory-module/item
 
 import { itemStatus } from "src/static-data/zurit-static-data";
 import { CATEGORIAS, ITEM_ESTADOS } from '../../../../../static-data/constants/enums';
+import { ItemType } from "../item-types/models/itemType.model";
+import { ItemTypeService } from "src/app/services/modules/inventory-module/item-types/item-type.service";
 
 const itemFilters = environment.items_config.items_filters;
 const fileExportName = `${environment.items_config.items_export_config.file_name_template}${new Date().toISOString().split('T')[0]}${environment.items_config.items_export_config.file_extension}`;
@@ -75,12 +77,12 @@ const fileExportName = `${environment.items_config.items_export_config.file_name
 })
 export class ItemsInventory implements OnInit, AfterViewInit {
   layoutCtrl = new FormControl("boxed");
-  itemList: Item[];
+  itemList: ItemType[];
   itemClasses = itemStatus;
 
   estadoItems: { key: string, value: any }[] = [];
 
-  columns: TableColumn<Item>[] = [
+  columns: TableColumn<ItemType>[] = [
     {
       label: "Checkbox",
       property: "checkbox",
@@ -89,7 +91,7 @@ export class ItemsInventory implements OnInit, AfterViewInit {
     },
     { label: "CATEGORIA", property: "categoria", type: "text", visible: true },
     { label: "NOMBRE", property: "nombre", type: "text", visible: true },
-    { label: "CANTIDAD", property: "cantidad", type: "text", visible: true },
+    { label: "MARCA", property: "marca", type: "text", visible: true },
     { label: "PROVEEDOR", property: "proveedor", type: "text", visible: true },
     { label: "ESTADO", property: "estado", type: "text", visible: true },
     { label: "FECHA DE REGISTRO", property: "creationDate", type: "text", visible: true },
@@ -101,8 +103,8 @@ export class ItemsInventory implements OnInit, AfterViewInit {
   filter = "";
   interval;
   totalData = 0;
-  dataSource: MatTableDataSource<Item> | null;
-  selection = new SelectionModel<Item>(true, []);
+  dataSource: MatTableDataSource<ItemType> | null;
+  selection = new SelectionModel<ItemType>(true, []);
   searchCtrl = new FormControl();
 
   urlItem = "";
@@ -139,6 +141,7 @@ export class ItemsInventory implements OnInit, AfterViewInit {
     private router: Router,
     private dialog: MatDialog,
     private itemsService: InventoryService,
+    private itemTypeService: ItemTypeService,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef
   ) { }
@@ -201,7 +204,7 @@ export class ItemsInventory implements OnInit, AfterViewInit {
   ) {
     if (spinner) this.spinner.show("itemsSpinner");
 
-    return this.itemsService.getItemsPag(
+    return this.itemTypeService.getItemTypesPag(
       pageNumber,
       pageSize,
       filter,
@@ -348,7 +351,7 @@ export class ItemsInventory implements OnInit, AfterViewInit {
     //TODO
   }
 
-  notifyCustomers(itemList: Item[]) {
+  notifyCustomers(itemList: ItemType[]) {
     Swal.fire({
       title: `Only in warehouse packages can be notified`,
       text: `Also the packages that have not been repacked or divided will be notified. Do you wish to continue?`,
@@ -365,32 +368,40 @@ export class ItemsInventory implements OnInit, AfterViewInit {
 
   }
 
-  updateItem(item: Item) {
-    this.router.navigate(['/app/items/registro/' + item._id]);
+  updateItemType(itemType: ItemType) {
+    this.router.navigate(['/app/items/registro/' + itemType._id]);
   }
 
-  deleteItems(items: Item[]) {
-
-    Swal.fire({
-      icon: "info",
-      title: "Oops...",
-      text: "The packages have associated quotes, all will be deleted!",
-    });
-  }
-
-  deleteItem(item: Item) {
-    this.itemsService.disableItem(item._id).subscribe(
+  deleteItemType(itemType: ItemType) {
+    this.itemTypeService.disableItemType(itemType._id).subscribe(
       (resp: ServiceResponse) => {
         if (resp.ok) {
-          this.openSnackbar("Item deleted successfully");
+          this.openSnackbar("Item type deleted successfully");
           this.ngAfterViewInit();
         } else {
-          this.openSnackbar("There was an error deleting the item");
+          this.openSnackbar("There was an error deleting the item type");
         }
       });
-
   }
 
+  deleteItemTypes(itemTypes: ItemType[]) {
+    Swal.fire({
+      title: `Are you sure you want to delete the selected item types?`,
+      text: `This action cannot be undone`,
+      showDenyButton: true,
+      confirmButtonText: "Yes!",
+      denyButtonText: `No!`,
+      width: "500px",
+      heightAuto: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        itemTypes.forEach((itemType) => {
+          this.deleteItemType(itemType);
+        });
+        this.selection.clear();
+      }
+    });
+  }
 
 
 }

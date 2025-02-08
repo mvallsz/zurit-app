@@ -4,9 +4,11 @@ import {
   Component,
   Inject,
   OnInit,
+  OnDestroy,
   QueryList,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  HostListener,
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelect } from '@angular/material/select';
@@ -25,14 +27,14 @@ import icRule from '@iconify/icons-ic/twotone-rule';
 import { environment } from '../../../../../../environments/environment';
 
 import { ServiceResponse } from '../../../../../interfaces/service-response.interface';
-import { Item, IItem } from '../models/item.model';
-import { Supplier, ISupplier } from '../../suppliers/models/supplier.model';
+
+import { ItemType, IItemType } from '../../item-types/models/itemType.model';
+import { Supplier } from '../../suppliers/models/supplier.model';
 
 import { FileUploadService } from '../../../../../services/file-upload.service';
-import { InventoryService } from '../../../../../services/modules/inventory-module/items/inventory.service';
 import { SupplierService } from '../../../../../services/modules/inventory-module/suppliers/supplier.service';
 
-import { ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -40,11 +42,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { CATEGORIAS, MONEDAS, UNIDADES } from '../../../../../../static-data/constants/enums';
 import Swal from 'sweetalert2';
-import { ExpenseService } from 'src/app/services/modules/admin-module/expense.service';
-import { IncomeService } from 'src/app/services/modules/admin-module/income.service';
-import { IIncome } from 'src/app/pages/admin-module/sub-modules/incomes/models/income.model';
-import { escapeIdentifier } from '@angular/compiler/src/output/abstract_emitter';
-const base_url = environment.base_url;
+import { ItemTypeService } from 'src/app/services/modules/inventory-module/item-types/item-type.service';
+
+import { CanComponentDeactivate } from '../../../../../guards/unsaved-changes';
+
 
 const supplierFilterOptions = {
   multiple: true,
@@ -64,7 +65,7 @@ const supplierFilterOptions = {
   ]
 })
 
-export class ItemsUpdateComponent implements OnInit {
+export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   layoutCtrl = new FormControl("boxed");
 
@@ -80,17 +81,12 @@ export class ItemsUpdateComponent implements OnInit {
 
   public nombreCtrl: FormControl = new FormControl('', [Validators.required]);
   public descripcionCtrl: FormControl = new FormControl('', [Validators.required]);
-  public loteCtrl: FormControl = new FormControl('');
-  public fechaVencimientoCtrl: FormControl = new FormControl('');
-  public serialCtrl: FormControl = new FormControl('');
-  public skuCtrl: FormControl = new FormControl('');
   public exentoCtrl: FormControl = new FormControl(false);
   public costoCompraCtrl: FormControl = new FormControl('', [Validators.required]);
   public monedaCtrl: FormControl = new FormControl('', [Validators.required]);
   public marcaCtrl: FormControl = new FormControl('', [Validators.required]);
   public modeloCtrl: FormControl = new FormControl('');
   public categoriaCtrl: FormControl = new FormControl('', [Validators.required]);
-  public cantidadCtrl: FormControl = new FormControl('', [Validators.required]);
   public unidadCtrl: FormControl = new FormControl('', [Validators.required]);
   public minStockCtrl: FormControl = new FormControl('', [Validators.required]);
   public maxStockCtrl: FormControl = new FormControl('', [Validators.required]);
@@ -100,7 +96,7 @@ export class ItemsUpdateComponent implements OnInit {
   protected _onDestroy = new Subject<void>();
 
   itemFormGroup: FormGroup;
-  item: IItem;
+  item: IItemType;
   icMoreVert = icMoreVert;
   icClose = icClose;
   icRule = icRule;
@@ -108,28 +104,25 @@ export class ItemsUpdateComponent implements OnInit {
   public spinner = false;
   public files: NgxFileDropEntry[] = [];
   public photoFiles: NgxFileDropEntry[] = [];
-  public itemsFiles: File[] = [];
+
   imagePreviews: any[] = [];
   imageBlob: any[] = [];
   imageOriginal: any[] = [];
 
   public searching = false;
-  invoiceFile: File;
-  needInvoice = false;
-
+  invalidMsg: string;
+  photoLoad = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
-    private inventoryService: InventoryService,
+    private itemTypeService: ItemTypeService,
     private supplierService: SupplierService,
-    private expenseService: ExpenseService,
-    private incomeService: IncomeService,
     private fileUploadService: FileUploadService,
     private sanitizer: DomSanitizer,
-    private snackbar: MatSnackBar) {
+    private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -141,10 +134,6 @@ export class ItemsUpdateComponent implements OnInit {
     this.itemFormGroup = this.fb.group({
       nombre: ['', [Validators.required]],
       descripcion: ['', [Validators.required]],
-      lote: [''],
-      fecha_vencimiento: [''],
-      serial: [''],
-      sku: [''],
       exento: [false],
       costo_compra: ['', [Validators.required]],
       moneda: ['', [Validators.required]],
@@ -152,7 +141,6 @@ export class ItemsUpdateComponent implements OnInit {
       modelo: [''],
       categoria: ['', [Validators.required]],
       proveedor: ['', [Validators.required]],
-      cantidad: ['', [Validators.required]],
       unidad: ['', [Validators.required]],
       min_stock: ['', [Validators.required]],
       max_stock: ['', [Validators.required]],
@@ -177,21 +165,59 @@ export class ItemsUpdateComponent implements OnInit {
           });
       });
 
+    // Add beforeunload event listener
+    window.addEventListener('beforeunload', this.unloadNotification.bind(this));
+
+
     this.cd.detectChanges();
 
   }
 
+  ngOnDestroy(): void {
+    // Remove beforeunload event listener
+    window.removeEventListener('beforeunload', this.unloadNotification.bind(this));
+  }
+
+  unloadNotification(event: BeforeUnloadEvent): void {
+    if (this.photoFiles.length > 0 && !this.photoLoad) {
+      event.preventDefault();
+      this.openSnackbar('Tienes imágenes nuevas cargadas. Si no guardas, no se cargarán las imágenes nuevas.');
+    }
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.photoFiles.length > 0 && !this.photoLoad) {
+      return new Observable<boolean>((observer) => {
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: 'Tienes imágenes nuevas cargadas. Si no guardas, no se cargarán las imágenes nuevas.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, quiero salir',
+          cancelButtonText: 'No, quédate en el formulario de edición',
+
+        }).then((result) => {
+          if (result.isConfirmed) {
+            observer.next(true);
+          } else {
+            observer.next(false);
+          }
+          observer.complete();
+        });
+      });
+    }
+    return true;
+  }
+
   loadItem(itemId: string) {
-    this.inventoryService.getItemById(itemId).subscribe(async (response: ServiceResponse) => {
+    this.itemTypeService.getItemTypeById(itemId).subscribe(async (response: ServiceResponse) => {
       if (response.ok) {
         this.item = response.data[0];
 
         this.nombreCtrl.setValue(this.item.nombre);
         this.descripcionCtrl.setValue(this.item.descripcion);
-        this.loteCtrl.setValue(this.item.lote);
-        this.fechaVencimientoCtrl.setValue(this.item.fecha_vencimiento);
-        this.serialCtrl.setValue(this.item.serial);
-        this.skuCtrl.setValue(this.item.sku);
         this.exentoCtrl.setValue(this.item.exento);
         this.costoCompraCtrl.setValue(this.item.costo_compra);
         this.monedaCtrl.setValue(this.item.moneda.toString());
@@ -199,7 +225,6 @@ export class ItemsUpdateComponent implements OnInit {
         this.modeloCtrl.setValue(this.item.modelo);
         this.categoriaCtrl.setValue(this.item.categoria.toString());
         this.suppliersCtrl.setValue(this.item.proveedor._id);
-        this.cantidadCtrl.setValue(this.item.cantidad);
         this.unidadCtrl.setValue(this.item.unidad.toString());
         this.minStockCtrl.setValue(this.item.min_stock);
         this.maxStockCtrl.setValue(this.item.max_stock);
@@ -243,7 +268,7 @@ export class ItemsUpdateComponent implements OnInit {
     this.imagePreviews.splice(index, 1);
     this.imageBlob.splice(index, 1);
     this.item.imagenes.splice(imageIndex, 1);
-    this.inventoryService.updateItem(this.item._id, new Item(this.item)).subscribe(
+    this.itemTypeService.updateItemType(this.item._id, new ItemType(this.item)).subscribe(
       (response: ServiceResponse) => {
         if (response.ok) {
           this.fileUploadService.deleteFile(this.imageOriginal[index]).subscribe(
@@ -293,7 +318,6 @@ export class ItemsUpdateComponent implements OnInit {
     this.itemFormGroup.reset();
     this.suppliersCtrl.reset();
     this.imagenCtrl.reset();
-    this.itemsFiles = [];
   }
 
 
@@ -307,7 +331,6 @@ export class ItemsUpdateComponent implements OnInit {
       'INVALID' === this.suppliersCtrl.status ||
       'INVALID' === this.marcaCtrl.status ||
       'INVALID' === this.categoriaCtrl.status ||
-      'INVALID' === this.cantidadCtrl.status ||
       'INVALID' === this.unidadCtrl.status ||
       'INVALID' === this.minStockCtrl.status ||
       'INVALID' === this.maxStockCtrl.status) {
@@ -327,9 +350,6 @@ export class ItemsUpdateComponent implements OnInit {
       if (this.categoriaCtrl.invalid) {
         this.categoriaCtrl.setErrors({ 'invalid': true });
       }
-      if (this.cantidadCtrl.invalid) {
-        this.cantidadCtrl.setErrors({ 'invalid': true });
-      }
       if (this.unidadCtrl.invalid) {
         this.unidadCtrl.setErrors({ 'invalid': true });
       }
@@ -345,30 +365,41 @@ export class ItemsUpdateComponent implements OnInit {
       if (this.suppliersCtrl.invalid) {
         this.suppliersCtrl.setErrors({ 'invalid': true });
       }
+      this.invalidMsg = 'Por favor, complete los campos requeridos.';
       formOk = false;
 
     }
+
+    if (this.costoCompraCtrl.value < 0) {
+      this.costoCompraCtrl.setErrors({ 'invalid': true });
+      this.invalidMsg = 'El costo de compra no puede ser menor a 0.';
+      formOk = false;
+    }
+
+    if (this.minStockCtrl.value > this.maxStockCtrl.value) {
+      this.minStockCtrl.setErrors({ 'invalid': true });
+      this.maxStockCtrl.setErrors({ 'invalid': true });
+      this.invalidMsg = 'El stock mínimo no puede ser mayor al stock máximo.';
+      formOk = false;
+    }
+
+
     return formOk;
   }
 
   async submit() {
     if (this.updateItemValidation()) {
 
-      const originalQuantity = this.item.cantidad;
       const originalCost = this.item.costo_compra;
       const originalCurrency = this.item.moneda;
 
       const newCost = this.costoCompraCtrl.value;
-      const newQuantity = this.cantidadCtrl.value;
       const newCurrency = this.monedaCtrl.value;
 
-      let updatedItem: IItem = {
+
+      let updatedItem: IItemType = {
         nombre: this.nombreCtrl.value,
         descripcion: this.descripcionCtrl.value,
-        lote: this.loteCtrl.value,
-        fecha_vencimiento: this.fechaVencimientoCtrl.value,
-        serial: this.serialCtrl.value,
-        sku: this.skuCtrl.value,
         exento: this.exentoCtrl.value,
         costo_compra: this.costoCompraCtrl.value,
         moneda: this.monedaCtrl.value,
@@ -376,37 +407,23 @@ export class ItemsUpdateComponent implements OnInit {
         modelo: this.modeloCtrl.value,
         categoria: this.categoriaCtrl.value,
         proveedor: this.suppliersCtrl.value,
-        cantidad: this.cantidadCtrl.value,
         unidad: this.unidadCtrl.value,
         min_stock: this.minStockCtrl.value,
         max_stock: this.maxStockCtrl.value,
         ficha_tecnica: this.fichaTecnicaCtrl.value,
-        estado: newQuantity === 0 ? '3' : newQuantity < this.minStockCtrl.value ? '4' : this.item.estado,
         createdBy: this.item.createdBy
       };
 
-
-      if (newQuantity < 0 || newCost < 0) {
-        this.openSnackbar('Los valores de cantidad y costo de compra deben ser mayores a 0');
-        return;
-      }
-
-      if (newQuantity > originalQuantity && !this.invoiceFile) {
-        this.needInvoice = true;
-        this.openSnackbar('Por favor, es necesario adjuntar una factura para justificar el aumento de stock');
-        return;
-      }
 
       if (newCurrency !== originalCurrency.toString() && newCost === originalCost) {
         this.openSnackbar('Debe ingresar un nuevo costo de compra si cambia la moneda');
         return;
       }
 
-      this.inventoryService.updateItem(this.item._id, new Item(updatedItem)).subscribe(async (response: ServiceResponse) => {
+      this.itemTypeService.updateItemType(this.item._id, new ItemType(updatedItem)).subscribe(async (response: ServiceResponse) => {
         if (response.ok) {
 
           const item = response.data;
-          let expense;
           const uploadPromises: Promise<any>[] = [];
 
           for (const file of this.photoFiles) {
@@ -422,88 +439,24 @@ export class ItemsUpdateComponent implements OnInit {
             }
           }
 
-          if (newQuantity < originalQuantity) {
-            const incomeData: IIncome = {
-              tipo: '2',
-              fecha: new Date(),
-              items: [{
-                itemId: this.item._id,
-                cantidad: originalQuantity - newQuantity,
-                precio: originalCost,
-                moneda: originalCurrency
-              }],
-              total: (originalQuantity - newQuantity) * originalCost,
-              estado: 1
-            };
-            await this.incomeService.createIncome(incomeData).toPromise();
-          } else if (newQuantity > originalQuantity) {
-
-            const expenseData = {
-              descripcion: `Adjustment for item: ${updatedItem.nombre}, quantity increased from ${originalQuantity} to ${newQuantity}`,
-              monto: (newQuantity - originalQuantity) * newCost,
-              moneda: newCurrency,
-              categoria: 1,
-              createdBy: updatedItem.createdBy,
-              justificacion: 'Stock adjustment',
-              estado: 1
-            };
-
-            const expenseResponse = await this.expenseService.createExpense(expenseData).toPromise();
-            expense = expenseResponse.data;
-
-            if (this.invoiceFile) {
-              uploadPromises.push(this.fileUploadService.photoUpdate(this.invoiceFile, 'expenses', expense._id));
-            }
-
-          }
-
           const uploadResults = await Promise.all(uploadPromises);
 
           const fileIds = uploadResults.map(result => result.pathToFront); // Assuming the response contains the fileId
           const photoFileIds = fileIds.filter(id => id.includes('items'));
-          const invoiceFileId = fileIds.find(id => id.includes('expenses'));
 
           let updateItemResp;
-          let updateExpenseResp;
           if (photoFileIds.length > 0) {
             if (item.imagenes.length > 0) {
               item.imagenes = item.imagenes.concat(photoFileIds);
             } else {
               item.imagenes = photoFileIds;
             }
-            updateItemResp = await this.inventoryService.updateItem(item._id, item).toPromise();
+            updateItemResp = await this.itemTypeService.updateItemType(item._id, item).toPromise();
           }
 
-          if (invoiceFileId) {
-            updateExpenseResp = await this.expenseService.updateExpense(expense._id, expense).toPromise();
 
-
-            if (updateItemResp.ok && updateExpenseResp.ok) {
-              Swal.fire({
-                title: 'Artículo actualizado con éxito!!',
-                icon: 'success',
-                timer: 5000,
-                showConfirmButton: true
-              }).then(() => {
-                this.router.navigate(['/app/items/']);
-              });
-
-            } else if (updateItemResp.ok && !updateExpenseResp.ok) {
-              Swal.fire({
-                title: 'Artículo actualizado con exito en el sistema!!',
-                text: 'Error registrando el documento de gasto, por favor notifique al administrador del sistema.',
-                icon: 'warning',
-                showConfirmButton: false
-              }).then(() => {
-                this.router.navigate(['/app/items/']);
-              });
-
-            } else {
-              this.spinner = false;
-              this.openSnackbar('Error actualizando el artículo, por favor notifique al administrador del sistema e intente de nuevo más tarde.');
-              this.cd.detectChanges();
-            }
-          } else {
+          if (updateItemResp.ok) {
+            this.photoLoad = true;
             Swal.fire({
               title: 'Artículo actualizado con éxito!!',
               icon: 'success',
@@ -512,6 +465,11 @@ export class ItemsUpdateComponent implements OnInit {
             }).then(() => {
               this.router.navigate(['/app/items/']);
             });
+
+          } else {
+            this.spinner = false;
+            this.openSnackbar('Error actualizando el artículo, por favor notifique al administrador del sistema e intente de nuevo más tarde.');
+            this.cd.detectChanges();
           }
         } else {
           this.spinner = false;
@@ -521,7 +479,7 @@ export class ItemsUpdateComponent implements OnInit {
       });
     } else {
       this.spinner = false;
-      this.openSnackbar('Por favor, complete los campos requeridos');
+      this.openSnackbar(this.invalidMsg);
     }
   }
   // UTILITY FUNCTIOS
@@ -565,20 +523,12 @@ export class ItemsUpdateComponent implements OnInit {
   }
 
   openSnackbar(message: string) {
-    this.snackbar.open(message, 'CLOSE', {
+    this.snackBar.open(message, 'CERRAR', {
       duration: 10000,
       horizontalPosition: 'right'
     });
   }
 
-  public dropped(files: NgxFileDropEntry[]) {
-    if (files.length > 0 && files[0].fileEntry.isFile) {
-      const fileEntry = files[0].fileEntry as FileSystemFileEntry;
-      fileEntry.file((file: File) => {
-        this.invoiceFile = file;
-      });
-    }
-  }
 
   public photoDropped(files: NgxFileDropEntry[]) {
     this.photoFiles = this.photoFiles.concat(files);
@@ -596,4 +546,6 @@ export class ItemsUpdateComponent implements OnInit {
       }
     }
   }
+
+
 }

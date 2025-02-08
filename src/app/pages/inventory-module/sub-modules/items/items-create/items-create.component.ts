@@ -2,17 +2,18 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Inject,
   OnInit,
-  QueryList,
   ViewChild,
-  ViewChildren
+  HostListener,
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelect } from '@angular/material/select';
-import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer } from '@angular/platform-browser';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { NgxFileDropEntry } from 'ngx-file-drop';
+import { Router } from '@angular/router';
+
+import { ReplaySubject, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { stagger80ms } from '../../../../../../@vex/animations/stagger.animation';
 import { fadeInUp400ms } from '../../../../../../@vex/animations/fade-in-up.animation';
@@ -22,28 +23,25 @@ import { fadeInRight400ms } from '../../../../../../@vex/animations/fade-in-righ
 import icMoreVert from '@iconify/icons-ic/twotone-more-vert';
 import icClose from '@iconify/icons-ic/twotone-close';
 import icRule from '@iconify/icons-ic/twotone-rule';
-import { environment } from '../../../../../../environments/environment';
 
 import { ServiceResponse } from '../../../../../interfaces/service-response.interface';
-import { Item, IItem } from '../models/item.model';
-import { Supplier, ISupplier } from '../../suppliers/models/supplier.model';
+import { Supplier } from '../../suppliers/models/supplier.model';
+import { IItemType, ItemType } from '../../item-types/models/itemType.model';
+import { CATEGORIAS, MONEDAS, UNIDADES } from '../../../../../../static-data/constants/enums';
 
 import { FileUploadService } from '../../../../../services/file-upload.service';
 import { InventoryService } from '../../../../../services/modules/inventory-module/items/inventory.service';
 import { SupplierService } from '../../../../../services/modules/inventory-module/suppliers/supplier.service';
+import { ItemTypeService } from '../../../../../services/modules/inventory-module/item-types/item-type.service';
 
-import { ReplaySubject, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-
-import { NgxFileDropEntry } from 'ngx-file-drop';
-import { Router } from '@angular/router';
-
-import { CATEGORIAS, MONEDAS, UNIDADES } from '../../../../../../static-data/constants/enums';
 import Swal from 'sweetalert2';
-import { ExpenseService } from 'src/app/services/modules/admin-module/expense.service';
-const base_url = environment.base_url;
 
 const supplierFilterOptions = {
+  multiple: true,
+  autoComplete: true,
+};
+
+const itemTypesFilterOptions = {
   multiple: true,
   autoComplete: true,
 };
@@ -77,17 +75,12 @@ export class ItemsCreateComponent implements OnInit {
 
   public nombreCtrl: FormControl = new FormControl('', [Validators.required]);
   public descripcionCtrl: FormControl = new FormControl('', [Validators.required]);
-  public loteCtrl: FormControl = new FormControl('');
-  public fechaVencimientoCtrl: FormControl = new FormControl('');
-  public serialCtrl: FormControl = new FormControl('');
-  public skuCtrl: FormControl = new FormControl('');
   public exentoCtrl: FormControl = new FormControl(false);
   public costoCompraCtrl: FormControl = new FormControl('', [Validators.required]);
   public monedaCtrl: FormControl = new FormControl('', [Validators.required]);
   public marcaCtrl: FormControl = new FormControl('', [Validators.required]);
   public modeloCtrl: FormControl = new FormControl('');
   public categoriaCtrl: FormControl = new FormControl('', [Validators.required]);
-  public cantidadCtrl: FormControl = new FormControl('', [Validators.required]);
   public unidadCtrl: FormControl = new FormControl('', [Validators.required]);
   public minStockCtrl: FormControl = new FormControl('', [Validators.required]);
   public maxStockCtrl: FormControl = new FormControl('', [Validators.required]);
@@ -109,18 +102,18 @@ export class ItemsCreateComponent implements OnInit {
   imagePreviews: string[] = [];
 
   public searching = false;
-  invoiceFile: File;
-  /** list of banks filtered after simulating server side search */
+  public invalidMsg = '';
+
+  itemTypes: ItemType[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private cd: ChangeDetectorRef,
-    private inventoryService: InventoryService,
     private supplierService: SupplierService,
-    private expenseService: ExpenseService,
     private fileUploadService: FileUploadService,
-    private snackbar: MatSnackBar) {
+    private snackBar: MatSnackBar,
+    private itemTypeService: ItemTypeService) {
   }
 
   ngOnInit() {
@@ -132,17 +125,12 @@ export class ItemsCreateComponent implements OnInit {
     this.itemFormGroup = this.fb.group({
       nombre: this.nombreCtrl,
       descripcion: this.descripcionCtrl,
-      lote: this.loteCtrl,
-      fecha_vencimiento: this.fechaVencimientoCtrl,
-      serial: this.serialCtrl,
-      sku: this.skuCtrl,
       exento: this.exentoCtrl,
       costo_compra: this.costoCompraCtrl,
       moneda: this.monedaCtrl,
       marca: this.marcaCtrl,
       modelo: this.modeloCtrl,
       categoria: this.categoriaCtrl,
-      cantidad: this.cantidadCtrl,
       unidad: this.unidadCtrl,
       min_stock: this.minStockCtrl,
       max_stock: this.maxStockCtrl,
@@ -160,6 +148,14 @@ export class ItemsCreateComponent implements OnInit {
             this.filterSuppliers();
           });
       });
+
+    this.itemTypeService.getItemTypes('', itemTypesFilterOptions).subscribe((resp: ServiceResponse) => {
+      if (!resp.ok) {
+        this.openSnackbar('Error cargando los tipos de artículos, por favor notifique al administrador del sistema e intente de nuevo más tarde.');
+        return;
+      }
+      this.itemTypes = resp.data;
+    });
 
     this.cd.detectChanges();
 
@@ -191,7 +187,6 @@ export class ItemsCreateComponent implements OnInit {
     this.itemsFiles = [];
   }
 
-
   public createItemValidation() {
     let formOk = true;
     if (
@@ -202,7 +197,6 @@ export class ItemsCreateComponent implements OnInit {
       'INVALID' === this.suppliersCtrl.status ||
       'INVALID' === this.marcaCtrl.status ||
       'INVALID' === this.categoriaCtrl.status ||
-      'INVALID' === this.cantidadCtrl.status ||
       'INVALID' === this.unidadCtrl.status ||
       'INVALID' === this.minStockCtrl.status ||
       'INVALID' === this.maxStockCtrl.status) {
@@ -222,9 +216,7 @@ export class ItemsCreateComponent implements OnInit {
       if (this.categoriaCtrl.invalid) {
         this.categoriaCtrl.setErrors({ 'invalid': true });
       }
-      if (this.cantidadCtrl.invalid) {
-        this.cantidadCtrl.setErrors({ 'invalid': true });
-      }
+
       if (this.unidadCtrl.invalid) {
         this.unidadCtrl.setErrors({ 'invalid': true });
       }
@@ -240,9 +232,18 @@ export class ItemsCreateComponent implements OnInit {
       if (this.suppliersCtrl.invalid) {
         this.suppliersCtrl.setErrors({ 'invalid': true });
       }
+      this.invalidMsg = 'Por favor complete los campos requeridos.';
       formOk = false;
-
     }
+
+    if (this.minStockCtrl.value > this.maxStockCtrl.value) {
+      this.minStockCtrl.setErrors({ 'invalid': true });
+      this.maxStockCtrl.setErrors({ 'invalid': true });
+      this.invalidMsg = 'El stock mínimo no puede ser mayor al stock máximo.';
+      formOk = false;
+    }
+
+
     return formOk;
   }
 
@@ -251,14 +252,9 @@ export class ItemsCreateComponent implements OnInit {
     let isValidForm = this.createItemValidation();
 
     if (isValidForm) {
-      const item: IItem = {
+      const item: IItemType = {
         nombre: this.nombreCtrl.value,
         descripcion: this.descripcionCtrl.value,
-        lote: this.loteCtrl.value,
-        fecha_vencimiento: this.fechaVencimientoCtrl.value,
-        serial: this.serialCtrl.value,
-        sku: this.skuCtrl.value,
-        codigo_uuid: '',
         exento: this.exentoCtrl.value,
         costo_compra: this.costoCompraCtrl.value,
         moneda: this.monedaCtrl.value,
@@ -266,26 +262,20 @@ export class ItemsCreateComponent implements OnInit {
         modelo: this.modeloCtrl.value,
         categoria: this.categoriaCtrl.value,
         proveedor: this.suppliersCtrl.value,
-        cantidad: this.cantidadCtrl.value,
         unidad: this.unidadCtrl.value,
         min_stock: this.minStockCtrl.value,
         max_stock: this.maxStockCtrl.value,
         ficha_tecnica: this.fichaTecnicaCtrl.value,
       };
 
-      this.inventoryService.createItem(item).subscribe(async (resp: ServiceResponse) => {
+      this.itemTypeService.createItemType(item).subscribe(async (resp: ServiceResponse) => {
         if (resp.ok) {
 
           try {
 
-            const itemId = resp.data.item._id;
-            const expense = resp.data.expense;
+            const itemId = resp.data._id;
 
             const uploadPromises: Promise<any>[] = [];
-
-            if (this.invoiceFile) {
-              uploadPromises.push(this.fileUploadService.photoUpdate(this.invoiceFile, 'expenses', expense._id));
-            }
 
             for (const file of this.photoFiles) {
               if (file.fileEntry.isFile) {
@@ -303,33 +293,21 @@ export class ItemsCreateComponent implements OnInit {
             const uploadResults = await Promise.all(uploadPromises);
             const fileIds = uploadResults.map(result => result.pathToFront); // Assuming the response contains the fileId
             const photoFileIds = fileIds.filter(id => id.includes('items'));
-            const invoiceFileId = fileIds.find(id => id.includes('expenses'));
 
-            resp.data.item.imagenes = photoFileIds;
+            resp.data.imagenes = photoFileIds;
 
-            const updateItemResult = await this.inventoryService.updateItem(itemId, resp.data.item).toPromise();
-            expense.factura = invoiceFileId;
-            const updateExpenseResult = await this.expenseService.updateExpense(expense._id, expense).toPromise();
+            const updateItemResult = await this.itemTypeService.updateItemType(itemId, resp.data).toPromise();
 
-            if (updateItemResult.ok && updateExpenseResult.ok) {
+            if (updateItemResult.ok) {
               Swal.fire({
                 title: 'Artículo registrado con exito en el sistema!!',
+                text: 'Ya puedes agregar stock a este artículo.',
                 icon: 'success',
                 timer: 5000,
                 showConfirmButton: true
               }).then(() => {
                 this.router.navigate(['/app/items/']);
               });
-            } else if (updateItemResult.ok && !updateExpenseResult.ok) {
-              Swal.fire({
-                title: 'Artículo registrado con exito en el sistema!!',
-                text: 'Error registrando el documento de gasto, por favor notifique al administrador del sistema.',
-                icon: 'warning',
-                showConfirmButton: false
-              }).then(() => {
-                this.router.navigate(['/app/items/']);
-              });
-
             } else {
               this.spinner = false;
               this.openSnackbar('Error registrando el artículo, por favor notifique al administrador del sistema e intente de nuevo más tarde.');
@@ -353,7 +331,7 @@ export class ItemsCreateComponent implements OnInit {
 
     } else {
       this.spinner = false;
-      this.openSnackbar('');
+      this.openSnackbar(this.invalidMsg);
     }
   }
   // UTILITY FUNCTIOS
@@ -397,19 +375,10 @@ export class ItemsCreateComponent implements OnInit {
   }
 
   openSnackbar(message: string) {
-    this.snackbar.open(message, 'CLOSE', {
+    this.snackBar.open(message, 'CERRAR', {
       duration: 5000,
       horizontalPosition: 'right'
     });
-  }
-
-  public dropped(files: NgxFileDropEntry[]) {
-    if (files.length > 0 && files[0].fileEntry.isFile) {
-      const fileEntry = files[0].fileEntry as FileSystemFileEntry;
-      fileEntry.file((file: File) => {
-        this.invoiceFile = file;
-      });
-    }
   }
 
   public photoDropped(files: NgxFileDropEntry[]) {
@@ -426,6 +395,13 @@ export class ItemsCreateComponent implements OnInit {
           reader.readAsDataURL(file);
         });
       }
+    }
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    if (this.photoFiles.length > 0) {
+      $event.returnValue = 'Tienes imágenes nuevas cargadas. Si no guardas, no se cargarán las imágenes nuevas.';
     }
   }
 }
