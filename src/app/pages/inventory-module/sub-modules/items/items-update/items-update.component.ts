@@ -86,6 +86,7 @@ export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
   public monedaCtrl: FormControl = new FormControl('', [Validators.required]);
   public marcaCtrl: FormControl = new FormControl('', [Validators.required]);
   public modeloCtrl: FormControl = new FormControl('');
+  public skuCtrl: FormControl = new FormControl('');
   public categoriaCtrl: FormControl = new FormControl('', [Validators.required]);
   public unidadCtrl: FormControl = new FormControl('', [Validators.required]);
   public minStockCtrl: FormControl = new FormControl('', [Validators.required]);
@@ -139,6 +140,7 @@ export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
       moneda: ['', [Validators.required]],
       marca: ['', [Validators.required]],
       modelo: [''],
+      sku: [''],
       categoria: ['', [Validators.required]],
       proveedor: ['', [Validators.required]],
       unidad: ['', [Validators.required]],
@@ -223,6 +225,7 @@ export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
         this.monedaCtrl.setValue(this.item.moneda.toString());
         this.marcaCtrl.setValue(this.item.marca);
         this.modeloCtrl.setValue(this.item.modelo);
+        this.skuCtrl.setValue(this.item.sku);
         this.categoriaCtrl.setValue(this.item.categoria.toString());
         this.suppliersCtrl.setValue(this.item.proveedor._id);
         this.unidadCtrl.setValue(this.item.unidad.toString());
@@ -405,6 +408,7 @@ export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
         moneda: this.monedaCtrl.value,
         marca: this.marcaCtrl.value,
         modelo: this.modeloCtrl.value,
+        sku: this.skuCtrl.value,
         categoria: this.categoriaCtrl.value,
         proveedor: this.suppliersCtrl.value,
         unidad: this.unidadCtrl.value,
@@ -452,11 +456,24 @@ export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
               item.imagenes = photoFileIds;
             }
             updateItemResp = await this.itemTypeService.updateItemType(item._id, item).toPromise();
-          }
 
+            if (updateItemResp.ok) {
+              this.photoLoad = true;
+              Swal.fire({
+                title: 'Artículo actualizado con éxito!!',
+                icon: 'success',
+                timer: 5000,
+                showConfirmButton: true
+              }).then(() => {
+                this.router.navigate(['/app/items/']);
+              });
 
-          if (updateItemResp.ok) {
-            this.photoLoad = true;
+            } else {
+              this.spinner = false;
+              this.openSnackbar('Error actualizando el artículo, por favor notifique al administrador del sistema e intente de nuevo más tarde.');
+              this.cd.detectChanges();
+            }
+          } else {
             Swal.fire({
               title: 'Artículo actualizado con éxito!!',
               icon: 'success',
@@ -466,11 +483,10 @@ export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
               this.router.navigate(['/app/items/']);
             });
 
-          } else {
-            this.spinner = false;
-            this.openSnackbar('Error actualizando el artículo, por favor notifique al administrador del sistema e intente de nuevo más tarde.');
-            this.cd.detectChanges();
           }
+
+
+
         } else {
           this.spinner = false;
           this.openSnackbar('Error actualizando el artículo, por favor notifique al administrador del sistema e intente de nuevo más tarde.');

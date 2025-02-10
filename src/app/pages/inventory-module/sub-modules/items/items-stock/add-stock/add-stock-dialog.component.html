@@ -1,0 +1,132 @@
+<div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
+  <h2 class="title my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l headline" fxFlex="none" fxHide.xs>
+    Agregar Stock
+  </h2>
+  <span fxFlex></span>
+  <button mat-icon-button (click)="dialogRef.close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <form [formGroup]="itemForm">
+    <div class="p-6">
+      <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">
+        Para hacer el proceso más sencillo, indicar qué valores del artículo quieres repetir
+      </h4>
+      <div fxLayout="row wrap" fxLayoutGap="16px grid">
+        <div *ngFor="let field of repeatableFields; let i = index" fxFlex="25" fxFlex.lt-sm="100" class="mb-2">
+          <mat-checkbox [formControl]="getRepeatableFieldControl(i)" (change)="toggleRepeatableField(i)">
+            {{field}}
+          </mat-checkbox>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6" [formGroup]="globalForm">
+      <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Valores a Repetir</h4>
+
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('costo_compra')">
+        <input matInput placeholder="Costo de Compra" formControlName="costo_compra">
+      </mat-form-field>
+
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('moneda')">
+        <mat-select placeholder="Moneda" formControlName="moneda">
+          <mat-option *ngFor="let moneda of MONEDAS | keyvalue" [value]="moneda.key">
+            {{moneda.value}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('fecha_vencimiento')  || !showLoteAndFechaVencimiento()" >
+        <input matInput [matDatepicker]="picker" placeholder="Fecha de Vencimiento" formControlName="fecha_vencimiento">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('exento')">
+           <mat-label>Exento?</mat-label>
+            <mat-select placeholder="Articulo exento de IVA?" formControlName="exento">
+              <mat-option value="false">NO</mat-option>
+              <mat-option value="true">SI</mat-option>
+            </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('lote') || !showLoteAndFechaVencimiento()">
+        <input matInput placeholder="Lote" formControlName="lote">
+      </mat-form-field>
+
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('serial')">
+        <input matInput placeholder="Serial" formControlName="serial">
+      </mat-form-field>
+    </div>
+
+    <div class="p-6">
+      <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Valores Individuales</h4>
+      <div *ngFor="let element of getItemFormArray().controls; let i = index" [formGroup]="element" class="item-container">
+        <div>
+          <h3 class="title text-md font-semibold mb-4 bg-deep-purple text-white p-2 rounded">Artículo {{ i + 1}}</h3>
+        </div>
+
+        <div fxLayout="row wrap" fxLayoutGap="16px grid">
+          <div fxFlex="33" *ngIf="!isSelectedRepeatableField('lote')  && !showLoteAndFechaVencimiento()">
+            <mat-form-field class="w-full">
+              <mat-label>Lote</mat-label>
+              <input matInput placeholder="Lote" formControlName="lote">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="33" *ngIf="!isSelectedRepeatableField('fecha_vencimiento')  && !showLoteAndFechaVencimiento()">
+            <mat-form-field class="w-full">
+              <mat-label>Fecha de Vencimiento</mat-label>
+              <input matInput [matDatepicker]="picker" placeholder="Fecha de Vencimiento" formControlName="fecha_vencimiento">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="33" *ngIf="!isSelectedRepeatableField('serial')">
+            <mat-form-field class="w-full">
+              <mat-label>Serial</mat-label>
+              <input matInput placeholder="Serial" formControlName="serial">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div fxLayout="row wrap" fxLayoutGap="16px grid">
+          <div fxFlex="33" *ngIf="!isSelectedRepeatableField('costo_compra')">
+            <mat-form-field class="w-full">
+              <mat-label>Costo de Compra</mat-label>
+              <input matInput placeholder="Costo de Compra" formControlName="costo_compra">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="33" *ngIf="!isSelectedRepeatableField('moneda')">
+            <mat-form-field class="w-full">
+              <mat-label>Moneda</mat-label>
+              <mat-select placeholder="Moneda" formControlName="moneda">
+                <mat-option *ngFor="let moneda of MONEDAS | keyvalue" [value]="moneda.key">
+                  {{moneda.value}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div fxFlex="33" *ngIf="!isSelectedRepeatableField('exento')">
+            <mat-form-field class="w-full">
+              <mat-label>Exento?</mat-label>
+              <mat-select placeholder="Articulo exento de IVA?" formControlName="exento">
+                <mat-option value="false">NO</mat-option>
+                <mat-option value="true">SI</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-button color="primary" class="vex-button" (click)="saveStock()">Guardar</button>
+</mat-dialog-actions>

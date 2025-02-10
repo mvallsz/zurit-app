@@ -2,6 +2,7 @@ import enums from './enums.json';
 
 export const MONEDAS = enums.monedas;
 export const ITEM_ESTADOS = enums.item_estados;
+export const STOCK_ESTADOS = enums.stock_estados;
 export const UNIDADES = enums.unidades;
 export const CATEGORIAS = enums.categorias;
 export const CATEGORIAS_EMPRESA = enums.categorias_empresa;

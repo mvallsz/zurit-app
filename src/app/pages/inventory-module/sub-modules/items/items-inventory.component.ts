@@ -89,12 +89,15 @@ export class ItemsInventory implements OnInit, AfterViewInit {
       type: "checkbox",
       visible: true,
     },
+    { label: "STOCK", property: "stock", type: "button", visible: true },
     { label: "CATEGORIA", property: "categoria", type: "text", visible: true },
     { label: "NOMBRE", property: "nombre", type: "text", visible: true },
     { label: "MARCA", property: "marca", type: "text", visible: true },
+    { label: "MODELO", property: "modelo", type: "text", visible: false },
+    { label: "COSTO", property: "costo", type: "text", visible: false },
     { label: "PROVEEDOR", property: "proveedor", type: "text", visible: true },
     { label: "ESTADO", property: "estado", type: "text", visible: true },
-    { label: "FECHA DE REGISTRO", property: "creationDate", type: "text", visible: true },
+    { label: "FECHA DE REGISTRO", property: "creationDate", type: "text", visible: false },
     { label: "CREADO POR", property: "createdBy", type: "text", visible: false },
     { label: "Actions", property: "actions", type: "button", visible: true }
   ];
@@ -370,6 +373,10 @@ export class ItemsInventory implements OnInit, AfterViewInit {
 
   updateItemType(itemType: ItemType) {
     this.router.navigate(['/app/items/registro/' + itemType._id]);
+  }
+
+  seeStockItemType(itemType: ItemType) {
+    this.router.navigate(['/app/items/stock/' + itemType._id]);
   }
 
   deleteItemType(itemType: ItemType) {

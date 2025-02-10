@@ -1,18 +1,10 @@
 <vex-page-layout>
-  <vex-page-layout-header
-    class="pb-16"
-    fxLayout="column"
-    fxLayoutAlign="center start"
-  >
-    <div
-      [class.container]="layoutCtrl.value === 'boxed'"
-      [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
-      class="w-full flex flex-col sm:flex-row justify-between"
-    >
+  <vex-page-layout-header class="pb-16" fxLayout="column" fxLayoutAlign="center start">
+    <div [class.container]="layoutCtrl.value === 'boxed'" [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between">
       <div>
         <h1 class="title mt-0 mb-1">Formulario de Edición de Artículos</h1>
-        <vex-breadcrumbs
-          [crumbs]="[
+        <vex-breadcrumbs [crumbs]="[
             { value: 'Módulo de Inventario', router: '/app' },
             {
               value: 'Registro de Inventario',
@@ -22,30 +14,18 @@
               value: 'Edición de Artículos',
               router: '/app/items/registro'
             }
-          ]"
-        ></vex-breadcrumbs>
+          ]"></vex-breadcrumbs>
       </div>
     </div>
   </vex-page-layout-header>
 
-  <vex-page-layout-content
-    [class.container]="layoutCtrl.value === 'boxed'"
-    [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
-    class="-mt-6"
-  >
+  <vex-page-layout-content [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'" class="-mt-6">
     <div class="card overflow-auto -mt-16">
-      <div
-        class="bg-app-bar px-6 h-16 border-b sticky left-0"
-        fxLayout="row"
-        fxLayoutAlign="start center"
-      >
-        <h1
-          class="font-light text-2xl my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l"
-          fxFlex="none"
-          fxHide.xs
-          *ngIf="item"
-        >
-        Edita la información del artículo UUID: {{ item._id }}
+      <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
+        <h1 class="font-light text-2xl my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l" fxFlex="none"
+          fxHide.xs *ngIf="item">
+          Edita la información del artículo UUID: {{ item._id }}
         </h1>
       </div>
       <div @fadeInUp class="card overflow-hidden p-8">
@@ -70,31 +50,15 @@
           <mat-form-field class="flex-auto s: ml-1 ancho1">
             <mat-label>Selecciona un proveedor</mat-label>
             <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
-            <mat-select
-              [formControl]="suppliersCtrl"
-              placeholder="Proveedores"
-              #supplierSelect
-              required
-            >
+            <mat-select [formControl]="suppliersCtrl" placeholder="Proveedores" #supplierSelect required>
               <mat-option>
-                <ngx-mat-select-search
-                  placeholderLabel="Busqueda"
-                  noEntriesFoundLabel="'No se encontraron proveedores'"
-                  [formControl]="suppliersFilterCtrl"
-                >
-                  <mat-icon
-                    [icIcon]="icClose"
-                    [inline]="true"
-                    size="24px"
-                    ngxMatSelectSearchClear
-                  ></mat-icon>
+                <ngx-mat-select-search placeholderLabel="Busqueda" noEntriesFoundLabel="'No se encontraron proveedores'"
+                  [formControl]="suppliersFilterCtrl">
+                  <mat-icon [icIcon]="icClose" [inline]="true" size="24px" ngxMatSelectSearchClear></mat-icon>
                 </ngx-mat-select-search>
               </mat-option>
 
-              <mat-option
-                *ngFor="let supplier of filteredSuppliers | async"
-                [value]="supplier._id"
-              >
+              <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier._id">
                 {{ supplier.nombre.toUpperCase() }}
               </mat-option>
             </mat-select>
@@ -120,31 +84,37 @@
         <br />
         <div class="flex flex-col sm:flex-row">
           <mat-form-field class="flex-auto s: ml-1 ancho1">
-          <mat-label>Nombre</mat-label>
-          <input type="text" [formControl]="nombreCtrl" matInput placeholder="Ingresa el nombre" required />
-          <mat-hint>Ingresa el nombre del artículo</mat-hint>
+            <mat-label>Nombre</mat-label>
+            <input type="text" [formControl]="nombreCtrl" matInput placeholder="Ingresa el nombre" required />
+            <mat-hint>Ingresa el nombre del artículo</mat-hint>
           </mat-form-field>
-
-            <mat-form-field *ngIf="categoriaCtrl.value === '2' || categoriaCtrl.value === '3'" class="flex-auto s: ml-1 ancho1">
-              <mat-label>Modelo</mat-label>
-              <input type="text" [formControl]="modeloCtrl" matInput placeholder="Ingresa el modelo"  />
-              <mat-hint>Ingresa el modelo del artículo</mat-hint>
-            </mat-form-field>
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>SKU</mat-label>
+            <input type="text" [formControl]="skuCtrl" matInput placeholder="Ingresa el SKU" />
+            <mat-hint>Ingresa el SKU del artículo</mat-hint>
+          </mat-form-field>
+          <mat-form-field *ngIf="categoriaCtrl.value === '2' || categoriaCtrl.value === '3'"
+            class="flex-auto s: ml-1 ancho1">
+            <mat-label>Modelo</mat-label>
+            <input type="text" [formControl]="modeloCtrl" matInput placeholder="Ingresa el modelo" />
+            <mat-hint>Ingresa el modelo del artículo</mat-hint>
+          </mat-form-field>
 
         </div>
         <br />
         <div class="flex flex-col sm:flex-row">
 
-            <mat-form-field class="flex-auto s: ml-1 ancho1">
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
             <mat-label>Descripción</mat-label>
-            <textarea [formControl]="descripcionCtrl" matInput placeholder="Ingresa la descripción" class="h-40" required></textarea>
+            <textarea [formControl]="descripcionCtrl" matInput placeholder="Ingresa la descripción" class="h-40"
+              required></textarea>
             <mat-hint>Ingresa la descripción del artículo</mat-hint>
-            </mat-form-field>
+          </mat-form-field>
 
         </div>
         <br />
         <mat-divider></mat-divider>
-         <!-- ######## Fin de Sección de IDENTIFICACION ######## -->
+        <!-- ######## Fin de Sección de IDENTIFICACION ######## -->
         <!-- ######## Inicio de Sección de COSTOS Y CANTIDADES ######## -->
         <br />
         <h2 class="title">Datos Cuantitativos y de compra</h2>
@@ -157,7 +127,7 @@
             <mat-label>Unidad de presentación</mat-label>
             <mat-select [formControl]="unidadCtrl" required>
               <mat-option *ngFor="let unidad of unidadItems" [value]="unidad.key">
-          {{ unidad.value.toUpperCase() }}
+                {{ unidad.value.toUpperCase() }}
               </mat-option>
             </mat-select>
             <mat-hint>Ingresa la unidad en la que se presenta el artículo</mat-hint>
@@ -173,7 +143,7 @@
             <mat-label>Moneda</mat-label>
             <mat-select [formControl]="monedaCtrl" required>
               <mat-option *ngFor="let moneda of monedaItems" [value]="moneda.key">
-          {{ moneda.value.toUpperCase() }}
+                {{ moneda.value.toUpperCase() }}
               </mat-option>
             </mat-select>
             <mat-hint>Selecciona la moneda</mat-hint>
@@ -192,9 +162,10 @@
             <input type="number" [formControl]="maxStockCtrl" matInput required />
             <mat-hint>Ingresa el stock máximo</mat-hint>
           </mat-form-field>&nbsp;&nbsp;
-            <div class="flex items-center">
-            <mat-checkbox [formControl]="exentoCtrl" class="text-xs font-bold">El artículo es exento de Impuestos?</mat-checkbox>
-            </div>
+          <div class="flex items-center">
+            <mat-checkbox [formControl]="exentoCtrl" class="text-xs font-bold">El artículo es exento de
+              Impuestos?</mat-checkbox>
+          </div>
 
         </div>
         <br />
@@ -235,108 +206,64 @@
         </div> -->
         <br>
         <mat-divider></mat-divider>
-<!-- ######## Inicio de Sección de COSTOS Y CANTIDADES ######## -->
-<br />
-<h2 class="title">Anexos e Información complementaria</h2>
-<div class="subheading-1">
-  Ingresa la información complementaria del artículo y anexos si es necesario
-</div>
-<br />
+        <!-- ######## Inicio de Sección de COSTOS Y CANTIDADES ######## -->
+        <br />
+        <h2 class="title">Anexos e Información complementaria</h2>
+        <div class="subheading-1">
+          Ingresa la información complementaria del artículo y anexos si es necesario
+        </div>
+        <br />
 
-<div class="flex flex-col sm:flex-row">
-  <mat-form-field class="flex-auto s: ml-1 ancho1">
-    <mat-label>Ficha Técnica</mat-label>
-    <textarea [formControl]="fichaTecnicaCtrl" matInput placeholder="Ingresa la ficha Técnica" class="h-56"></textarea>
-    <mat-hint>Ingresa la información de la ficha técnica</mat-hint>
-    </mat-form-field>
-  </div>
-  <br />
-  <div class="mt-4" fxLayout="column" fxLayoutGap="8px">
-    <ngx-file-drop
-    dropZoneLabel="Arrastra y suelta las fotos aquí para adjuntarlas"
-    (onFileDrop)="photoDropped($event)"
-    class="bg-deep-purple-light"
-  >
-    <ng-template
-      ngx-file-drop-content-tmp
-      let-openFileSelector="openFileSelector"
-    >
-      Arrastra y suelta las fotos aquí para adjuntarlas.
-      <button
-        type="button"
-        (click)="openFileSelector()"
-        color="warn"
-        mat-button
-      >
-        Seleccionar archivo
-      </button>
-    </ng-template>
-  </ngx-file-drop>
-</div>
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Ficha Técnica</mat-label>
+            <textarea [formControl]="fichaTecnicaCtrl" matInput placeholder="Ingresa la ficha Técnica"
+              class="h-56"></textarea>
+            <mat-hint>Ingresa la información de la ficha técnica</mat-hint>
+          </mat-form-field>
+        </div>
+        <br />
+        <div class="mt-4" fxLayout="column" fxLayoutGap="8px">
+          <ngx-file-drop dropZoneLabel="Arrastra y suelta las fotos aquí para adjuntarlas"
+            (onFileDrop)="photoDropped($event)" class="bg-deep-purple-light">
+            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+              Arrastra y suelta las fotos aquí para adjuntarlas.
+              <button type="button" (click)="openFileSelector()" color="warn" mat-button>
+                Seleccionar archivo
+              </button>
+            </ng-template>
+          </ngx-file-drop>
+        </div>
 
-  <br />
-  <div class="card mt-6" *ngIf="imagePreviews.length > 0">
-    <div class="px-6 py-4 border-b">
-      <h2 class="title m-0">Fotos Cargadas</h2>
-    </div>
+        <br />
+        <div class="card mt-6" *ngIf="imagePreviews.length > 0">
+          <div class="px-6 py-4 border-b">
+            <h2 class="title m-0">Fotos Cargadas</h2>
+          </div>
 
-    <div @stagger class="px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-6">
-      <div class="relative" *ngFor="let img of imagePreviews; let i = index">
-        <img
-          @scaleIn
-          class="rounded w-full"
-          [src]="img"
-          alt="Imagen del artículo"
-        />
-        <button
-          mat-icon-button
-          color="warn"
-          class="absolute top-0 right-0"
-          (click)="removeImage(i)"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-         <button
-      mat-icon-button
-      color="primary"
-      class="absolute top-0 left-0"
-      (click)="openImageInNewWindow(i)"
-    >
-      <mat-icon>search</mat-icon>
-    </button>
-      </div>
-    </div>
-  </div>
-  <br />
-        <div
-          class="actions"
-          fxLayout="row"
-          fxLayoutAlign="end center"
-          fxLayoutGap="8px"
-        >
-          <button
-            color="warn"
-            mat-raised-button
-            type="button"
-            (click)="resetItemFormGroup()"
-          >
+          <div @stagger class="px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-6">
+            <div class="relative" *ngFor="let img of imagePreviews; let i = index">
+              <img @scaleIn class="rounded w-full" [src]="img" alt="Imagen del artículo" />
+              <button mat-icon-button color="warn" class="absolute top-0 right-0" (click)="removeImage(i)">
+                <mat-icon>close</mat-icon>
+              </button>
+              <button mat-icon-button color="primary" class="absolute top-0 left-0" (click)="openImageInNewWindow(i)">
+                <mat-icon>search</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+          <button color="warn" mat-raised-button type="button" (click)="resetItemFormGroup()">
             BORRAR
           </button>
           <div fxLayout="row" fxLayoutAlign="center center">
-            <mat-progress-spinner
-              diameter="40"
-              mode="indeterminate"
-              color="primary"
-              *ngIf="spinner"
-            ></mat-progress-spinner>
+            <mat-progress-spinner diameter="40" mode="indeterminate" color="primary"
+              *ngIf="spinner"></mat-progress-spinner>
           </div>
           <div fxLayout="row" fxLayoutAlign="center center" *ngIf="!spinner">
-            <button
-              (click)="submit()"
-              [disabled]="false"
-              color="primary"
-              mat-raised-button
-            >
+            <button (click)="submit()" [disabled]="false" color="primary" mat-raised-button>
               GUARDAR
             </button>
           </div>
