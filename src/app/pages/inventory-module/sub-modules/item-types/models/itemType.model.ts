@@ -6,6 +6,7 @@ export interface IItemType {
   descripcion: string;
   marca: string;
   modelo?: string;
+  sku?: string;
   categoria: number;
   proveedor: ISupplier;
   costo_compra: number;
@@ -26,6 +27,7 @@ export class ItemType {
   nombre: string;
   descripcion: string;
   marca: string;
+  sku?: string;
   modelo?: string;
   categoria: number;
   proveedor: ISupplier;
@@ -47,6 +49,7 @@ export class ItemType {
     this.descripcion = itemType.descripcion;
     this.marca = itemType.marca;
     this.modelo = itemType.modelo;
+    this.sku = itemType.sku;
     this.categoria = itemType.categoria;
     this.proveedor = itemType.proveedor;
     this.costo_compra = itemType.costo_compra;

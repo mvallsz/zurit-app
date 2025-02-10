@@ -32,6 +32,12 @@
     "3": "sin stock",
     "4": "alarmado"
   },
+  "stock_estados": {
+    "1": "disponible",
+    "2": "cotizado",
+    "3": "vendido",
+    "4": "dañado"
+  },
   "categorias_empresa": {
     "1": "proveedor",
     "2": "cliente",

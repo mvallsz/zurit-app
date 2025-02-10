@@ -80,6 +80,7 @@ export class ItemsCreateComponent implements OnInit {
   public monedaCtrl: FormControl = new FormControl('', [Validators.required]);
   public marcaCtrl: FormControl = new FormControl('', [Validators.required]);
   public modeloCtrl: FormControl = new FormControl('');
+  public skuCtrl: FormControl = new FormControl('');
   public categoriaCtrl: FormControl = new FormControl('', [Validators.required]);
   public unidadCtrl: FormControl = new FormControl('', [Validators.required]);
   public minStockCtrl: FormControl = new FormControl('', [Validators.required]);
@@ -130,6 +131,7 @@ export class ItemsCreateComponent implements OnInit {
       moneda: this.monedaCtrl,
       marca: this.marcaCtrl,
       modelo: this.modeloCtrl,
+      sku: this.skuCtrl,
       categoria: this.categoriaCtrl,
       unidad: this.unidadCtrl,
       min_stock: this.minStockCtrl,
@@ -260,6 +262,7 @@ export class ItemsCreateComponent implements OnInit {
         moneda: this.monedaCtrl.value,
         marca: this.marcaCtrl.value,
         modelo: this.modeloCtrl.value,
+        sku: this.skuCtrl.value,
         categoria: this.categoriaCtrl.value,
         proveedor: this.suppliersCtrl.value,
         unidad: this.unidadCtrl.value,

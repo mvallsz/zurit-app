@@ -67,6 +67,7 @@ export const environment = {
     { path: 'proyectos', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'items', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'items/registro', expectedRoles: ['ADMIN', 'ROOT'] },
+    { path: 'items/stock', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'documentos', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'documentos/registro', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'contaduria', expectedRoles: ['ADMIN', 'ROOT'] }

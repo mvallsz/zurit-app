@@ -146,6 +146,16 @@ const routes: VexRoutes = [
             "./pages/inventory-module/sub-modules/items/items-update/items-update.module"
           ).then((m) => m.ItemsUpdateModule),
       },
+      {
+        path: "items/stock/:id",
+        canActivate: [RoleGuard],
+        data: { expectedRoles: permissions.filter(x => x.path === 'items/stock')[0].expectedRoles },
+        // tslint:disable-next-line:max-line-length
+        loadChildren: () =>
+          import(
+            "./pages/inventory-module/sub-modules/items/items-stock/items-stock.module"
+          ).then((m) => m.ItemsStockModule),
+      },
       // {
       //   path: "documentos",
       //   canActivate: [RoleGuard],
