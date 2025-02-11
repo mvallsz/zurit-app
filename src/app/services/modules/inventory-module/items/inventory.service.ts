@@ -38,8 +38,11 @@ export class InventoryService {
   getItems(filter: string,
     filterOptions: any
   ) {
-    filter += `&filterOptions=${JSON.stringify(filterOptions)}`;
-    const url = `${this.apiUrl}/?${filter}`;
+    let _filter = `?filterOptions=${JSON.stringify(filterOptions)}`;
+    if (filter) {
+      _filter += `&${filter}`;
+    }
+    const url = `${this.apiUrl}/${_filter}`;
     return this.http.get<ServiceResponse>(url, this.headers);
   }
 
