@@ -25,8 +25,12 @@
       <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
         <h1 class="font-light text-2xl my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l" fxFlex="none"
           fxHide.xs *ngIf="item">
-          Edita la información del artículo UUID: {{ item._id }}
+          Edita la información del artículo UUID: {{ item?._id }}
         </h1>
+        <span fxFlex></span>
+        <button [routerLink]="['/app/items/stock', item?._id]" mat-raised-button color="primary">
+          Ver Stock
+        </button>
       </div>
       <div @fadeInUp class="card overflow-hidden p-8">
         <!-- ######## Inicio de Sección de CATEGORIZACION ######## -->

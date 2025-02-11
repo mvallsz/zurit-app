@@ -20,6 +20,9 @@
             {{field}}
           </mat-checkbox>
         </div>
+        <div fxFlex="25" fxFlex.lt-sm="100" class="mb-2 text-right">
+          <button mat-raised-button (click)="toggleAllRepeatableFields()">Seleccionar Todos</button>
+        </div>
       </div>
     </div>
 
@@ -38,7 +41,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('fecha_vencimiento')  || !showLoteAndFechaVencimiento()" >
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('fecha_vencimiento')  || showLoteAndFechaVencimiento()" >
         <input matInput [matDatepicker]="picker" placeholder="Fecha de Vencimiento" formControlName="fecha_vencimiento">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
@@ -52,7 +55,7 @@
             </mat-select>
       </mat-form-field>
 
-      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('lote') || !showLoteAndFechaVencimiento()">
+      <mat-form-field class="w-full" *ngIf="isSelectedRepeatableField('lote') || showLoteAndFechaVencimiento()">
         <input matInput placeholder="Lote" formControlName="lote">
       </mat-form-field>
 

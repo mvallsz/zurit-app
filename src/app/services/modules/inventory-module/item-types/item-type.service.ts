@@ -26,11 +26,11 @@ export class ItemTypeService {
 
   getItemTypesPag(pageNumber: Number, pageSize: Number, filter: string, filterOptions: any): Observable<ServiceResponse> {
     filter += `&filterOptions=${JSON.stringify(filterOptions)}`;
-    return this.http.get<ServiceResponse>(`${this.apiUrl}/?page=${pageNumber}&limit=${pageSize}&${filter}`, this.headers);
+    return this.http.get<ServiceResponse>(`${this.apiUrl}/?from=${pageNumber}&limit=${pageSize}&${filter}`, this.headers);
   }
 
   getItemTypeById(id: string): Observable<ServiceResponse> {
-    return this.http.get<ServiceResponse>(`${this.apiUrl}/?_id=${id}`, this.headers);
+    return this.http.get<ServiceResponse>(`${this.apiUrl}/${id}`, this.headers);
   }
 
   getItemTypes(filter: string,

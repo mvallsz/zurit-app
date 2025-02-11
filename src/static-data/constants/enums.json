@@ -14,14 +14,14 @@
     "5": "otros"
   },
   "unidades": {
-    "1": "ml",
-    "2": "l",
-    "3": "mg",
-    "4": "g",
-    "5": "kg",
-    "6": "cm",
-    "7": "m",
-    "8": "und",
+    "1": "mililitro",
+    "2": "litro",
+    "3": "miligramo",
+    "4": "gramo",
+    "5": "kilogramo",
+    "6": "centímetro",
+    "7": "metro",
+    "8": "unidad",
     "9": "paquete",
     "10": "caja",
     "11": "bulto"

@@ -111,9 +111,10 @@ export class ItemsStockComponent implements OnInit, AfterViewInit {
       type: "checkbox",
       visible: true,
     },
-    { label: "ESTADO", property: "estado", type: "text", visible: true },
+    { label: "PRESENTACIÓN", property: "itemType", type: "text", visible: true },
     { label: "SERIAL", property: "serial", type: "text", visible: true },
     { label: "COSTO", property: "costo", type: "text", visible: true },
+    { label: "ESTADO", property: "estado", type: "text", visible: true },
     { label: "EXENTO", property: "exento", type: "text", visible: true },
     { label: "LOTE", property: "lote", type: "text", visible: false },
     { label: "FECHA DE VENCIMIENTO", property: "fecha_vencimiento", type: "text", visible: false },
@@ -197,10 +198,10 @@ export class ItemsStockComponent implements OnInit, AfterViewInit {
   }
 
   loadItemType(itemTypeId: string) {
-    this.itemTypeService.getItemTypes(itemTypeId, itemsFilterOptions).subscribe(
+    this.itemTypeService.getItemTypeById(itemTypeId).subscribe(
       async (resp: ServiceResponse) => {
         if (resp.ok) {
-          this.itemType = resp.data[0];
+          this.itemType = resp.data;
           try {
             const imagePromises = this.itemType.imagenes.map(image => this.loadImage(`${image.replace('uploads', 'files')}`));
             const imageUrls = await Promise.all(imagePromises);

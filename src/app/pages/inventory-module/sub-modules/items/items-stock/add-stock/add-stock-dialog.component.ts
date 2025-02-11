@@ -58,7 +58,7 @@ export class AddStockDialogComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.category !== +CATEGORIAS[0] || this.category !== +CATEGORIAS[1]) {
+    if (this.category !== 1) {
       this.repeatableFields = this.repeatableFields.filter(field => field !== 'fecha_vencimiento' && field !== 'lote');
     }
 
@@ -146,11 +146,27 @@ export class AddStockDialogComponent implements OnInit {
   }
 
   showLoteAndFechaVencimiento(): boolean {
-    return this.category !== +CATEGORIAS[0] && this.category !== +CATEGORIAS[1];
+    return this.category !== 1;
   }
 
   toggleRepeatableField(index: number) {
     this.selectedRepeatableFields[index] = !this.selectedRepeatableFields[index];
+    this.setItemFormFields();
+  }
+
+  toggleAllRepeatableFields() {
+    //this.selectedRepeatableFields = this.selectedRepeatableFields.map(() => !this.selectedRepeatableFields.every(selected => selected));
+    const allSelected = this.selectedRepeatableFields.every(selected => selected);
+    this.selectedRepeatableFields.forEach((_, index) => {
+      const control = this.getRepeatableFieldControl(index);
+      if (allSelected) {
+      control.setValue(false);
+      this.selectedRepeatableFields[index] = false;
+      } else {
+      control.setValue(true);
+      this.selectedRepeatableFields[index] = true;
+      }
+    });
     this.setItemFormFields();
   }
 

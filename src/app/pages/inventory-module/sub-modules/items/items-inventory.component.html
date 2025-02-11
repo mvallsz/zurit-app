@@ -167,7 +167,13 @@
         <!-- Status Columns -->
         <ng-container matColumnDef="estado">
           <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
-            estado
+            <mat-form-field>
+              <mat-select [(value)]="selectedStatuses" (selectionChange)="onFilterChange('status')" multiple>
+                <mat-option *ngFor="let key of itemClasses" [value]="key.id">
+                  <span [ngClass]="[key.textClass, key.bgClass]">{{ ITEM_ESTADOS[key.id] }}</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </th>
           <td *matCellDef="let row" mat-cell>
             <div (click)="$event.stopPropagation()" fxLayoutAlign="start center" fxLayoutGap="4px">

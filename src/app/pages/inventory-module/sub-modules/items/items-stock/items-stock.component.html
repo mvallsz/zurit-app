@@ -70,6 +70,11 @@
                       Proveedor:</th>
                     <td class="py-1 pl-2">{{itemType?.proveedor?.nombre}}</td>
                   </tr>
+                  <tr>
+                    <td class="py-1 pl-2 text-right" colspan="2">
+                        <button mat-raised-button color="primary"  [routerLink]="['/app/items/registro', itemType?._id]">Editar</button>
+                    </td>
+                  </tr>
                 </table>
               </div>
               <div fxFlex="33%" style="text-align: justify;">
@@ -246,7 +251,7 @@
               </th>
               <td *matCellDef="let row" mat-cell>
                 <ng-container
-                  *ngIf="column.property !== 'creationDate' && column.property !== 'estado' && column.property !== 'fecha_vencimiento' && column.property !== 'createdBy'">
+                  *ngIf="column.property !== 'creationDate' && column.property !== 'estado' && column.property !== 'fecha_vencimiento' && column.property !== 'createdBy' && column.property !== 'itemType'">
                   {{row[column.property]}}
                 </ng-container>
                 <ng-container *ngIf="column.property === 'creationDate' || column.property === 'fecha_vencimiento'">
@@ -265,6 +270,10 @@
                 <ng-container *ngIf="column.property === 'createdBy'">
                   {{row[column.property].name}}
                 </ng-container>
+                <ng-container *ngIf="column.property === 'itemType'">
+                  {{UNIDADES[this.itemType?.unidad].toUpperCase()}}
+                </ng-container>
+
               </td>
             </ng-container>
           </ng-container>
@@ -284,6 +293,11 @@
           <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
           <tr *matRowDef="let row; columns: visibleColumns;" class="hover:bg-hover trans-ease-out cursor-pointer"
             mat-row></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="visibleColumns.length" style="text-align: center">
+                No hay articulos registrados en el Inventario.
+              </td>
+            </tr>
         </table>
         <mat-paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize" class="sticky left-0"></mat-paginator>
       </div>

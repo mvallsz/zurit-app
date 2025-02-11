@@ -59,7 +59,6 @@ import { ItemTypeService } from "src/app/services/modules/inventory-module/item-
 const itemFilters = environment.items_config.items_filters;
 const fileExportName = `${environment.items_config.items_export_config.file_name_template}${new Date().toISOString().split('T')[0]}${environment.items_config.items_export_config.file_extension}`;
 
-
 @UntilDestroy()
 @Component({
   selector: "zurit-items-inventory",
@@ -79,8 +78,13 @@ export class ItemsInventory implements OnInit, AfterViewInit {
   layoutCtrl = new FormControl("boxed");
   itemList: ItemType[];
   itemClasses = itemStatus;
+  objectKeys = Object.keys;
+
 
   estadoItems: { key: string, value: any }[] = [];
+  ITEM_ESTADOS = ITEM_ESTADOS;
+  CATEGORY = CATEGORIAS;
+
 
   columns: TableColumn<ItemType>[] = [
     {
@@ -137,6 +141,8 @@ export class ItemsInventory implements OnInit, AfterViewInit {
   public dateSearch = false;
   public dateColor = 'primary';
   spinnerDown: boolean = false;
+  selectedStatuses = [];
+  selectedCategories = [];
 
 
   constructor(
@@ -147,7 +153,9 @@ export class ItemsInventory implements OnInit, AfterViewInit {
     private itemTypeService: ItemTypeService,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef
-  ) { }
+  ) {
+    this.selectedStatuses[0] = '1';
+  }
 
   get visibleColumns() {
     return this.columns
@@ -207,6 +215,9 @@ export class ItemsInventory implements OnInit, AfterViewInit {
   ) {
     if (spinner) this.spinner.show("itemsSpinner");
 
+    if(this.selectedStatuses.length > 0)
+      filter = `estado=[${this.selectedStatuses.join(',')}]`;
+
     return this.itemTypeService.getItemTypesPag(
       pageNumber,
       pageSize,
@@ -243,9 +254,12 @@ export class ItemsInventory implements OnInit, AfterViewInit {
         this.filter = "";
       }
     } else {
-      for (const whFilter of itemFilters) {
-        this.filter += `&${whFilter}=${value}`;
+      if (value !== "status") {
+        for (const whFilter of itemFilters) {
+          this.filter += `&${whFilter}=${value}`;
+        }
       }
+
     }
 
     this.getTableData$(
@@ -258,7 +272,7 @@ export class ItemsInventory implements OnInit, AfterViewInit {
       this.totalData = resp.total;
       this.itemList = resp.data;
       this.dataSource.data = this.itemList;
-      this.spinner.hide("pckSpinner");
+      this.spinner.hide("itemsSpinner");
     });
   }
 

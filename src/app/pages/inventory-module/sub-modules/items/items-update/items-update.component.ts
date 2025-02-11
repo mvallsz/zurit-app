@@ -216,7 +216,7 @@ export class ItemsUpdateComponent implements OnInit, OnDestroy, CanComponentDeac
   loadItem(itemId: string) {
     this.itemTypeService.getItemTypeById(itemId).subscribe(async (response: ServiceResponse) => {
       if (response.ok) {
-        this.item = response.data[0];
+        this.item = response.data;
 
         this.nombreCtrl.setValue(this.item.nombre);
         this.descripcionCtrl.setValue(this.item.descripcion);
