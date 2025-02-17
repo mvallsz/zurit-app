@@ -80,11 +80,11 @@ export class ClientsComponent implements OnInit, AfterViewInit {
       type: "checkbox",
       visible: true,
     },
-    { label: "CODIGO", property: "codigo", type: "text", visible: true },
     { label: "NOMBRE", property: "nombre", type: "text", visible: true },
     { label: "RIF", property: "rif", type: "text", visible: true },
     { label: "TELEFONO", property: "telefono", type: "text", visible: true },
     { label: "EMAIL", property: "email", type: "text", visible: true },
+    { label: "PUNTAJE", property: "puntaje", type: "text", visible: true },
     { label: "Actions", property: "actions", type: "button", visible: true }
   ];
   pageSize = 10;
@@ -337,19 +337,27 @@ export class ClientsComponent implements OnInit, AfterViewInit {
   }
 
   updateClient(client: Client) {
-    this.router.navigate(['/app/clients/registro/' + client._id]); // TODO: Update route
+    this.router.navigate(['/app/clientes/registro/' + client._id]); // TODO: Update route
   }
 
   deleteClient(client: Client) {
-    this.clientsService.disableClient(client._id).subscribe(
-      (resp: ServiceResponse) => {
-        if (resp.ok) {
-          this.openSnackbar("Client deleted successfully");
-          this.ngAfterViewInit();
-        } else {
-          this.openSnackbar("There was an error deleting the client");
-        }
-      });
+    this.clientsService.disableClient(client._id).subscribe({
+      next: (resp: ServiceResponse) => {
+      if (resp.ok) {
+        this.openSnackbar("Client deleted successfully");
+        this.ngAfterViewInit();
+      } else {
+        this.openSnackbar("There was an error deleting the client");
+      }
+      },
+      error: (err) => {
+      if (err.status === 400) {
+        this.openSnackbar(err.error.message);
+      } else {
+        this.openSnackbar("There was an error deleting the client");
+      }
+      }
+    });
   }
 
   deleteClients(clients: Client[]) {

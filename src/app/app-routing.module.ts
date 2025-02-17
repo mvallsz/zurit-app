@@ -96,16 +96,36 @@ const routes: VexRoutes = [
       //       "./pages/adminModules/rate-registry/rate-registry.module"
       //     ).then((m) => m.RateRegistryModule),
       // },
-      // {
-      //   path: "clientes",
-      //   canActivate: [RoleGuard],
-      //   data: { expectedRoles: permissions.filter(x => x.path === 'clientes')[0].expectedRoles },
-      //   // tslint:disable-next-line:max-line-length
-      //   loadChildren: () =>
-      //     import(
-      //       "./pages/warehousingModules/customers-registry/customers-registry.module"
-      //     ).then((m) => m.CustomersRegistryModule),
-      // },
+      {
+         path: "clientes",
+         canActivate: [RoleGuard],
+         data: { expectedRoles: permissions.filter(x => x.path === 'clientes')[0].expectedRoles },
+         // tslint:disable-next-line:max-line-length
+         loadChildren: () =>
+           import(
+             "./pages/comercial-module/sub-modules/clients/clients.module"
+           ).then((m) => m.ClientsModule),
+       },
+       {
+        path: "clientes/registro",
+        canActivate: [RoleGuard],
+        data: { expectedRoles: permissions.filter(x => x.path === 'clientes/registro')[0].expectedRoles },
+        // tslint:disable-next-line:max-line-length
+        loadChildren: () =>
+          import(
+            "./pages/comercial-module/sub-modules/clients/clients-create/clients-create.module"
+          ).then((m) => m.ClientsCreateModule),
+      },
+      {
+       path: "clientes/registro/:id",
+       canActivate: [RoleGuard],
+       data: { expectedRoles: permissions.filter(x => x.path === 'clientes/registro')[0].expectedRoles },
+       // tslint:disable-next-line:max-line-length
+       loadChildren: () =>
+         import(
+           "./pages/comercial-module/sub-modules/clients/clients-update/clients-update.module"
+         ).then((m) => m.ClientsUpdateModule),
+     },
       // {
       //   path: "proyectos",
       //   canActivate: [RoleGuard],

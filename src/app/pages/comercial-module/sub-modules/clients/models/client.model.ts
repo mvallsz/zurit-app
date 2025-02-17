@@ -6,14 +6,15 @@ export interface IClient {
   descripcion?: string;
   rif: string;
   nombre: string;
-  direccion: IAddress | string; // Could be the ID or the object
-  codigo: string;
+  direcciones: (IAddress | string)[]; // Array of Address ID or Address object
+  codigo?: string;
   puntaje?: number;
   telefono: string;
   whatsapp: string;
   email: string;
-  tipo_contabilidad: number; // 1: ordinario, 2: especial
-  tipo_cliente: number; // 1: empresa privada, 2: ente gubernamental
+  categoria: number;
+  tipo_contabilidad: number;
+  tipo_cliente: number;
   contactos: (IContact | string)[]; // Array of Contact IDs or Contact objects
   creationDate?: Date;
   createdBy?: string; // Assuming User ID is a string
@@ -25,12 +26,13 @@ export class Client implements IClient {
   descripcion?: string;
   rif: string;
   nombre: string;
-  direccion: Address | string;
-  codigo: string;
+  direcciones: (Address | string)[]; // Array of Address ID or Address object
+  codigo?: string;
   puntaje?: number;
   telefono: string;
   whatsapp: string;
   email: string;
+  categoria: number;
   tipo_contabilidad: number;
   tipo_cliente: number;
   contactos: (Contact | string)[];
@@ -43,12 +45,13 @@ export class Client implements IClient {
     this.descripcion = data.descripcion;
     this.rif = data.rif;
     this.nombre = data.nombre;
-    this.direccion = data.direccion;
+    this.direcciones = data.direcciones;
     this.codigo = data.codigo;
     this.puntaje = data.puntaje;
     this.telefono = data.telefono;
     this.whatsapp = data.whatsapp;
     this.email = data.email;
+    this.categoria = data.categoria;
     this.tipo_contabilidad = data.tipo_contabilidad;
     this.tipo_cliente = data.tipo_cliente;
     this.contactos = data.contactos;

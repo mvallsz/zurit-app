@@ -1,50 +1,53 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ServiceResponse } from 'src/app/pages/interfaces/service-response.interface';
-import { Client, IClient } from 'src/app/pages/comercial-module/sub-modules/clients/models/client.model';
+import { environment } from 'src/environments/environment';
+import { Client, IClient } from '../../../../pages/comercial-module/sub-modules/clients/models/client.model';
+import { ServiceResponse } from '../../../../interfaces/service-response.interface';
+
+const base_url = environment.base_url;
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientsService {
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${base_url}/clients`;
 
   constructor(private http: HttpClient) { }
 
+  private get headers() {
+    return {
+      headers: {
+        'x-token': localStorage.getItem('token')
+      }
+    };
+  }
+
+
   getClientsPag(pageNumber: Number, pageSize: Number, filter: string, filterOptions?: any): Observable<ServiceResponse> {
-    let params = new HttpParams()
-      .set('page', pageNumber.toString())
-      .set('limit', pageSize.toString());
-
-    if (filter) {
-      params = params.set('filter', filter);
-    }
-
-    if (filterOptions) {
-      Object.keys(filterOptions).forEach(key => {
-        params = params.set(key, filterOptions[key]);
-      });
-    }
-
-    return this.http.get<ServiceResponse>(`${this.apiUrl}/clients`, { params });
+    filter += `&filterOptions=${JSON.stringify(filterOptions)}`;
+    return this.http.get<ServiceResponse>(`${this.apiUrl}/?from=${pageNumber}&limit=${pageSize}&${filter}`, this.headers);
   }
 
-  getClient(id: string): Observable<IClient> {
-    return this.http.get<IClient>(`${this.apiUrl}/clients/${id}`);
+  getClient(id: string): Observable<ServiceResponse> {
+    return this.http.get<ServiceResponse>(`${this.apiUrl}/${id}`, this.headers);
   }
 
-  createClient(client: IClient): Observable<IClient> {
-    return this.http.post<IClient>(`${this.apiUrl}/clients`, client);
+
+  getItemTypeById(id: string): Observable<ServiceResponse> {
+    return this.http.get<ServiceResponse>(`${this.apiUrl}/${id}`, this.headers);
   }
 
-  updateClient(id: string, client: IClient): Observable<IClient> {
-    return this.http.put<IClient>(`${this.apiUrl}/clients/${id}`, client);
+  createClient(client: IClient): Observable<ServiceResponse> {
+    return this.http.post<ServiceResponse>(`${this.apiUrl}`, client, this.headers);
+  }
+
+  updateClient(id: string, client: IClient): Observable<ServiceResponse> {
+    return this.http.put<ServiceResponse>(`${this.apiUrl}/${id}`, client, this.headers);
   }
 
   disableClient(id: string): Observable<ServiceResponse> {
-    return this.http.delete<ServiceResponse>(`${this.apiUrl}/clients/${id}`);
+    return this.http.put<ServiceResponse>(`${this.apiUrl}/${id}/disable`, null, this.headers);
   }
 }

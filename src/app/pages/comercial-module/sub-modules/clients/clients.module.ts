@@ -1,22 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClientsComponent } from './clients.component';
-import { ClientsRoutingModule } from './clients.routing';
-import { PageLayoutModule } from '../../../../../@vex/components/page-layout/page-layout.module';
-import { BreadcrumbsModule } from '../../../../../@vex/components/breadcrumbs/breadcrumbs.module';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { ContainerModule } from '../../../../../@vex/directives/container/container.module';
-import { NgxSpinnerModule } from 'ngx-spinner';
-import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { IconModule } from '@visurel/iconify-angular';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { BreadcrumbsModule } from 'src/@vex/components/breadcrumbs/breadcrumbs.module';
+import { PageLayoutModule } from 'src/@vex/components/page-layout/page-layout.module';
+import { ContainerModule } from 'src/@vex/directives/container/container.module';
+import { ClientsComponent } from './clients.component';
+import { ClientsRoutingModule } from './clients.routing';
+
+
 
 @NgModule({
   declarations: [ClientsComponent],
@@ -24,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
     CommonModule,
     ClientsRoutingModule,
     PageLayoutModule,
+    FlexLayoutModule,
     BreadcrumbsModule,
     MatPaginatorModule,
     MatTableModule,
@@ -32,13 +38,15 @@ import { MatSelectModule } from '@angular/material/select';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    IconModule,
     FormsModule,
-    ReactiveFormsModule,
     MatTooltipModule,
+    ReactiveFormsModule,
     ContainerModule,
+    MatSelectModule,
+    MatButtonToggleModule,
     NgxSpinnerModule,
-    MatInputModule,
-    MatSelectModule
+    MatProgressSpinnerModule
   ]
 })
 export class ClientsModule { }

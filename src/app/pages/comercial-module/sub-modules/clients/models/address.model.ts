@@ -5,6 +5,7 @@ export interface IAddress {
   estado: string;
   codigo_postal?: string;
   referencia?: string;
+  tipo?: string;
   creationDate?: Date;
   createdBy?: string; // Assuming User ID is a string
 }
@@ -16,6 +17,7 @@ export class Address implements IAddress {
   estado: string;
   codigo_postal?: string;
   referencia?: string;
+  tipo?: string;
   creationDate?: Date;
   createdBy?: string;
 
@@ -26,6 +28,7 @@ export class Address implements IAddress {
     this.estado = data.estado;
     this.codigo_postal = data.codigo_postal;
     this.referencia = data.referencia;
+    this.tipo = data.tipo;
     this.creationDate = data.creationDate;
     this.createdBy = data.createdBy;
   }
