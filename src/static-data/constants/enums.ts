@@ -10,4 +10,5 @@ export const TIPOS_CONTABILIDAD = enums.tipos_contabilidad;
 export const TIPOS_EMPRESA = enums.tipos_empresa;
 export const CATEGORIAS_PROVEEDORES = enums.categorias_proveedores;
 export const TIPOS_INCOME = enums.tipos_incomes;
+export const TIPOS_DIRECCION = enums.tipos_direccion;
 

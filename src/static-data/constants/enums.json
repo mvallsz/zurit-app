@@ -113,5 +113,12 @@
     "2": "ajuste inventario",
     "3": "ajuste contable",
     "4": "venta"
+  },
+  "tipos_direccion": {
+    "1": "fiscal",
+    "2": "comercial",
+    "3": "envío",
+    "4": "facturación",
+    "5": "principal"
   }
 }
