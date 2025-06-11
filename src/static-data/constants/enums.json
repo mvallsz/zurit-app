@@ -120,5 +120,19 @@
     "3": "envío",
     "4": "facturación",
     "5": "principal"
+  },
+  "tipos_contacto": {
+    "1": "principal",
+    "2": "administrativo",
+    "3": "comercial",
+    "4": "técnico",
+    "5": "logística",
+    "6": "otro"
+  },
+  "tipos_proyecto": {
+    "1": "normal",
+    "2": "sin fines de lucro",
+    "3": "social",
+    "4": "otro"
   }
 }

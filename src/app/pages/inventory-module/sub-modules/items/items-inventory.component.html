@@ -11,7 +11,7 @@
         <h1 class="title mt-0 mb-1">Inventario de productos</h1>
         <vex-breadcrumbs [crumbs]="[
             { value: 'Módulo de Inventario', router: '/app' },
-            { value: 'Inventario de Artículos', router: '/app/items' }
+            { value: 'Inventario', router: '/app/items' }
           ]"></vex-breadcrumbs>
       </div>
     </div>
@@ -194,8 +194,8 @@
             STOCK
           </th>
           <td *matCellDef="let row" mat-cell>
-            <div (click)="$event.stopPropagation()" fxLayoutAlign="start center" fxLayoutGap="4px">
-              <button (click)="seeStockItemType(row)" color="primary" mat-raised-button style="border-radius: 20px;">
+            <div (click)="$event.stopPropagation()" fxLayoutAlign="start center" fxLayoutGap="2px">
+              <button (click)="seeStockItemType(row)" class="bg-primary text-white rounded-lg  text-xs" mat-raised-button>
                 Ver Stock
               </button>
             </div>

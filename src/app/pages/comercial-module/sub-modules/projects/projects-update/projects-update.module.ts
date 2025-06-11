@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { ItemsStockComponent } from './items-stock.component';
-import { ItemsStockRoutingComponent } from './items-stock-routing.component';
+import { ProjectsUpdateComponent } from './projects-update.component';
+import { ProjectsUpdateRoutingComponent } from './projects-update-routing.component';
 import { PageLayoutModule } from 'src/@vex/components/page-layout/page-layout.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BreadcrumbsModule } from 'src/@vex/components/breadcrumbs/breadcrumbs.module';
@@ -26,16 +26,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
-import { AddStockDialgoModule } from './components/add-stock/add-stock-dialog.module';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
-  declarations: [ItemsStockComponent],
+  declarations: [ProjectsUpdateComponent],
   imports: [
     CommonModule,
-    ItemsStockRoutingComponent,
+    ProjectsUpdateRoutingComponent,
     PageLayoutModule,
     FlexLayoutModule,
     BreadcrumbsModule,
@@ -63,10 +62,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatCardModule,
     MatDividerModule,
     MatExpansionModule,
-    MatProgressSpinnerModule,
-    AddStockDialgoModule
+    MatProgressSpinnerModule
   ],
-  exports: [ItemsStockComponent],
+  exports: [ProjectsUpdateComponent],
   providers: [CurrencyPipe]
 })
-export class ItemsStockModule { }
+export class ProjectUpdateModule { }

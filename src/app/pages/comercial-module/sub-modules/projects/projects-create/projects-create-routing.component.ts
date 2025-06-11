@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { QuicklinkModule } from 'ngx-quicklink'; import { VexRoutes } from '../../../../../../@vex/interfaces/vex-route.interface';
-import { ClientsCreateComponent } from './clients-create.component';
+import { QuicklinkModule } from 'ngx-quicklink';
+import { VexRoutes } from '../../../../../../@vex/interfaces/vex-route.interface';
+import { ProjectsCreateComponent } from './projects-create.component';
 import { UnsavedChangesGuard } from 'src/app/guards/unsaved-changes';
 
 
 const routes: VexRoutes = [
   {
     path: '',
-    component: ClientsCreateComponent,
+    component: ProjectsCreateComponent,
     canDeactivate: [UnsavedChangesGuard]
   }
 ];
@@ -18,4 +19,4 @@ const routes: VexRoutes = [
   exports: [RouterModule, QuicklinkModule]
 })
 
-export class ClientsCreateRoutingComponent { }
+export class ProjectsCreateRoutingModule { }

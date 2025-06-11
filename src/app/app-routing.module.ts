@@ -126,16 +126,26 @@ const routes: VexRoutes = [
            "./pages/comercial-module/sub-modules/clients/clients-update/clients-update.module"
          ).then((m) => m.ClientsUpdateModule),
      },
-      // {
-      //   path: "proyectos",
-      //   canActivate: [RoleGuard],
-      //   data: { expectedRoles: permissions.filter(x => x.path === 'proyectos')[0].expectedRoles },
-      //   // tslint:disable-next-line:max-line-length
-      //   loadChildren: () =>
-      //     import(
-      //       "./pages/warehousingModules/customers-registry/customers-registry.module"
-      //     ).then((m) => m.CustomersRegistryModule),
-      // },
+     {
+        path: "proyectos",
+        canActivate: [RoleGuard],
+        data: { expectedRoles: permissions.filter(x => x.path === 'proyectos')[0].expectedRoles },
+        // tslint:disable-next-line:max-line-length
+        loadChildren: () =>
+          import(
+            "./pages/comercial-module/sub-modules/projects/projects-grid/projects-grid.module"
+          ).then((m) => m.ProjectsGridModule),
+      },
+      {
+        path: "proyectos/registro",
+        canActivate: [RoleGuard],
+        data: { expectedRoles: permissions.filter(x => x.path === 'proyectos/registro')[0].expectedRoles },
+        // tslint:disable-next-line:max-line-length
+        loadChildren: () =>
+          import(
+            "./pages/comercial-module/sub-modules/projects/projects-create/projects-create.module"
+          ).then((m) => m.ProjectsCreateModule),
+      },
       {
         path: "items",
         canActivate: [RoleGuard],

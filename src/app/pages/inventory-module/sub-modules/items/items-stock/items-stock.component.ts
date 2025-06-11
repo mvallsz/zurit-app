@@ -46,7 +46,7 @@ import { itemStatus } from "src/static-data/zurit-static-data";
 
 import { CurrencyPipe } from "@angular/common";
 import { FormBuilder } from '@angular/forms';
-import { AddStockDialogComponent } from "./add-stock/add-stock-dialog.component";
+import { AddStockDialogComponent } from "./components/add-stock/add-stock-dialog.component";
 import { FileUploadService } from "src/app/services/file-upload.service";
 import { DomSanitizer } from "@angular/platform-browser";
 import { scaleIn400ms } from "src/@vex/animations/scale-in.animation";
@@ -81,6 +81,7 @@ interface AddStockData {
 })
 export class ItemsStockComponent implements OnInit, AfterViewInit {
 
+  selectedStatuses = [];
   layoutCtrl = new FormControl("boxed");
   itemType: ItemType;
   itemId: string;
@@ -167,7 +168,10 @@ export class ItemsStockComponent implements OnInit, AfterViewInit {
     private sanitizer: DomSanitizer,
     public currencyPipe: CurrencyPipe,
     private fb: FormBuilder
-  ) { }
+  ) {
+    this.selectedStatuses[0] = '1';
+
+   }
 
   get visibleColumns() {
     return this.columns
@@ -348,6 +352,9 @@ export class ItemsStockComponent implements OnInit, AfterViewInit {
   ) {
     if (spinner) this.spinner.show("itemStockSpinner");
 
+    if(this.selectedStatuses.length > 0)
+      filter = `estado=[${this.selectedStatuses.join(',')}]`;
+
     return this.itemsService.getItems(
       filter,
       filterOptions
@@ -382,8 +389,10 @@ export class ItemsStockComponent implements OnInit, AfterViewInit {
         this.filter = "";
       }
     } else {
-      for (const whFilter of itemFilters) {
-        this.filter += `&${whFilter}=${value}`;
+      if (value !== "estado") {
+        for (const whFilter of itemFilters) {
+          this.filter += `&${whFilter}=${value}`;
+        }
       }
     }
 
@@ -397,7 +406,6 @@ export class ItemsStockComponent implements OnInit, AfterViewInit {
         const currencySymbol = MONEDAS[item.moneda] || '$';
         return {
           ...item,
-          estado: this.itemEstados[item.estado].toUpperCase(),
           costo: `${this.currencyPipe.transform(item.costo_compra, currencySymbol, 'symbol', '1.2-2')}`,
           exento: item.exento ? 'SI' : 'NO',
         };

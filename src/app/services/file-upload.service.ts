@@ -24,7 +24,7 @@ export class FileUploadService {
 
   async photoUpdate(
     archivo: File,
-    tipo: 'items' | 'expenses',
+    tipo: 'items' | 'expenses' | 'projects',
     id: string
   ): Promise<any> {
     try {

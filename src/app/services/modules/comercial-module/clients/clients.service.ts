@@ -30,6 +30,11 @@ export class ClientsService {
     return this.http.get<ServiceResponse>(`${this.apiUrl}/?from=${pageNumber}&limit=${pageSize}&${filter}`, this.headers);
   }
 
+  getClients(filter: string, filterOptions?: any): Observable<ServiceResponse> {
+    filter += `&filterOptions=${JSON.stringify(filterOptions)}`;
+    return this.http.get<ServiceResponse>(`${this.apiUrl}/?${filter}`, this.headers);
+  }
+
   getClient(id: string): Observable<ServiceResponse> {
     return this.http.get<ServiceResponse>(`${this.apiUrl}/${id}`, this.headers);
   }

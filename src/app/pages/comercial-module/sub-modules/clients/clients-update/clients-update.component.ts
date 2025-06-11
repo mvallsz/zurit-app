@@ -25,7 +25,7 @@ import { ServiceResponse } from '../../../../../interfaces/service-response.inte
 import { Address, IAddress } from '../models/address.model';
 import { Contact, IContact } from '../models/contact.model';
 import { ClientsService } from '../../../../../services/modules/comercial-module/clients/clients.service';
-import { CATEGORIAS_EMPRESA, TIPOS_CONTABILIDAD, TIPOS_EMPRESA, TIPOS_DIRECCION } from '../../../../../../static-data/constants/enums';
+import { CATEGORIAS_EMPRESA, TIPOS_CONTABILIDAD, TIPOS_EMPRESA, TIPOS_DIRECCION, TIPOS_CONTACTO } from '../../../../../../static-data/constants/enums';
 import { ESTADOS_VE, CIUDADES_VE } from '../../../../../../static-data/constants/addresses/addresses';
 import Swal from 'sweetalert2';
 import { MatTableDataSource } from '@angular/material/table';
@@ -65,6 +65,8 @@ export class ClientsUpdateComponent implements OnInit {
   public tiposEmpresa = TIPOS_EMPRESA;
   public categoriasEmpresa = CATEGORIAS_EMPRESA;
   public tiposDireccion = TIPOS_DIRECCION;
+  public tiposContacto = TIPOS_CONTACTO;
+
   public estados = ESTADOS_VE.sort((a, b) => {
     const nameA = a.name ? a.name.trim() : '';
     const nameB = b.name ? b.name.trim() : '';
@@ -166,6 +168,22 @@ export class ClientsUpdateComponent implements OnInit {
     this.ciudadCtrl.setValue('');
     this.cd.detectChanges();
   }
+
+  getCityNameById(id: string){
+    const city = CIUDADES_VE.find(ciudad => ciudad.id === +id);
+    return city ? city.name : '';
+  }
+
+  getStateNameById(id: string){
+    const state = ESTADOS_VE.find(estado => estado.id === +id);
+    return state ? state.name : '';
+  }
+
+  getTipoDireccionNameById(id: string){
+    const tipoDireccion = this.tiposDireccion[id];
+    return tipoDireccion ? tipoDireccion.name : '';
+  }
+
   loadClientData() {
     if (this.clientId) {
       this.clientService.getClient(this.clientId)

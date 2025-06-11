@@ -1,0 +1,108 @@
+<vex-page-layout>
+  <ngx-spinner name="projectsSpinner" bdColor="rgba(0, 0, 0, 0.8)" size="small" color="#fff" [fullScreen]="false"
+      type="ball-climbing-dot" template="<img src='../../../../../assets/img/zurit/logo.png' width='50px' height='50px'>">
+      <p style="color: white">Loading...</p>
+  </ngx-spinner>
+
+  <vex-page-layout-header class="pb-16" fxLayout="column" fxLayoutAlign="center start">
+    <div [class.container]="layoutCtrl.value === 'boxed'" [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between">
+      <div>
+        <h1 class="title mt-0 mb-1">Proyectos</h1>
+        <vex-breadcrumbs [crumbs]="[
+            { value: 'Módulo Comercial', router: '/app' },
+            { value: 'Proyectos', router: '/app/proyectos' }
+          ]"></vex-breadcrumbs>
+      </div>
+    </div>
+  </vex-page-layout-header>
+
+  <vex-page-layout-content [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'" class="-mt-6 ">
+    <div class="card overflow-auto -mt-16 bg-deep-purple-light">
+      <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
+        <button [routerLink]="['/app/proyectos/registro']"
+        class="ml-4" color="primary" fxFlex="none" mat-raised-button
+          matTooltip="Registra un nuevo proyecto" type="button">
+          <mat-icon [icIcon]="icAdd"></mat-icon>
+          Nuevo Proyecto
+        </button>&nbsp;&nbsp;
+        <ng-container *ngIf="!dateSearch">
+          <div class="bg-card rounded-full border px-4" fxFlex="grow" fxFlex.lt-md="auto" fxHide.xs fxLayout="row"
+        fxLayoutAlign="start center">
+        <input [formControl]="searchCtrl" (keyup.enter)="onFilterChange(searchCtrl.value)"
+          class="px-0 py-1 border-0 outline-none w-full bg-transparent"
+          placeholder="Ingrese aquí sus términos de busqueda..." type="search" />
+
+        <button (click)="onFilterChange(searchCtrl.value)" color="primary" mat-icon-button matTooltip="Search"
+          type="button">
+          <mat-icon [icIcon]="icSearch"></mat-icon>
+        </button>
+          </div>
+          <button (click)="onFilterChange('')" color="primary" mat-icon-button matTooltip="Reset table data"
+        type="button">
+        <mat-icon>
+          <span class="material-symbols-outlined"> restart_alt </span>
+        </mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="dateSearch">
+          Since &nbsp;&nbsp;
+          <div class="bg-card rounded-full border px-4" fxFlex="200px" fxLayout="row" fxLayoutAlign="start center">
+        <input [formControl]="sinceDateCtrl" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+          type="date" />
+          </div>
+          &nbsp;&nbsp;Until&nbsp;&nbsp;
+          <div class="bg-card rounded-full border px-4" fxFlex="200px" fxLayout="row" fxLayoutAlign="start center">
+        <input [formControl]="untilDateCtrl" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+          type="date" />
+          </div>
+          <button (click)="onFilterChange('')" color="primary" mat-icon-button matTooltip="Search" type="button">
+        <mat-icon [icIcon]="icSearch"></mat-icon>
+          </button>
+          <button (click)="onFilterChange('')" color="primary" mat-icon-button matTooltip="Reset table data"
+        type="button">
+        <mat-icon>
+          <span class="material-symbols-outlined"> restart_alt </span>
+        </mat-icon>
+          </button>
+        </ng-container>
+        <span fxFlex></span>
+        <button (click)="showDate()" [color]="dateColor" mat-icon-button matTooltip="Date Range Search" type="button">
+          <mat-icon>
+        <span class="material-symbols-outlined"> date_range </span>
+          </mat-icon>
+        </button>
+        <mat-progress-spinner diameter="20" mode="indeterminate" color="primary"
+          *ngIf="spinnerDown">
+        </mat-progress-spinner>
+        <div *ngIf="!spinnerDown">
+          <button (click)="exportToExcel()" matTooltip="Download table" mat-icon-button>
+        <mat-icon>
+          <span class="material-symbols-outlined"> download </span>
+        </mat-icon>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="((projectList)?.length ?? 0) > 0" @stagger class="overflow-y-auto flex-auto">
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 container">
+          <zurit-projects-card
+            (openProject)="openProject($event)"
+            (toggleStar)="toggleStar($event)"
+            *ngFor="let project of projectList; trackBy: trackById"
+            @fadeInUp
+            [project]="project">
+          </zurit-projects-card>
+        </div>
+      </div>
+      <div *ngIf="(projectList?.length ?? 0) === 0" @scaleFadeIn class="flex-auto flex flex-col items-center justify-center">
+        <img class="m-12 h-64" src="assets/img/illustrations/idea.svg" />
+        <h2 class="headline m-0 text-center">No hay proyectos registrados</h2>
+      </div>
+      <br>
+      <br>
+      <mat-paginator [pageSizeOptions]="pageSizeOptions" [length]="totalData" [pageSize]="pageSize"
+      class="sticky left-0"></mat-paginator>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>

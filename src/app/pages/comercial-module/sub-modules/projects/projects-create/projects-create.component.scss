@@ -1,0 +1,17 @@
+.mat-table {
+  width: 100%; /* Ensure the table takes full width */
+}
+
+.mat-cell {
+  padding: 0.5rem; /* Add some padding to cells */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12); /* Add subtle borders */
+  font-weight: 300; /* Lighter font weight */
+}
+
+.mat-header-cell {
+  font-weight: 500;
+}
+
+.bg-gray-50 {
+  background-color: #f9f9f9; /* Alternate row background color */
+}

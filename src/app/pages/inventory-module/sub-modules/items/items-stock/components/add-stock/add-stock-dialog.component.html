@@ -64,7 +64,7 @@
       </mat-form-field>
     </div>
 
-    <div class="p-6">
+    <div class="p-6" *ngIf="!noneIndividuals">
       <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Valores Individuales</h4>
       <div *ngFor="let element of getItemFormArray().controls; let i = index" [formGroup]="element" class="item-container">
         <div>

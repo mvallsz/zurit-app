@@ -5,7 +5,7 @@ import { FormControl, Validators, FormBuilder, FormGroup, FormArray } from "@ang
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { InventoryService } from "src/app/services/modules/inventory-module/items/inventory.service";
 import { STOCK_ESTADOS, MONEDAS, CATEGORIAS } from "src/static-data/constants/enums";
-import { Item, IItem } from "../../models/item.model";
+import { Item, IItem } from "../../../models/item.model";
 
 @UntilDestroy()
 @Component({
@@ -42,6 +42,8 @@ export class AddStockDialogComponent implements OnInit {
 
   selectedRepeatableFields: boolean[] = [];
   itemFormFields: { field: string; showInIndividual: boolean }[] = [];
+
+  public noneIndividuals = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddStockDialogComponent>,
@@ -151,6 +153,12 @@ export class AddStockDialogComponent implements OnInit {
 
   toggleRepeatableField(index: number) {
     this.selectedRepeatableFields[index] = !this.selectedRepeatableFields[index];
+
+    if (this.selectedRepeatableFields.every(value => value)) {
+      this.noneIndividuals = true;
+    } else {
+      this.noneIndividuals = false;
+    }
     this.setItemFormFields();
   }
 
@@ -167,6 +175,11 @@ export class AddStockDialogComponent implements OnInit {
       this.selectedRepeatableFields[index] = true;
       }
     });
+    if (this.selectedRepeatableFields.every(value => value)) {
+      this.noneIndividuals = true;
+    } else {
+      this.noneIndividuals = false;
+    }
     this.setItemFormFields();
   }
 

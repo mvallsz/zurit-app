@@ -6,6 +6,7 @@ export interface IClient {
   descripcion?: string;
   rif: string;
   nombre: string;
+  avatar?: string;
   direcciones: (IAddress | string)[]; // Array of Address ID or Address object
   codigo?: string;
   puntaje?: number;
@@ -26,6 +27,7 @@ export class Client implements IClient {
   descripcion?: string;
   rif: string;
   nombre: string;
+  avatar?: string;
   direcciones: (Address | string)[]; // Array of Address ID or Address object
   codigo?: string;
   puntaje?: number;
@@ -45,6 +47,7 @@ export class Client implements IClient {
     this.descripcion = data.descripcion;
     this.rif = data.rif;
     this.nombre = data.nombre;
+    this.avatar = data.avatar;
     this.direcciones = data.direcciones;
     this.codigo = data.codigo;
     this.puntaje = data.puntaje;

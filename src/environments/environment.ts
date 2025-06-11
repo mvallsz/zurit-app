@@ -41,6 +41,26 @@ export const environment = {
       file_extension: "xlsx"
     }
   },
+  projects_config: {
+    projects_filters: [
+      "nombre",
+      "cliente.nombre",
+      "cliente.rif"
+    ],
+    projects_export_config: {
+      header_mapper: {
+        "nombre": "Nombre",
+        "cliente": "Cliente",
+        "fecha_inicio": "Fecha de inicio",
+        "fecha_fin": "Fecha de finalización",
+        "estado": "Estado",
+        "creationDate": "Fecha de creación",
+        "createdBy.name": "Creado por"
+      },
+      file_name_template: "projects",
+      file_extension: "xlsx"
+    }
+  },
   users_config: {
     new_users_secret: "3df4$3we&wf4f5rg*",
     users_filters: ["phone", "name", "email", "role"],
@@ -66,6 +86,7 @@ export const environment = {
     { path: 'clientes', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'clientes/registro', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'proyectos', expectedRoles: ['ADMIN', 'ROOT'] },
+    { path: 'proyectos/registro', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'items', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'items/registro', expectedRoles: ['ADMIN', 'ROOT'] },
     { path: 'items/stock', expectedRoles: ['ADMIN', 'ROOT'] },

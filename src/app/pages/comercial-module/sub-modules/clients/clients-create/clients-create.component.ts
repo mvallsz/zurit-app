@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { stagger80ms } from '../../../../../../@vex/animations/stagger.animation';
 import { fadeInUp400ms } from '../../../../../../@vex/animations/fade-in-up.animation';
@@ -26,11 +26,15 @@ import { IClient } from '../models/client.model';
 import { Address, IAddress } from '../models/address.model';
 import { Contact, IContact } from '../models/contact.model';
 import { ClientsService } from '../../../../../services/modules/comercial-module/clients/clients.service';
-import { CATEGORIAS_EMPRESA, TIPOS_CONTABILIDAD, TIPOS_EMPRESA, TIPOS_DIRECCION } from '../../../../../../static-data/constants/enums';
+import { CATEGORIAS_EMPRESA, TIPOS_CONTABILIDAD, TIPOS_EMPRESA, TIPOS_DIRECCION, TIPOS_CONTACTO } from '../../../../../../static-data/constants/enums';
+import { ESTADOS_VE, CIUDADES_VE } from '../../../../../../static-data/constants/addresses/addresses';
+
 import Swal from 'sweetalert2';
 import { MatTableDataSource } from '@angular/material/table';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
+import { CanComponentDeactivate } from '../../../../../guards/unsaved-changes';
 
 @Component({
   selector: 'zurit-clients-create',
@@ -45,7 +49,7 @@ import { catchError } from 'rxjs/operators';
   ]
 })
 
-export class ClientsCreateComponent implements OnInit {
+export class ClientsCreateComponent implements OnInit, CanComponentDeactivate {
 
   layoutCtrl = new FormControl("boxed");
 
@@ -63,6 +67,7 @@ export class ClientsCreateComponent implements OnInit {
   public tiposEmpresa = TIPOS_EMPRESA;
   public categoriasEmpresa = CATEGORIAS_EMPRESA;
   public tiposDireccion = TIPOS_DIRECCION;
+  public tiposContacto = TIPOS_CONTACTO;
 
 
   // Client Form Controls
@@ -104,6 +109,14 @@ export class ClientsCreateComponent implements OnInit {
   displayedContactColumns: string[] = ['nombre', 'telefono', 'email', 'tipo', 'actions'];
   contactDataSource: MatTableDataSource<Contact> | null;
 
+  public estados = ESTADOS_VE.sort((a, b) => {
+      const nameA = a.name ? a.name.trim() : '';
+      const nameB = b.name ? b.name.trim() : '';
+      return nameA.localeCompare(nameB);
+    });
+
+    public ciudades = CIUDADES_VE.sort((a, b) => a.name.localeCompare(b.name));
+
   protected _onDestroy = new Subject<void>();
 
   constructor(
@@ -143,8 +156,50 @@ export class ClientsCreateComponent implements OnInit {
       tipo_contacto: this.tipoContactoCtrl
     });
 
+
+    // Add beforeunload event listener
+    window.addEventListener('beforeunload', this.unloadNotification.bind(this));
+
+
     this.cd.detectChanges();
   }
+
+    ngOnDestroy(): void {
+      // Remove beforeunload event listener
+      window.removeEventListener('beforeunload', this.unloadNotification.bind(this));
+    }
+
+    unloadNotification(event: BeforeUnloadEvent): void {
+      if (this.addresses.length > 0 || this.contacts.length > 0) {
+        event.preventDefault();
+        this.openSnackbar('Tienes direcciones y / o contactos registrados. Si no guardas, se perdera la información ingresada.');
+      }
+    }
+
+    canDeactivate(): Observable<boolean> | boolean {
+      if (this.addresses.length > 0 || this.contacts.length > 0) {
+        return new Observable<boolean>((observer) => {
+            Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Si sales de esta página, perderás los cambios no guardados.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, quiero salir',
+            cancelButtonText: 'No, quédate en el formulario de creación'
+            }).then((result) => {
+            if (result.isConfirmed) {
+              observer.next(true);
+            } else {
+              observer.next(false);
+            }
+            observer.complete();
+            });
+        });
+      }
+      return true;
+    }
 
   // FORM FUNCTIONS
 
@@ -226,6 +281,23 @@ export class ClientsCreateComponent implements OnInit {
       formOk = false;
     }
     return formOk;
+  }
+
+  filterCitiesByState(event: any) {
+    const estado = event.value;
+    this.ciudades = CIUDADES_VE.filter(ciudad => ciudad.idState === estado).sort((a, b) => a.name.localeCompare(b.name));
+    this.ciudadCtrl.setValue('');
+    this.cd.detectChanges();
+  }
+
+  getCityNameById(id: string){
+    const city = CIUDADES_VE.find(ciudad => ciudad.id === +id);
+    return city ? city.name : '';
+  }
+
+  getStateNameById(id: string){
+    const state = ESTADOS_VE.find(estado => estado.id === +id);
+    return state ? state.name : '';
   }
 
   createAddressValidation() {
@@ -379,6 +451,9 @@ export class ClientsCreateComponent implements OnInit {
         })
       ).subscribe((resp: ServiceResponse) => {
         if (resp.ok) {
+          this.addresses = [];
+          this.contacts = [];
+
           Swal.fire({
             title: 'Cliente registrado con exito en el sistema!!',
             icon: 'success',

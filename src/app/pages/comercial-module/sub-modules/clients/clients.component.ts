@@ -279,7 +279,7 @@ export class ClientsComponent implements OnInit, AfterViewInit {
 
   exportToExcel(): void {
     const filterOptions = {
-      multiple: true,
+      multiSame: true,
       autoComplete: true,
     };
     this.spinnerDown = true;
