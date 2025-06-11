@@ -14,13 +14,21 @@ export class FileUploadService {
 
   constructor(private http: HttpClient) { }
 
+  private get headers() {
+    return {
+      headers: {
+        'x-token': localStorage.getItem('token')
+      }
+    };
+  }
+
   async photoUpdate(
     archivo: File,
-    tipo: 'packages' | 'users' | 'guides' | 'signatures' | 'invoices',
+    tipo: 'items' | 'expenses' | 'projects',
     id: string
-  ) {
+  ): Promise<any> {
     try {
-      const url = `${base_url}/uploads/${tipo}/${id}`;
+      const url = `${base_url}/files/${tipo}/${id}`;
       const formData = new FormData();
       formData.append('file', archivo);
 
@@ -48,7 +56,16 @@ export class FileUploadService {
     return this.http.get(`${base_url}/files/${type}/${imagePath}`, { responseType: 'blob' });
   }
 
+  getImagePath(imagePath: string): Observable<Blob> {
+    return this.http.get(`${base_url}/files${imagePath}`, { responseType: 'blob' });
+  }
+
   getNoImage(): Observable<Blob> {
     return this.http.get(`${base_url}/files/`, { responseType: 'blob' });
+  }
+
+  deleteFile(filePath: string): Observable<any> {
+    const url = `${base_url}/files/delete`;
+    return this.http.post<any>(url, { path: filePath }, this.headers);
   }
 }

@@ -1,0 +1,19 @@
+#activo {
+  color: var(--text-green);
+  background-color: var(--bg-green-light);
+}
+
+#inactivo {
+  color: var(--text-cyan);
+  background-color: var(--bg-cyan-light);
+}
+
+#sin-stock {
+  color: var(--text-red);
+  background-color: var(--bg-red-light);
+}
+
+#alarmado {
+  color: var(--text-purple);
+  background-color: var(--bg-purple-light);
+}

@@ -1,0 +1,370 @@
+<vex-page-layout>
+  <vex-page-layout-header class="pb-16" fxLayout="column" fxLayoutAlign="center start">
+    <div [class.container]="layoutCtrl.value === 'boxed'" [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between">
+      <div>
+        <h1 class="title mt-0 mb-1">Proyectos</h1>
+        <vex-breadcrumbs [crumbs]="[
+            { value: 'Módulo Comercial', router: '/app' },
+            { value: 'Proyectos', router: '/app/proyectos' },
+            { value: 'Registro de Proyectos', router: '/app/proyectos/registro' }
+          ]"></vex-breadcrumbs>
+      </div>
+    </div>
+  </vex-page-layout-header>
+  <vex-page-layout-content [class.container]="layoutCtrl.value === 'boxed'" [class.px-gutter]="layoutCtrl.value === 'fullwidth'" class="-mt-6">
+    <div class="card overflow-auto -mt-16">
+      <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
+        <h1 class="font-light text-2xl my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l" fxFlex="none" fxHide.xs>
+          Registra un nuevo Proyecto
+        </h1>
+      </div>
+      <div @fadeInUp class="card overflow-hidden p-8">
+          <div fxLayout="column" fxLayoutGap="16px">
+            <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Completa la información del proyecto.</h4>
+
+            <mat-form-field fxFlex="50">
+              <mat-label>Cliente</mat-label>
+              <input type="text" matInput [formControl]="clientSearchCtrl" [matAutocomplete]="auto" >
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayClientName.bind(this)">
+                <mat-option *ngFor="let client of filteredClients" [value]="client">
+                  {{ client.nombre }}
+                </mat-option>
+              </mat-autocomplete>
+              <mat-error *ngIf="clientSearchCtrl.hasError('required')">Cliente es requerido.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field fxFlex="50">
+              <mat-label>Nombre</mat-label>
+              <input matInput [formControl]="nombreCtrl" required />
+              <mat-error *ngIf="nombreCtrl.hasError('required')">Nombre es requerido.</mat-error>
+            </mat-form-field>
+
+            <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="16px">
+              <mat-form-field fxFlex="50">
+              <mat-label>Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="pickerInicio" [formControl]="fechaInicioCtrl" >
+              <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+              <mat-datepicker #pickerInicio></mat-datepicker>
+              <mat-error *ngIf="fechaInicioCtrl.hasError('required')">Fecha de inicio es requerida.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field fxFlex="50">
+              <mat-label>Fecha Fin</mat-label>
+              <input matInput [matDatepicker]="pickerFin" [formControl]="fechaFinCtrl" >
+              <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFin></mat-datepicker>
+              <mat-error *ngIf="fechaFinCtrl.hasError('required')">Fecha de fin es requerida.</mat-error>
+              </mat-form-field>
+
+              <mat-form-field fxFlex="50">
+                <mat-label>Tipo</mat-label>
+                <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+                <mat-select [formControl]="tipoCtrl" required>
+                <mat-option *ngFor="let tipo of tiposProyecto" [value]="tipo.key">
+                  {{ tipo.value.toUpperCase() }}
+                </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="16px">
+              <div fxFlex="100%" style="text-align: justify;">
+                <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Carga aqui todos los archivos anexos.</h4>
+                <div class="mt-4" fxLayout="column" fxLayoutGap="8px">
+                <ngx-file-drop
+                  dropZoneLabel="Arrastra y suelta los anexos"
+                  (onFileDrop)="anexosDropped($event)"
+                >
+                  <ng-template
+                  ngx-file-drop-content-tmp
+                  let-openFileSelector="openFileSelector"
+                  >
+                  Arrastra y suelta los anexos.
+                  <button
+                    type="button"
+                    (click)="openFileSelector()"
+                    color="primary"
+                    mat-button
+                  >
+                    Seleccionar archivos
+                  </button>
+                  </ng-template>
+                </ngx-file-drop>
+                <table @stagger [dataSource]="anexosDataSource" class="w-full" id="anexosTable" mat-table matSort>
+                  <!--- Note that these columns can be defined in any order.
+                        The actual rendered columns are set as a property on the row definition" -->
+
+                  <!-- Text Columns -->
+                  <ng-container *ngFor="let column of columnsAnexos; trackBy: trackByProperty">
+                    <ng-container *ngIf="column.type === 'text'" [matColumnDef]="column.property">
+                      <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+                        {{ column.label }}
+                      </th>
+                      <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+                        <div *ngIf="column.property === 'size'" >
+                            {{ row[column.property] / (1024 * 1024) | number:'1.2-2' }} MB
+                        </div>
+                        <div  *ngIf="column.property !== 'size'">
+                          {{ row[column.property] }}
+                        </div>
+                      </td>
+                    </ng-container>
+                  </ng-container>
+
+                  <!-- Action Column -->
+                  <ng-container matColumnDef="actions">
+                    <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+                      Acciones
+                    </th>
+                    <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
+                      <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{ item: row }"
+                        [matMenuTriggerFor]="anexosActionsMenu" mat-icon-button type="button">
+                        <mat-icon [icIcon]="icMoreHoriz"></mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr *matHeaderRowDef="anexoVisibleColumns" mat-header-row></tr>
+                  <tr *matRowDef="let row; columns: anexoVisibleColumns;"
+                    class="hover:bg-hover trans-colors" mat-row></tr>
+                  <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" [attr.colspan]="anexoVisibleColumns.length" style="text-align: center">
+                      No hay anexos registrados en el proyecto.
+                    </td>
+                  </tr>
+                </table>
+                </div>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <!-- Item Types Section -->
+            <div fxLayout="column" >
+              <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Productos a solicitar en el proyecto</h4>
+              <br>
+              <mat-expansion-panel #expansionPanel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <mat-icon class="mr-2" matTooltip="Información del Artículo">
+                    <!-- Puedes usar un icono de acordeón aquí, por ejemplo: -->
+                    expand_more
+                    </mat-icon>
+                    Agrega la solicitud de un nuevo producto al proyecto
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div class="p-6">
+                  <div fxLayout="column" fxLayoutGap="16px">
+                    <div fxLayout="column" fxLayout.lt-md="column" fxLayoutGap="32px">
+                    <div fxFlex="33%" style="text-align: justify;">
+
+                      <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Ingresa aquí lo requerido por el cliente</h4>
+                      <div class="flex flex-col sm:flex-row">
+                        <mat-form-field class="flex-auto s: ml-1 ancho1">
+                          <mat-label>Categoria</mat-label>
+                          <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+                          <mat-select [formControl]="categoriaCtrl" required>
+                          <mat-option *ngFor="let categoria of categoriaItems" [value]="categoria.key">
+                            {{ categoria.value.toUpperCase() }}
+                          </mat-option>
+                          </mat-select>
+                          <mat-hint>Selecciona la categoría del artículo</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="flex-auto s: ml-1 ancho1">
+                          <mat-label>Nombre</mat-label>
+                          <input type="text" [formControl]="nombreItemCtrl" matInput placeholder="Ingresa el nombre" required />
+                          <mat-hint>Ingresa el nombre del artículo</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="flex-auto s: ml-1 ancho1">
+                          <mat-label>Marca</mat-label>
+                          <input type="text" [formControl]="marcaCtrl" matInput required />
+                          <mat-hint>Ingresa la marca del artículo</mat-hint>
+                        </mat-form-field>
+                      </div>
+                      <div class="flex flex-col sm:flex-row">
+                        <mat-form-field class="flex-auto s: ml-1 ancho1">
+                          <mat-label>Descripción</mat-label>
+                          <input type="text" [formControl]="descripcionCtrl" matInput placeholder="Ingresa la descripcion del producto requerido" />
+                          <mat-hint>Ingresa la descripcion del producto requerido</mat-hint>
+                        </mat-form-field>
+                      </div>
+
+
+                      <div class="flex flex-col sm:flex-row">
+                        <mat-form-field *ngIf="categoriaCtrl.value === '2' || categoriaCtrl.value === '3'"
+                          class="flex-auto s: ml-1 ancho1">
+                          <mat-label>Modelo</mat-label>
+                          <input type="text" [formControl]="modeloCtrl" matInput placeholder="Ingresa el modelo" />
+                          <mat-hint>Ingresa el modelo del artículo</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="flex-auto s: ml-1 ancho1">
+                          <mat-label>Unidad de presentación</mat-label>
+                          <mat-icon [icIcon]="icMoreVert" class="mr-3" matPrefix></mat-icon>
+                          <mat-select [formControl]="unidadCtrl" required>
+                          <mat-option *ngFor="let unidad of unidadItems" [value]="unidad.key">
+                            {{ unidad.value.toUpperCase() }}
+                          </mat-option>
+                          </mat-select>
+                          <mat-hint>Ingresa la unidad en la que se presenta el artículo</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="flex-auto s: ml-1 ancho1">
+                          <mat-label>Cantidad</mat-label>
+                          <input type="number" [formControl]="cantidadCtrl" matInput required />
+                          <mat-hint>Ingresa la cantidad de artículos</mat-hint>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div fxFlex="33%" style="text-align: justify;">
+                      <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+                        <button color="warn" mat-raised-button type="button" (click)="resetItemFormGroup()">
+                          BORRAR
+                        </button>
+                        <div fxLayout="row" fxLayoutAlign="center center">
+                          <mat-progress-spinner diameter="40" mode="indeterminate" color="primary"
+                          *ngIf="spinner"></mat-progress-spinner>
+                        </div>
+                        <div fxLayout="row" fxLayoutAlign="center center" *ngIf="!spinner">
+                          <button (click)="submitAddItem()" [disabled]="false" color="primary" mat-raised-button>
+                          GUARDAR
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                    <div fxLayout="column">
+                      <div fxFlex="100%" style="text-align: justify;">
+                        <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Si dispones de un archivo con el formato indicado puedes subirlo aquí para cargas masivas!</h4>
+                        <div class="mt-4" fxLayout="column" fxLayoutGap="8px">
+                        <ngx-file-drop
+                          dropZoneLabel="Arrastra y suelta el excel para cargar los items requeridos"
+                          (onFileDrop)="dropped($event)"
+                        >
+                          <ng-template
+                          ngx-file-drop-content-tmp
+                          let-openFileSelector="openFileSelector"
+                          >
+                          Arrastra y suelta el excel para cargar los articulos requeridos.
+                          <button
+                            type="button"
+                            (click)="openFileSelector()"
+                            color="primary"
+                            mat-button
+                          >
+                            Seleccionar archivo
+                          </button>
+                          </ng-template>
+                        </ngx-file-drop>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+              <br>
+              <zurit-items-req [itemsReqDataSource]="itemsReqDataSource" [itemsReqPageSize]="itemsReqPageSize" [itemsReqPageSizeOptions]="itemsReqPageSizeOptions" itemsReqTotalData="itemsReqTotalData" (edit)="editItemReq($event)"></zurit-items-req>
+
+
+
+              <table @stagger [dataSource]="itemsReqDataSource" class="w-full" id="itemsReqTable" mat-table matSort>
+                <!--- Note that these columns can be defined in any order.
+                      The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Text Columns -->
+                <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+                  <ng-container *ngIf="column.type === 'text'" [matColumnDef]="column.property">
+                    <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+                      {{ column.label }}
+                    </th>
+                    <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+                      <div *ngIf="column.property === 'nombre'" matTooltip="{{ row[column.property] }}">
+                        {{
+                        row[column.property].length > 20
+                        ? row[column.property].toString().substr(0, 17) + "..."
+                        : row[column.property]
+                        }}
+                      </div>
+
+                      <div *ngIf="column.property === 'descripcion'" matTooltip="{{ row[column.property] }}">
+                        {{
+                        row[column.property].length > 20
+                        ? row[column.property].toString().substr(0, 17) + "..."
+                        : row[column.property]
+                        }}
+                      </div>
+                      <div *ngIf="column.property === 'unidad'">
+                        {{ UNIDADES[row[column.property]].toUpperCase() }}
+                      </div>
+                      <div *ngIf="column.property === 'categoria'">
+                        {{ CATEGORIAS[row[column.property]].toUpperCase() }}
+                      </div>
+                      <div *ngIf="column.property !== 'nombre' && column.property !== 'descripcion' && column.property !== 'unidad' && column.property !== 'categoria'">
+                        {{ row[column.property] }}
+                      </div>
+                    </td>
+                  </ng-container>
+                </ng-container>
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="actions">
+                  <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+                    Acciones
+                  </th>
+                  <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
+                    <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{ item: row }"
+                      [matMenuTriggerFor]="actionsMenu" mat-icon-button type="button">
+                      <mat-icon [icIcon]="icMoreHoriz"></mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr (click)="editItemReq(row)" matTooltip="{{row.codigo}}" *matRowDef="let row; columns: visibleColumns;"
+                  class="hover:bg-hover trans-colors" mat-row></tr>
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell" [attr.colspan]="visibleColumns.length" style="text-align: center">
+                    No hay items registrados en el Sistema.
+                  </td>
+                </tr>
+              </table>
+
+              <mat-paginator #itemsReqPaginator [pageSizeOptions]="itemsReqPageSizeOptions" [length]="itemsReqTotalData" [pageSize]="itemsReqPageSize"
+                class="sticky left-0"></mat-paginator>
+
+
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="16px">
+              <button mat-raised-button color="warn" type="button" (click)="resetForm()">CANCELAR</button>
+              <button mat-raised-button color="primary" type="submit" (click)="submit()">GUARDAR</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>
+
+<mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-item="item" matMenuContent>
+    <button (click)="editItemReq(item)" mat-menu-item>
+      <mat-icon [icIcon]="icEdit"></mat-icon>
+      <span>Editar</span>
+    </button>
+    <button (click)="removeItemReq(item)" mat-menu-item>
+      <mat-icon [icIcon]="icDelete"></mat-icon>
+      <span>Eliminar</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+
+<mat-menu #anexosActionsMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-item="item" matMenuContent>
+    <button (click)="previewAnexo(item)" mat-menu-item>
+      <mat-icon [icIcon]="icDownload"></mat-icon>
+      <span>Descargar</span>
+    </button>
+    <button (click)="removeAnexo(item)" mat-menu-item>
+      <mat-icon [icIcon]="icDelete"></mat-icon>
+      <span>Eliminar</span>
+    </button>
+  </ng-template>
+</mat-menu>

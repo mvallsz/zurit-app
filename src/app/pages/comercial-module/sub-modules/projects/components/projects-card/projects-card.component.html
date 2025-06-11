@@ -1,0 +1,67 @@
+<div class="card overflow-hidden">
+  <div
+    (click)="openProject.emit(project._id)"
+    class="p-4 text-center hover:bg-hover transition duration-400 ease-out-swift cursor-pointer relative"
+    matRipple>
+    <ng-container *ngIf="project.client.avatar; else initials">
+      <img [src]="project.anexos" class="avatar h-24 w-24 mx-auto" />
+    </ng-container>
+    <ng-template #initials>
+      <div class="avatar h-24 w-24 mx-auto flex items-center justify-center rounded-full bg-primary text-white text-2xl">
+      {{ project.client.nombre.substring(0, 1).toUpperCase() }}{{ project.client.nombre.substring(1, 2).toUpperCase() }}
+      </div>
+    </ng-template>
+
+    <h2 class="title mb-1 mt-3">{{ project.nombre }}</h2>
+    <div class="body-2 text-secondary flex items-center justify-center">
+      <span>{{ project.client.nombre }}<br>{{ project.client.rif }}</span>
+    </div>
+
+    <div class="body-2 text-secondary flex items-center justify-center">
+     <span>{{ project.items_solicitados.length }} artículos solicitados</span>
+    </div>
+
+    <button
+      (click)="emitToggleStar($event, project._id)"
+      class="absolute top-2 right-2"
+      mat-icon-button
+      type="button">
+      <mat-icon
+        [ngClass]="project?.starred ? 'material-icons text-yellow-500' : 'material-symbols-outlined text-secondary'">
+        star
+      </mat-icon>
+
+    </button>
+  </div>
+  <div class="bg-purple p-2 flex items-center justify-around">
+    <button
+      (click)="copyToClipboard(project.client.telefono)"
+      class="text-secondary"
+      mat-icon-button
+      type="button">
+      <mat-icon>
+      <span class="material-symbols-outlined text-white"> phone_iphone </span>
+      </mat-icon>
+    </button>
+
+    <a class="text-secondary" mat-icon-button type="button" [href]="'mailto:' + project.client.email">
+      <mat-icon >
+      <span class="material-symbols-outlined text-white">
+       mail
+       </span>
+      </mat-icon>
+     </a>
+    <a
+      class="text-secondary"
+      mat-icon-button
+      type="button"
+      [href]="'https://wa.me/' + project.client.whatsapp + '?text=Hola%20' + project.client.nombre + ',%20estamos%20en%20contacto%20desde%20Zurit%20App.'"
+      target="_blank">
+      <mat-icon>
+      <span class="material-symbols-outlined text-white">
+        chat
+      </span>
+      </mat-icon>
+    </a>
+  </div>
+</div>

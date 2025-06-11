@@ -1,0 +1,370 @@
+<vex-page-layout>
+  <ngx-spinner name="itemStockSpinner" bdColor="rgba(0, 0, 0, 0.8)" size="small" color="#fff" [fullScreen]="false"
+    type="ball-climbing-dot" template="<img src='../../../../../assets/img/zurit/logo.png' width='50px' height='50px'>">
+    <p style="color: white">Loading...</p>
+  </ngx-spinner>
+
+  <vex-page-layout-header class="pb-16" fxLayout="column" fxLayoutAlign="center start">
+    <div [class.container]="layoutCtrl.value === 'boxed'" [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between">
+      <div>
+        <h1 class="title mt-0 mb-1">Stock de Artículos</h1>
+        <vex-breadcrumbs [crumbs]="[
+            { value: 'Módulo de Inventario', router: '/app' },
+            { value: 'Inventario de Artículos', router: '/app/items' },
+            { value: 'Stock', router: '/app/items/stock/'+ itemId }
+          ]"></vex-breadcrumbs>
+      </div>
+    </div>
+  </vex-page-layout-header>
+
+  <vex-page-layout-content [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'" class="-mt-6">
+    <div class="card overflow-auto -mt-16">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon class="mr-2" matTooltip="Información del Artículo">
+              <!-- Puedes usar un icono de acordeón aquí, por ejemplo: -->
+              expand_more
+            </mat-icon>
+            {{itemType?.nombre}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="p-6">
+          <div fxLayout="column" fxLayoutGap="16px">
+
+            <div fxLayout="column" fxLayout.lt-md="column" fxLayoutGap="32px">
+              <div fxFlex="33%" style="text-align: justify;">
+                <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Identificación</h4>
+                <table class="w-full">
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Nombre:</th>
+                    <td class="py-1 pl-2">{{itemType?.nombre}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Descripción:
+                    </th>
+                    <td class="py-1 pl-2">{{itemType?.descripcion}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Marca:</th>
+                    <td class="py-1 pl-2">{{itemType?.marca}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Modelo:</th>
+                    <td class="py-1 pl-2">{{itemType?.modelo}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Categoría:</th>
+                    <td class="py-1 pl-2">{{CATEGORIAS[itemType?.categoria]}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Proveedor:</th>
+                    <td class="py-1 pl-2">{{itemType?.proveedor?.nombre}}</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1 pl-2 text-right" colspan="2">
+                        <button mat-raised-button color="primary"  [routerLink]="['/app/items/registro', itemType?._id]">Editar</button>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div fxFlex="33%" style="text-align: justify;">
+                <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Información Cuantitativa
+                </h4>
+                <table class="w-full">
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Costo de Compra:
+                    </th>
+                    <td class="py-1 pl-2">{{this.currencyPipe.transform(itemType?.costo_compra,
+                      MONEDAS[itemType?.moneda], 'symbol', '1.2-2')}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Unidad:</th>
+                    <td class="py-1 pl-2">{{UNIDADES[itemType?.unidad]}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Moneda:</th>
+                    <td class="py-1 pl-2">{{MONEDAS[itemType?.moneda]}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Exento:</th>
+                    <td class="py-1 pl-2">{{itemType?.exento ? 'Sí' : 'No'}}</td>
+                  </tr>
+                </table>
+              </div>
+              <div fxFlex="33%" style="text-align: justify;">
+                <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Más Detalles</h4>
+                <table class="w-full">
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Fecha de
+                      Registro en Sistema:</th>
+                    <td class="py-1 pl-2">{{itemType?.creationDate | date:'dd/MM/yyyy'}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Stock Mínimo:
+                    </th>
+                    <td class="py-1 pl-2">{{itemType?.min_stock}}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-left font-semibold pr-2 py-1" style="border-right: 1px solid gray; width: 120px;">
+                      Stock Máximo:
+                    </th>
+                    <td class="py-1 pl-2">{{itemType?.max_stock}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div fxLayout="column">
+              <div fxFlex="100%" style="text-align: justify;">
+                <h4 class="title text-lg font-semibold mb-4 bg-primary text-white p-2 rounded">Imágenes</h4>
+                <table class="w-full">
+                  <tr>
+                    <td>
+                      <div fxLayout="row wrap" fxLayoutGap="8px">
+                        <div @stagger class="px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-6">
+                          <div class="relative" *ngFor="let img of imagePreviews; let i = index">
+                            <img @scaleIn class="rounded w-full" [src]="img" alt="Imagen del artículo" />
+                            <button mat-icon-button color="primary" class="absolute top-0 left-0"
+                              (click)="openImageInNewWindow(i)">
+                              <mat-icon>search</mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
+        <h2 class="title my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l" fxFlex="none" fxHide.xs>
+          <span>Stock</span>
+        </h2>
+
+        <span fxFlex></span>
+        <ng-container *ngIf="!dateSearch">
+          <div class="bg-card rounded-full border px-4" fxFlex="400px" fxFlex.lt-md="auto" fxHide.xs fxLayout="row"
+            fxLayoutAlign="start center">
+            <input [formControl]="searchCtrl" (keyup.enter)="onFilterChange(searchCtrl.value)"
+              class="px-0 py-1 border-0 outline-none w-full bg-transparent"
+              placeholder="Ingrese aquí sus términos de busqueda..." type="search" />
+
+            <button (click)="onFilterChange(searchCtrl.value)" color="primary" mat-icon-button matTooltip="Search"
+              type="button">
+              <mat-icon [icIcon]="icSearch"></mat-icon>
+            </button>
+          </div>
+          <button (click)="onFilterChange('')" color="primary" mat-icon-button matTooltip="Reset table data"
+            type="button">
+            <mat-icon>
+              <span class="material-symbols-outlined"> restart_alt </span>
+            </mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="dateSearch">
+          Since &nbsp;&nbsp;
+          <div class="bg-card rounded-full border px-4" fxFlex="200px" fxLayout="row" fxLayoutAlign="start center">
+            <input [formControl]="sinceDateCtrl" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+              type="date" />
+          </div>
+          &nbsp;&nbsp;Until&nbsp;&nbsp;
+          <div class="bg-card rounded-full border px-4" fxFlex="200px" fxLayout="row" fxLayoutAlign="start center">
+            <input [formControl]="untilDateCtrl" class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+              type="date" />
+          </div>
+          <button (click)="onFilterChange('')" color="primary" mat-icon-button matTooltip="Search" type="button">
+            <mat-icon [icIcon]="icSearch"></mat-icon>
+          </button>
+          <button (click)="onFilterChange('')" color="primary" mat-icon-button matTooltip="Reset table data"
+            type="button">
+            <mat-icon>
+              <span class="material-symbols-outlined"> restart_alt </span>
+            </mat-icon>
+          </button>
+        </ng-container>
+        <span fxFlex></span>
+        <button (click)="showDate()" [color]="dateColor" mat-icon-button matTooltip="Date Range Search" type="button">
+          <mat-icon>
+            <span class="material-symbols-outlined"> date_range </span>
+          </mat-icon>
+        </button>
+
+        <button [matMenuTriggerFor]="columnFilterMenu" class="ml-4" fxFlex="none" mat-icon-button
+          matTooltip="Filter Columns" type="button">
+          <mat-icon [icIcon]="icFilterList"></mat-icon>
+        </button>
+        <mat-progress-spinner diameter="20" mode="indeterminate" color="primary"
+          *ngIf="spinnerDown"></mat-progress-spinner>
+        <div *ngIf="!spinnerDown">
+          <button (click)="exportToExcel()" matTooltip="Download table" mat-icon-button>
+            <mat-icon>
+              <span class="material-symbols-outlined"> download </span>
+            </mat-icon>
+          </button>
+        </div>
+
+        <button (click)="openAddStockDialog()" color="primary" mat-mini-fab matTooltip="Agregar Stock" type="button">
+          <mat-icon [icIcon]="icAdd"></mat-icon>
+        </button>
+      </div>
+      <div class="p-6">
+
+        <table [dataSource]="dataSource" class="w-full" mat-table matSort>
+
+          <ng-container matColumnDef="checkbox">
+            <th *matHeaderCellDef mat-header-cell>
+              <mat-checkbox (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue() && isAllSelected()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()" color="primary">
+              </mat-checkbox>
+            </th>
+            <td *matCellDef="let row" class="w-4" mat-cell>
+              <mat-checkbox (change)="$event ? selection.toggle(row) : null" (click)="$event.stopPropagation()"
+                [checked]="selection.isSelected(row)" color="primary">
+              </mat-checkbox>
+            </td>
+          </ng-container>
+
+          <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+            <ng-container *ngIf="column.type === 'text' && column.property !== 'estado'" [matColumnDef]="column.property">
+              <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+                {{ column.label }}
+              </th>
+              <td *matCellDef="let row" mat-cell>
+                <ng-container
+                  *ngIf="column.property !== 'creationDate' && column.property !== 'fecha_vencimiento' && column.property !== 'createdBy' && column.property !== 'itemType'">
+                  {{row[column.property]}}
+                </ng-container>
+                <ng-container *ngIf="column.property === 'creationDate' || column.property === 'fecha_vencimiento'">
+                  {{row[column.property] | date:'dd/MM/yyyy'}}
+                </ng-container>
+                <ng-container *ngIf="column.property === 'estado'">
+                  <div (click)="$event.stopPropagation()" fxLayoutAlign="start center" fxLayoutGap="4px">
+                    <div [ngClass]="[
+                    selectStatusClassById(row[column.property]).textClass,
+                    selectStatusClassById(row[column.property]).bgClass
+                  ]" class="rounded px-2 py-1 font-medium text-xs" fxFlex="none">
+                      {{ STOCK_ESTADOS[row[column.property]].toUpperCase() }}
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="column.property === 'createdBy'">
+                  {{row[column.property].name}}
+                </ng-container>
+                <ng-container *ngIf="column.property === 'itemType'">
+                  {{UNIDADES[this.itemType?.unidad].toUpperCase()}}
+                </ng-container>
+
+              </td>
+            </ng-container>
+          </ng-container>
+  <!-- Status Columns -->
+  <ng-container matColumnDef="estado">
+    <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+      <mat-form-field>
+        <mat-select [(value)]="selectedStatuses" (selectionChange)="onFilterChange('estado')" multiple>
+          <mat-option *ngFor="let key of itemClasses" [value]="key.id">
+            <span [ngClass]="[key.textClass, key.bgClass]">{{ STOCK_ESTADOS[key.id] }}</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </th>
+    <td *matCellDef="let row" mat-cell>
+      <div (click)="$event.stopPropagation()" fxLayoutAlign="start center" fxLayoutGap="4px">
+        <div [ngClass]="[
+            selectStatusClassById(row.estado).textClass,
+            selectStatusClassById(row.estado).bgClass
+          ]" class="rounded px-2 py-1 font-medium text-xs" fxFlex="none">
+          {{ STOCK_ESTADOS[row.estado].toUpperCase() }}
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th *matHeaderCellDef class="uppercase" mat-header-cell>
+              Acciones
+            </th>
+            <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
+              <button [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{item: row}" mat-icon-button
+                type="button">
+                <mat-icon [icIcon]="icMoreHoriz"></mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+          <tr *matRowDef="let row; columns: visibleColumns;" class="hover:bg-hover trans-ease-out cursor-pointer"
+            mat-row></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="visibleColumns.length" style="text-align: center">
+                No hay articulos registrados en el Inventario.
+              </td>
+            </tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize" class="sticky left-0"></mat-paginator>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="p-6">
+        <h3 class="title">Total de Items por Estado</h3>
+        <div fxLayout="row wrap" fxLayoutGap="16px grid">
+          <div *ngFor="let estado of itemEstadosArray" fxFlex="25%" fxFlex.lt-sm="50%">
+            <p><strong>{{estado.value}}:</strong> {{itemEstadosTotales[estado.key] || 0}}</p>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="p-6" *ngIf="isStockLevelWarning()">
+        <div class="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4" role="alert">
+          <p class="font-bold">Advertencia</p>
+          <p>{{getStockLevelWarningMessage()}}</p>
+        </div>
+      </div>
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>
+
+<mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-item="item" matMenuContent>
+    <button [disabled]="item.estado !== 1" mat-menu-item>
+      <mat-icon [icIcon]="icEdit"></mat-icon>
+      <span>Editar</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon [icIcon]="icDelete"></mat-icon>
+      <span>Eliminar</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #columnFilterMenu="matMenu" xPosition="before" yPosition="below">
+  <button (click)="toggleColumnVisibility(column, $event)" *ngFor="let column of columns"
+    class="checkbox-item mat-menu-item">
+    <mat-checkbox (click)="$event.stopPropagation()" [(ngModel)]="column.visible" color="primary">
+      {{ column.label }}
+    </mat-checkbox>
+  </button>
+</mat-menu>

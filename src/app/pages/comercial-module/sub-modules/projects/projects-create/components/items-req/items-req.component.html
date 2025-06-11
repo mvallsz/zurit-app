@@ -1,0 +1,78 @@
+<table @stagger [dataSource]="itemsReqDataSource" class="w-full" id="itemsReqTable" mat-table matSort>
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- Text Columns -->
+  <ng-container *ngFor="let column of columns; trackBy: trackByProperty">
+    <ng-container *ngIf="column.type === 'text'" [matColumnDef]="column.property">
+      <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+        {{ column.label }}
+      </th>
+      <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+        <div *ngIf="column.property === 'nombre'" matTooltip="{{ row[column.property] }}">
+          {{
+          row[column.property].length > 20
+          ? row[column.property].toString().substr(0, 17) + "..."
+          : row[column.property]
+          }}
+        </div>
+
+        <div *ngIf="column.property === 'descripcion'" matTooltip="{{ row[column.property] }}">
+          {{
+          row[column.property].length > 20
+          ? row[column.property].toString().substr(0, 17) + "..."
+          : row[column.property]
+          }}
+        </div>
+        <div *ngIf="column.property === 'unidad'">
+          {{ UNIDADES[row[column.property]].toUpperCase() }}
+        </div>
+        <div *ngIf="column.property === 'categoria'">
+          {{ CATEGORIAS[row[column.property]].toUpperCase() }}
+        </div>
+        <div *ngIf="column.property !== 'nombre' && column.property !== 'descripcion' && column.property !== 'unidad' && column.property !== 'categoria'">
+          {{ row[column.property] }}
+        </div>
+      </td>
+    </ng-container>
+  </ng-container>
+
+  <!-- Action Column -->
+  <ng-container matColumnDef="actions">
+    <th *matHeaderCellDef class="uppercase" mat-header-cell mat-sort-header>
+      Acciones
+    </th>
+    <td *matCellDef="let row" class="w-10 text-secondary" mat-cell>
+      <button (click)="$event.stopPropagation()" [matMenuTriggerData]="{ item: row }"
+        [matMenuTriggerFor]="actionsMenu" mat-icon-button type="button">
+        <mat-icon [icIcon]="icMoreHoriz"></mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+  <tr (click)="editItemReq(row)" matTooltip="{{row.codigo}}" *matRowDef="let row; columns: visibleColumns;"
+    class="hover:bg-hover trans-colors" mat-row></tr>
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" [attr.colspan]="visibleColumns.length" style="text-align: center">
+      No hay items registrados en el Sistema.
+    </td>
+  </tr>
+</table>
+
+<mat-paginator #itemsReqPaginator [pageSizeOptions]="itemsReqPageSizeOptions" [length]="itemsReqTotalData" [pageSize]="itemsReqPageSize"
+  class="sticky left-0"></mat-paginator>
+
+
+<mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
+  <ng-template let-item="item" matMenuContent>
+    <button (click)="editItemReq(item)" mat-menu-item>
+      <mat-icon [icIcon]="icEdit"></mat-icon>
+      <span>Editar</span>
+    </button>
+    <button (click)="removeItemReq(item)" mat-menu-item>
+      <mat-icon [icIcon]="icDelete"></mat-icon>
+      <span>Eliminar</span>
+    </button>
+  </ng-template>
+</mat-menu>

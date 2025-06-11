@@ -160,7 +160,7 @@
       <tr
         *matRowDef="let row; columns: visibleColumns"
         style="cursor: pointer"
-        (click)="navigateTo(row)"
+
         mat-row
       ></tr>
     </ng-container>
@@ -180,7 +180,7 @@
 <mat-menu #actionsMenu="matMenu" xPosition="before" yPosition="below">
   <ng-container *ngIf="type === 'guide'">
     <ng-template let-guide="guide" matMenuContent>
-      <button (click)="openPickList(guide)" mat-menu-item>
+      <button mat-menu-item>
         <mat-icon [icIcon]="icPrint"></mat-icon>
         <span>Print Package PickList</span>
       </button>
@@ -188,7 +188,7 @@
   </ng-container>
   <ng-container *ngIf="type === 'ship'">
     <ng-template let-ship="ship" matMenuContent>
-      <button (click)="openPickList(ship)" mat-menu-item>
+      <button mat-menu-item>
         <mat-icon [icIcon]="icPrint"></mat-icon>
         <span>Print Manifest</span>
       </button>

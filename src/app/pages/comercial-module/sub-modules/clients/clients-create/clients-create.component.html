@@ -1,0 +1,339 @@
+<vex-page-layout>
+  <vex-page-layout-header class="pb-16" fxLayout="column" fxLayoutAlign="center start">
+    <div [class.container]="layoutCtrl.value === 'boxed'" [class.px-gutter]="layoutCtrl.value === 'fullwidth'"
+      class="w-full flex flex-col sm:flex-row justify-between">
+      <div>
+        <h1 class="title mt-0 mb-1">Formulario de Registro de Clientes</h1>
+        <vex-breadcrumbs [crumbs]="[
+            { value: 'Módulo Comercial', router: '/app' },
+            {
+              value: 'Registro de Clientes',
+              router: '/app/clientes'
+            },
+            {
+              value: 'Registro de Cliente',
+              router: '/app/clientes/registro'
+            }
+          ]"></vex-breadcrumbs>
+      </div>
+    </div>
+  </vex-page-layout-header>
+
+  <vex-page-layout-content [class.container]="layoutCtrl.value === 'boxed'"
+    [class.px-gutter]="layoutCtrl.value === 'fullwidth'" class="-mt-6">
+    <div class="card overflow-auto -mt-16">
+      <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
+        <h1 class="font-light text-2xl my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l" fxFlex="none"
+          fxHide.xs>
+          Registra un nuevo cliente
+        </h1>
+      </div>
+      <div @fadeInUp class="card overflow-hidden p-8">
+
+        <!-- ######## Inicio de Sección de INFORMACION DEL CLIENTE ######## -->
+        <h2 class="title">Información del Cliente</h2>
+        <div class="subheading-1">
+          Ingresa la información general del cliente que deseas registrar
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+
+          <mat-form-field class="flex-auto s: ml-1 w-1/2">
+            <mat-label>Nombre</mat-label>
+            <input type="text" [formControl]="nombreCtrl" matInput required />
+            <mat-hint>Ingresa el nombre del cliente</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="flex-auto s: ml-1 w-1/4">
+            <mat-label>Tipo de Cliente</mat-label>
+            <mat-select [formControl]="tipoClienteCtrl" required>
+              <mat-option *ngFor="let tipo of tiposEmpresa | keyvalue" [value]="tipo.key">{{ tipo.value.toUpperCase() }}</mat-option>
+            </mat-select>
+            <mat-hint>Selecciona el tipo de empresa</mat-hint>
+            </mat-form-field>
+          <mat-form-field class="flex-auto s: ml-1 w-1/4">
+            <mat-label>RIF</mat-label>
+            <input type="text" [formControl]="rifCtrl" matInput placeholder="J-00000000-0" required (blur)="validateRif(rifCtrl.value)" />
+            <mat-hint>Ingresa el RIF del cliente</mat-hint>
+          </mat-form-field>
+
+        </div>
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 ">
+            <mat-label>Descripción</mat-label>
+            <textarea type="text" [formControl]="descripcionCtrl" matInput required class="h-40" ></textarea>
+            <mat-hint>Ingresa la descripción del cliente</mat-hint>
+          </mat-form-field>
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 w-1/3">
+            <mat-label>Teléfono</mat-label>
+            <input type="text" [formControl]="telefonoCtrl" placeholder="0XXX-XXXYYYY" (blur)="validatePhoneNumber(telefonoCtrl.value)" matInput required />
+            <mat-hint>Ingresa el teléfono del cliente</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="flex-auto s: ml-1 w-1/3">
+            <mat-label>WhatsApp</mat-label>
+            <input type="text" [formControl]="whatsappCtrl" placeholder="+58 XXX-XXXYYYY" (blur)="validateWhatsAppNumber(whatsappCtrl.value)" matInput required />
+            <mat-hint>Ingresa el WhatsApp del cliente</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="flex-auto s: ml-1 w-1/3">
+            <mat-label>Email</mat-label>
+            <input type="email" placeholder="juan@mail.com" [formControl]="emailCtrl" matInput required />
+            <mat-hint>Ingresa el email del cliente</mat-hint>
+          </mat-form-field>
+
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+
+             <mat-form-field class="flex-auto s: ml-1 ancho1">
+                <mat-label>Tipo de Contabilidad</mat-label>
+                <mat-select [formControl]="tipoContabilidadCtrl" required>
+                <mat-option *ngFor="let tipo of tiposContabilidad | keyvalue" [value]="tipo.key">{{ tipo.value.toUpperCase() }}</mat-option>
+                </mat-select>
+                <mat-hint>Selecciona el tipo de contabilidad</mat-hint>
+                </mat-form-field>
+                   <mat-form-field class="flex-auto s: ml-1 ancho1">
+                    <mat-label>Categoría de la Empresa</mat-label>
+                    <mat-select [formControl]="categoriaCtrl" required>
+                    <mat-option *ngFor="let categoria of categoriasEmpresa | keyvalue" [value]="categoria.key">{{ categoria.value.toUpperCase() }}</mat-option>
+                    </mat-select>
+                    <mat-hint>Selecciona la categoría de la empresa</mat-hint>
+                    </mat-form-field>
+                       <mat-form-field class="flex-auto s: ml-1 ancho1">
+                        <mat-label>Puntaje de la Empresa</mat-label>
+                        <input type="number" [formControl]="puntajeCtrl" matInput required min="0" max="999">
+                        <mat-hint>Ingrese el puntaje de la empresa (0-999)</mat-hint>
+                      </mat-form-field>
+        </div>
+        <br />
+        <mat-divider color="primary" style="border-radius: 5px; border-width: 5px;"></mat-divider>
+        <!-- ######## Fin de Sección de INFORMACION DEL CLIENTE ######## -->
+
+        <!-- ######## Inicio de Sección de DIRECCIONES ######## -->
+        <br />
+        <h2 class="title">Direcciones</h2>
+        <div class="subheading-1">
+          Ingresa las direcciones del cliente
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 w-1/4">
+            <mat-label>Estado</mat-label>
+              <mat-select [formControl]="estadoCtrl" (selectionChange)="filterCitiesByState($event)" required>
+                <mat-option *ngFor="let estado of estados | keyvalue" [value]="estado.value?.id">{{ estado.value?.name }}</mat-option>
+              </mat-select>
+            <mat-hint>Ingresa el estado</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="flex-auto s: ml-1 w-1/4">
+            <mat-label>Ciudad</mat-label>
+            <mat-select [formControl]="ciudadCtrl" required>
+              <mat-option *ngFor="let ciudad of ciudades | keyvalue" [value]="ciudad.value.id">{{ ciudad.value?.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+            <mat-form-field class="flex-auto s: ml-1 w-1/2">
+              <mat-label>Calle</mat-label>
+              <input type="text" [formControl]="calleCtrl" matInput required />
+              <mat-hint>Ingresa la calle</mat-hint>
+            </mat-form-field>
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Código Postal</mat-label>
+            <input type="text" [formControl]="codigoPostalCtrl" matInput />
+            <mat-hint>Ingresa el código postal</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Referencia</mat-label>
+            <input type="text" [formControl]="referenciaCtrl" matInput  />
+            <mat-hint>Ingresa alguna referencia</mat-hint>
+          </mat-form-field>
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+                    <mat-label>Tipo de Dirección</mat-label>
+                    <mat-select [formControl]="tipoDireccionCtrl" required>
+                      <mat-option *ngFor="let tipo of tiposDireccion | keyvalue" [value]="tipo.key">{{ tipo.value.toUpperCase() }}</mat-option>
+                    </mat-select>
+                    <mat-hint>Selecciona el tipo de dirección</mat-hint>
+                  </mat-form-field>
+        </div>
+        <br />
+        <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+          <button color="primary" mat-raised-button type="button" (click)="addAddress()">
+            <mat-icon [icIcon]="icAdd"></mat-icon>
+            Registrar Dirección
+          </button>
+        </div>
+        <br />
+        <mat-table [dataSource]="addressDataSource" class="w-full">
+            <!-- Tipo Column -->
+            <ng-container matColumnDef="tipo">
+              <mat-header-cell *matHeaderCellDef> Tipo </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{tiposDireccion[element.tipo]}} </mat-cell>
+            </ng-container>
+          <!-- Direccion Column -->
+          <ng-container matColumnDef="calle">
+            <mat-header-cell *matHeaderCellDef> Dirección </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.calle}} </mat-cell>
+          </ng-container>
+
+          <!-- Ciudad Column -->
+          <ng-container matColumnDef="ciudad">
+            <mat-header-cell *matHeaderCellDef> Ciudad </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{getCityNameById(element.ciudad)}} </mat-cell>
+          </ng-container>
+
+          <!-- Estado Column -->
+          <ng-container matColumnDef="estado">
+            <mat-header-cell *matHeaderCellDef> Estado </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{getStateNameById(element.estado)}} </mat-cell>
+          </ng-container>
+
+           <!-- Codigo Postal Column -->
+           <ng-container matColumnDef="codigo_postal">
+            <mat-header-cell *matHeaderCellDef> Codigo Postal </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.codigo_postal}} </mat-cell>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>
+              <div fxLayout="right">Acciones</div>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index">
+              <div fxLayout="row" fxLayoutAlign="center center">
+                <button (click)="removeAddress(i)" color="warn" mat-icon-button type="button">
+                  <mat-icon [icIcon]="icDelete"></mat-icon>
+                </button>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedAddressColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedAddressColumns;"></mat-row>
+        </mat-table>
+        <br />
+        <mat-divider color="primary" style="border-radius: 5px; border-width: 5px;"></mat-divider>
+        <!-- ######## Fin de Sección de DIRECCIONES ######## -->
+
+        <!-- ######## Inicio de Sección de CONTACTOS ######## -->
+        <br />
+        <h2 class="title">Contactos</h2>
+        <div class="subheading-1">
+          Ingresa los contactos del cliente
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Nombre</mat-label>
+            <input type="text" [formControl]="nombreContactoCtrl" matInput required />
+            <mat-hint>Ingresa el nombre del contacto</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Teléfono</mat-label>
+            <input type="text" [formControl]="telefonoContactoCtrl" matInput required />
+            <mat-hint>Ingresa el teléfono del contacto</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Email</mat-label>
+            <input type="email" [formControl]="emailContactoCtrl" matInput required />
+            <mat-hint>Ingresa el email del contacto</mat-hint>
+          </mat-form-field>
+        </div>
+        <br />
+        <div class="flex flex-col sm:flex-row">
+          <mat-form-field class="flex-auto s: ml-1 ancho1">
+            <mat-label>Tipo de Contacto</mat-label>
+            <mat-select [formControl]="tipoContactoCtrl" required>
+              <mat-option *ngFor="let tipo of tiposContacto | keyvalue" [value]="tipo.key">{{ tipo.value.toUpperCase() }}</mat-option>
+            </mat-select>
+            <mat-hint>Selecciona el tipo de contacto</mat-hint>
+            </mat-form-field>
+        </div>
+        <br />
+        <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+          <button color="primary" mat-raised-button type="button" (click)="addContact()">
+            <mat-icon [icIcon]="icAdd"></mat-icon>
+            Registrar Contacto
+          </button>
+        </div>
+        <br />
+        <mat-table [dataSource]="contactDataSource" class="w-full">
+          <!-- Nombre Column -->
+          <ng-container matColumnDef="nombre">
+            <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
+          </ng-container>
+
+          <!-- Teléfono Column -->
+          <ng-container matColumnDef="telefono">
+            <mat-header-cell *matHeaderCellDef> Teléfono </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.telefono}} </mat-cell>
+          </ng-container>
+
+          <!-- Email Column -->
+          <ng-container matColumnDef="email">
+            <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.email}} </mat-cell>
+          </ng-container>
+
+           <!-- Tipo Column -->
+           <ng-container matColumnDef="tipo">
+            <mat-header-cell *matHeaderCellDef> Tipo </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ tiposContacto[element.tipo] }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>
+              <div fxLayout="right">Acciones</div>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index">
+              <div fxLayout="row" fxLayoutAlign="center center">
+                <button (click)="removeContact(i)" color="warn" mat-icon-button type="button">
+                  <mat-icon [icIcon]="icDelete"></mat-icon>
+                </button>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedContactColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedContactColumns;"></mat-row>
+          <tr class="mat-row" *ngIf="contactDataSource?.data?.length === 0">
+            <td class="mat-cell" [attr.colspan]="displayedContactColumns.length" style="text-align: center">
+              No hay contactos registrados.
+            </td>
+          </tr>
+        </mat-table>
+        <br />
+        <mat-divider color="primary" style="border-radius: 5px; border-width: 5px;"></mat-divider>
+        <!-- ######## Fin de Sección de CONTACTOS ######## -->
+
+        <br />
+        <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+          <button color="warn" mat-raised-button type="button" (click)="resetClientFormGroup()">
+            BORRAR
+          </button>
+          <div fxLayout="row" fxLayoutAlign="center center">
+            <mat-progress-spinner diameter="40" mode="indeterminate" color="primary"
+              *ngIf="spinner"></mat-progress-spinner>
+          </div>
+          <div fxLayout="row" fxLayoutAlign="center center" *ngIf="!spinner">
+            <button (click)="submit()" [disabled]="false" color="primary" mat-raised-button>
+              GUARDAR
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!--TODO                       -->
+    </div>
+  </vex-page-layout-content>
+</vex-page-layout>
