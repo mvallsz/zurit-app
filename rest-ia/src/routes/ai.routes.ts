@@ -1,9 +1,12 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { aiController } from '../controllers';
-import { authMiddleware, roleMiddleware, validate } from '../middlewares';
+import { authMiddleware, roleMiddleware, validate, aiLimiter } from '../middlewares';
 
 const router = Router();
+
+// Apply AI rate limiter to all AI routes
+router.use(aiLimiter);
 
 router.post(
   '/chat',

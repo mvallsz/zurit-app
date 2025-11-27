@@ -4,7 +4,7 @@ import { createServer } from 'http';
 import { config } from './config';
 import { connectDatabase } from './config/database';
 import routes from './routes';
-import { errorHandler, notFoundHandler } from './middlewares';
+import { errorHandler, notFoundHandler, apiLimiter } from './middlewares';
 import { socketService, kafkaService } from './services';
 
 const app = express();
@@ -14,6 +14,9 @@ const httpServer = createServer(app);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Apply rate limiting to all API routes
+app.use('/api/v1', apiLimiter);
 
 // API Routes
 app.use('/api/v1', routes);

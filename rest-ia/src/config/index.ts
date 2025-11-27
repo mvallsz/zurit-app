@@ -3,16 +3,27 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
+// Validate required environment variables in production
+const nodeEnv = process.env.NODE_ENV || 'development';
+if (nodeEnv === 'production') {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET must be set in production environment');
+  }
+  if (!process.env.MONGODB_URI) {
+    throw new Error('MONGODB_URI must be set in production environment');
+  }
+}
+
 export const config = {
   // Server
   port: parseInt(process.env.PORT || '3500', 10),
-  nodeEnv: process.env.NODE_ENV || 'development',
+  nodeEnv,
   
   // Database
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/rest-ia',
   
-  // JWT
-  jwtSecret: process.env.JWT_SECRET || 'default-secret-change-me',
+  // JWT - require in production, allow default only in development
+  jwtSecret: process.env.JWT_SECRET || (nodeEnv === 'production' ? '' : 'dev-secret-do-not-use-in-production'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '24h',
   
   // Kafka
