@@ -1,0 +1,12 @@
+export { authController } from './auth.controller';
+export { restaurantController } from './restaurant.controller';
+export { menuController } from './menu.controller';
+export { menuItemController } from './menuItem.controller';
+export { categoryController } from './category.controller';
+export { customerController } from './customer.controller';
+export { orderController } from './order.controller';
+export { deliveryController } from './delivery.controller';
+export { tableController } from './table.controller';
+export { reservationController } from './reservation.controller';
+export { aiController } from './ai.controller';
+export { notificationController } from './notification.controller';
